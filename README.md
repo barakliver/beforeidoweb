@@ -33,6 +33,27 @@ Vercel פורסת אוטומטית אחרי ה-push.
 | `/visual-dna` | Visual DNA.dc.html | פנימי, noindex |
 | `/policies` | מדיניות.dc.html | פנימי, noindex |
 
+## התראות על הזמנה
+
+`api/order.js` שולח התראה ברגע שלקוח לוחץ "מעבר לתשלום מאובטח".
+העמוד שולח לשם את ההזמנה המלאה ב-`navigator.sendBeacon` — שורד את
+המעבר לעמוד של Grow, בניגוד ל-fetch שהיה נקטע.
+
+**ההתראה אומרת "התחילה הזמנה", לא "שולם".** התשלום עצמו מאושר מול Grow.
+
+להגדרה ב-Vercel → Settings → Environment Variables. כל מה שחסר פשוט מדולג,
+וכישלון בהתראה לעולם לא חוסם את התשלום:
+
+| משתנה | לְמה | ברירת מחדל |
+|---|---|---|
+| `RESEND_API_KEY` | מייל דרך resend.com | בלעדיו אין מייל |
+| `ORDER_EMAIL_TO` | לאן לשלוח | barakliver@gmail.com |
+| `ORDER_EMAIL_FROM` | שולח מאומת | onboarding@resend.dev |
+| `WHATSAPP_WEBHOOK` | כתובת שמקבלת `{phone, message}` | בלעדיה אין וואטסאפ |
+| `WHATSAPP_TO` | מספר היעד | 972526604320 |
+
+לבדיקה מקומית: `node tools/serve.js` מריץ גם את `/api` ומדפיס כל קריאה.
+
 ## מבנה
 
 ```
@@ -43,6 +64,7 @@ assets/fonts.css + fonts/        Assistant / Heebo / Caveat
 assets/img/                      תמונות, ממוזערות לפי תוכן
 assets/og-card.png               תמונת השיתוף (וואטסאפ/פייסבוק)
 assets/favicon.svg               אייקון הלב
+api/order.js                     התראת הזמנה במייל ובוואטסאפ
 tools/build-site.js              בונה את האתר מייצוא הפרויקט
 tools/og-card.html               המקור של תמונת השיתוף
 vercel.json                      כתובות נקיות (/terms ולא /terms.html)

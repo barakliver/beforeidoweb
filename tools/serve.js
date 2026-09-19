@@ -10,6 +10,28 @@ const TYPES = { '.html': 'text/html;charset=utf-8', '.js': 'text/javascript', '.
 
 http.createServer((req, res) => {
   let p = decodeURIComponent(req.url.split('?')[0]);
+
+  // Run the real /api handlers, so the notification path can be exercised
+  // locally exactly as it runs on Vercel.
+  if (p.startsWith('/api/')) {
+    let body = '';
+    req.on('data', c => { body += c; });
+    req.on('end', async () => {
+      console.log(`\n${req.method} ${p}\n${body}`);
+      try {
+        const mod = await import(path.join(ROOT, p + '.js'));
+        req.body = body;
+        await mod.default(req, {
+          status(c) { res.statusCode = c; return this; },
+          json(o) { res.setHeader('content-type', 'application/json'); res.end(JSON.stringify(o)); },
+        });
+      } catch (e) {
+        res.statusCode = 500; res.end(String(e && e.message));
+      }
+    });
+    return;
+  }
+
   if (p === '/') p = '/index.html';
   let f = path.join(ROOT, p);
   if (!f.startsWith(ROOT)) { res.writeHead(403); return res.end(); }

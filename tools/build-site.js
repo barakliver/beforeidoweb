@@ -276,6 +276,25 @@ for (const p of PAGES) {
       `payUrl: s.method === "ship" ? ${ship} : ${self},`));
     fix('checkout: drop placeholder', x =>
       x.replace(/<p [^>]*>עמוד הסליקה יתחבר כאן\.<\/p>\s*/, ''));
+
+    // Beacon the order to /api/order on the way out. sendBeacon is the right
+    // call here: it survives the navigation to Grow, where a fetch would be
+    // cancelled mid-flight, and it cannot delay the redirect.
+    fix('checkout: notify on pay', x => x.replace(
+      'onPay: e => { if (!this.state.consentTerms) e.preventDefault(); }',
+      `onPay: e => {
+        if (!this.state.consentTerms) { e.preventDefault(); return; }
+        try {
+          const s2 = this.state;
+          const body = JSON.stringify({
+            name: s2.name, phone: s2.phone, method: s2.method, point: s2.point,
+            city: s2.city, street: s2.street, houseNo: s2.houseNo, notes: s2.notes,
+            marketing: s2.consentMarketing,
+            total: 129 + (s2.method === "ship" ? 39 : 0)
+          });
+          navigator.sendBeacon("/api/order", new Blob([body], { type: "application/json" }));
+        } catch (err) { /* a lost notification must never block the payment */ }
+      }`));
     if (!PAY.ship) report.push(['WARNING', '    checkout: no 168 ₪ link — shipping charges 129 ₪']);
   }
 
