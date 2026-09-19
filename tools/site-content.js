@@ -140,7 +140,7 @@ module.exports = {
     ctaOpensWhatsapp: true,
 
     // המספר היחיד שצריך: כפי שהוא יוצג בדף. '054-1234567'
-    phone: '',
+    phone: '052-6604320',
     email: '',
     instagram: 'https://www.instagram.com/beforeido_wedding/',
     instagramLabel: '@beforeido_wedding',
