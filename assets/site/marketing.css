@@ -268,6 +268,46 @@
   color: rgba(255, 255, 255, 0.62);
 }
 
+/* ── floating WhatsApp button ────────────────────────────────────────────── */
+.bid-fab {
+  position: fixed;
+  z-index: 9990;
+  inset-block-end: max(20px, env(safe-area-inset-bottom));
+  inset-inline-start: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #25d366;              /* WhatsApp green — recognised instantly */
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(31, 44, 74, 0.3);
+  /* Hidden until the reader has scrolled past the hero, so it never competes
+     with the main call to action on the first screen. */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px) scale(0.9);
+  transition: opacity 220ms cubic-bezier(0.2, 0.7, 0.2, 1),
+              transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1),
+              visibility 220ms;
+}
+.bid-fab--on { opacity: 1; visibility: visible; transform: none; }
+.bid-fab:hover { background: #1fb855; }
+.bid-fab:focus-visible { outline: 3px solid var(--bid-red); outline-offset: 3px; }
+.bid-fab svg { width: 31px; height: 31px; }
+
+/* The consent banner lives at the bottom too. Its height depends on how the
+   text wraps, so the lift is measured at runtime rather than guessed. */
+body.bid-consent-open .bid-fab--on {
+  transform: translateY(calc((var(--bid-banner-h, 96px) + 14px) * -1));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bid-fab { transition: opacity 120ms linear, visibility 120ms; transform: none; }
+  .bid-fab--on { transform: none; }
+}
+
 /* ── consent banner ──────────────────────────────────────────────────────── */
 .bid-consent {
   position: fixed;

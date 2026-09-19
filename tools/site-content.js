@@ -209,6 +209,11 @@ module.exports = {
     ctaOpensWhatsapp: true,
 
     // המספר היחיד שצריך: כפי שהוא יוצג בדף. '054-1234567'
+    // כפתור עגול צף שמלווה את כל העמודים. מופיע אחרי גלילה קצרה ונעלם
+    // כשמגיעים לפס יצירת הקשר, כדי שלא יהיו שני כפתורי וואטסאפ על המסך.
+    floatingButton: true,
+    floatingLabel: 'שיחה בוואטסאפ',
+
     phone: '052-6604320',
     email: '',
     instagram: 'https://www.instagram.com/beforeido_wedding/',

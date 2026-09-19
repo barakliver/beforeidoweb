@@ -159,6 +159,22 @@ function closingHtml() {
 }
 
 
+// The button that follows the reader down every page. It is a separate block
+// from the contact strip because it belongs to every page, including ones that
+// do not sell anything.
+function fabHtml() {
+  const t = C.contact || {};
+  const chat = chatLink();
+  if (!chat || t.floatingButton === false) return '';
+  const label = t.floatingLabel || 'שיחה בוואטסאפ';
+
+  return `
+<a class="bid-fab" href="${esc(chat)}" target="_blank" rel="noopener"
+   data-bid-event="fab_whatsapp" aria-label="${esc(label)}" title="${esc(label)}">
+  ${svg('whatsapp')}
+</a>`;
+}
+
 // A single panel that opens, above the questions. Built from site-content.js
 // and nothing else: with no intro, bullets or note it returns an empty string
 // and the page carries no shipping promise at all. A pickup address and its
@@ -538,6 +554,9 @@ async function apply(html, opts = {}) {
   // Contact closes every page, selling or not.
   fix('contact strip', s =>
     upsert(s, 'contact', contactHtml(), (h, b) => h.replace('</body>', b + '\n</body>')));
+
+  fix('floating WhatsApp button', s =>
+    upsert(s, 'fab', fabHtml(), (h, b) => h.replace('</body>', b + '\n</body>')));
 
   html = await optimizeImages(html, root, report);
   writeSiteFiles(root, report, page);

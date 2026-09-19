@@ -175,6 +175,32 @@
     }
   }, { passive: true });
 
+  // ── floating button ──────────────────────────────────────────────────────
+  // Appears once the hero is behind you, and steps aside when the contact
+  // strip is on screen — two WhatsApp buttons at once is one too many.
+  function floatingButton() {
+    var fab = document.querySelector('.bid-fab');
+    if (!fab) return;
+
+    var footerVisible = false;
+    var strip = document.getElementById('contact');
+    if (strip && window.IntersectionObserver) {
+      new IntersectionObserver(function (entries) {
+        footerVisible = entries[0].isIntersecting;
+        update();
+      }, { threshold: 0.15 }).observe(strip);
+    }
+
+    function update() {
+      var past = (window.scrollY || 0) > 300;
+      fab.classList.toggle('bid-fab--on', past && !footerVisible);
+    }
+
+    addEventListener('scroll', update, { passive: true });
+    addEventListener('resize', update, { passive: true });
+    update();
+  }
+
   // ── consent banner ───────────────────────────────────────────────────────
   function banner() {
     if (!hasTrackers || consent) return;    // nothing to ask about, or answered
@@ -202,10 +228,21 @@
       consent = b.getAttribute('data-consent');
       write(consent);
       wrap.remove();
+      document.body.classList.remove('bid-consent-open');
       if (consent === 'granted') loadTrackers(); else queue.length = 0;
     });
 
     document.body.appendChild(wrap);
+    document.body.classList.add('bid-consent-open');
+
+    // Hand the floating button the banner's real height so the two never
+    // stack: how tall it is depends on where the sentence wraps.
+    var measure = function () {
+      document.body.style.setProperty('--bid-banner-h', wrap.offsetHeight + 'px');
+    };
+    measure();
+    if (window.ResizeObserver) new ResizeObserver(measure).observe(wrap);
+    else addEventListener('resize', measure, { passive: true });
   }
 
   // ── reminder form ────────────────────────────────────────────────────────
@@ -276,6 +313,7 @@
   function start() {
     if (consent === 'granted') loadTrackers();
     banner();
+    floatingButton();
     leadForm();
     share();
     track('page_engaged', { route: location.search.indexOf('gift') > -1 ? 'gift' : 'couple' });
