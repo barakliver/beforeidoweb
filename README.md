@@ -1,69 +1,70 @@
-# Before I Do — אתר השיווק
+# Before I Do — האתר
 
-אתר סטטי של המשחק "Before I Do" (Liver Production).
-המקור הוא עיצוב שנבנה ב-Claude Design ויוצא כקובץ bundle יחיד;
-כאן הוא פרוס לאתר אמיתי שאפשר לארח על דומיין משלנו.
+אתר סטטי רב-עמודי של המשחק "Before I Do" (Liver Production).
+המקור הוא פרויקט Claude Design; כאן הוא בנוי לאתר אמיתי שרץ על
+`beforeido.co.il` דרך Vercel.
 
 ## עדכון האתר אחרי שינוי עיצוב
 
-כשמגיע ייצוא חדש מ-Claude Design (קובץ HTML אחד, "Bundled Page"):
+כשמגיע ייצוא חדש מ-Claude Design (קובץ zip של הפרויקט):
 
 ```bash
-node tools/import-design.js ~/Downloads/Before_I_Do.html
-python3 -m http.server 8099     # לבדוק שהכל נראה טוב
+unzip "Visual system board review.zip" -d /tmp/bid
+node tools/build-site.js /tmp/bid
+node tools/serve.js              # לבדוק על http://127.0.0.1:8099
 git add -A && git commit -m "עדכון עיצוב" && git push
 ```
 
 Vercel פורסת אוטומטית אחרי ה-push.
 
-הסקריפט מפרק את ה-bundle לקבצים ומחיל מחדש את כל מה ש-Claude Design
-לא מייצאת בעצמה: `lang="he" dir="rtl"`, כותרת ותגיות שיתוף, פאביקון,
-React מקומי, הסתרת הערות העיצוב, וכותרות שמתכווצות במסך צר.
-הוא מדפיס `ok` או `SKIPPED` לכל תיקון — **`SKIPPED` אומר שהעיצוב השתנה
-באזור הזה וצריך להסתכל על הדף לפני פרסום.**
+**חשוב:** הסקריפט מדפיס `ok` או `SKIPPED` לכל תיקון בכל עמוד.
+`SKIPPED` אומר שהעיצוב השתנה באזור הזה — צריך להסתכל על העמוד לפני פרסום.
+
+## עמודים
+
+| כתובת | מקור | הערה |
+|---|---|---|
+| `/` | Opening Experience.dc.html | דף הבית |
+| `/checkout` | Checkout.dc.html | טופס הזמנה, 3 שלבים. **הסליקה עוד לא מחוברת** |
+| `/terms` | Terms.dc.html | תקנון, משלוחים, החזרות |
+| `/privacy` | Privacy.dc.html | פרטיות, עוגיות, נגישות |
+| `404.html` | 404.dc.html | Vercel מגישה אוטומטית |
+| `/spec` | Design Spec.dc.html | פנימי, noindex |
+| `/visual-dna` | Visual DNA.dc.html | פנימי, noindex |
+| `/policies` | מדיניות.dc.html | פנימי, noindex |
 
 ## מבנה
 
 ```
-index.html                 הדף עצמו (רכיב x-dc + התוכן)
-assets/js/app.js           מנוע ה-rendering של Claude Design (dc-runtime)
-assets/js/react*.js        React 18 — מוגש מהאתר, לא מ-unpkg
-assets/img/                תמונות (PNG/JPG)
-assets/fonts/              Assistant / Heebo / Caveat (woff2, מוטמעות)
-assets/favicon.svg         אייקון הלב
-assets/og-card.png         תמונת השיתוף (וואטסאפ/פייסבוק), 1200x630
-tools/import-design.js     ממיר ייצוא של Claude Design לאתר הזה
-tools/og-card.html         המקור של תמונת השיתוף
+index.html, checkout.html, ...   העמודים הבנויים (לא לערוך ביד)
+assets/js/app.js                 מנוע ה-rendering של Claude Design
+assets/js/react*.js              React 18 — מוגש מהאתר, לא מ-unpkg
+assets/fonts.css + fonts/        Assistant / Heebo / Caveat
+assets/img/                      תמונות, ממוזערות לפי תוכן
+assets/og-card.png               תמונת השיתוף (וואטסאפ/פייסבוק)
+assets/favicon.svg               אייקון הלב
+tools/build-site.js              בונה את האתר מייצוא הפרויקט
+tools/og-card.html               המקור של תמונת השיתוף
+vercel.json                      כתובות נקיות (/terms ולא /terms.html)
+robots.txt, sitemap.xml          נוצרים על ידי הסקריפט
 ```
 
-### עדכון תמונת השיתוף
+אין שלב build ואין תלויות — פלט הסקריפט הוא HTML סטטי.
 
-`tools/og-card.html` הוא המקור. לערוך אותו, ואז לצלם ב-1200x630 ולשמור
-כ-`assets/og-card.png`. הגופנים נטענים מ-`assets/fonts/`.
+## מה הסקריפט מוסיף מעבר לייצוא
 
-אין שלב build ואין תלויות. זה HTML סטטי — כל שרת סטטי יגיש אותו.
+הייצוא הוא קוד מקור של כלי העיצוב. הסקריפט הופך אותו לאתר:
 
-## הרצה מקומית
+- **runtime ותמונות משותפים** לכל העמודים במקום עותק לכל עמוד
+- **גופנים מקומיים** במקום Google Fonts, כולל טווחי היוניקוד לעברית
+- **React מהאתר** דרך `window.__resources`, שחייב להיטען *לפני* ה-runtime
+- **קישורים פנימיים** מומרים משמות קבצים (`Terms.dc.html#terms`) לכתובות (`/terms#terms`)
+- **מטא-דאטה** לכל עמוד: כותרת, תיאור, canonical, noindex לפנימיים, og לדף הבית
+- **תיקוני מפרט** כרשת ביטחון: clamp לטיפוגרפיה מעל 21px, `min()` בגריד,
+  שוליים גמישים, מסגרת focus 3px, ואזור מגע 44px. העיצוב הנוכחי כבר עומד
+  ברובם — לכן חלקם מדווחים `SKIPPED`, וזה תקין.
 
-```bash
-python3 -m http.server 8099
-# → http://127.0.0.1:8099
-```
+## עדכון תמונת השיתוף
 
-חובה להגיש דרך שרת (`http://`) ולא לפתוח את הקובץ ישירות (`file://`),
-כי ה-runtime טוען את `app.js` ואת הגופנים כמשאבים יחסיים.
-
-## הערות תחזוקה
-
-כל התיקונים האלה מוחלים על ידי `tools/import-design.js`, לא ביד —
-לערוך שם, אחרת הם ייעלמו בייצוא הבא.
-
-- **הערות העיצוב הפנימיות** (המקטע "Gift route — three opening lines"
-  וכו') מוסתרות דרך `showVoiceNotes`, גם ב-`data-props` וגם בברירת
-  המחדל בקוד הרכיב.
-- **כותרות מעל 32px** מקבלות `font-size:clamp(...)` אחרי ה-shorthand,
-  כך שבטלפון הן מתכווצות ובדסקטופ הגודל המקורי נשמר.
-- **React מוגש מקומית** דרך `window.__resources` ב-`<head>`, כדי שלא
-  תהיה תלות ב-CDN חיצוני וכדי שה-runtime לא ימשוך מחדש את מקור הדף.
-- **כפתורי ה-CTA** ("אני רוצה את המשחק", "מצאתי מתנה") הם עדיין
-  `<button>` בלי פעולה — הם ממתינים לחיבור הסליקה.
+`tools/og-card.html` הוא המקור. לערוך, לצלם ב-1200x630, לשמור כ-`assets/og-card.png`.
+וואטסאפ שומרת תצוגות במטמון — לבדיקה מיידית להוסיף `?v=N` לקישור.

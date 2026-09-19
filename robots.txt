@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /checkout
+Disallow: /spec
+Disallow: /visual-dna
+Disallow: /policies
+
+Sitemap: https://www.beforeido.co.il/sitemap.xml

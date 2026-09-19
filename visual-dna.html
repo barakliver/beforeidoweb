@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Visual DNA — Before I Do</title>
+<meta name="description" content="מסמך פנימי">
+<meta name="theme-color" content="#4F6BA5">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/fonts.css">
+<script>
+  window.__resources = {
+    "https://unpkg.com/react@18.3.1/umd/react.production.min.js": "assets/js/react.production.min.js",
+    "https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js": "assets/js/react-dom.production.min.js"
+  };
+</script>
+<script src="/assets/js/app.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<style>
+body{margin:0;background:#4F6BA5;-webkit-font-smoothing:antialiased}
+a{color:#EF453D;text-decoration:none}
+a:hover{color:#4F6BA5}
+@keyframes bidLift{0%,100%{transform:rotate(-2deg) translateY(0)}50%{transform:rotate(-2deg) translateY(-6px)}}
+</style>
+<style>
+  a:focus-visible, button:focus-visible, input:focus-visible,
+  select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+    outline: 3px solid #EF453D !important; outline-offset: 3px !important;
+  }
+  nav a, footer a, header a { min-height: 44px; display: inline-flex; align-items: center; }
+</style>
+</helmet>
+
+<div style="background:#4F6BA5;padding:96px 48px 128px;font-family:Assistant,system-ui,sans-serif">
+<div style="max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:96px">
+
+<header style="display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:64px;align-items:end">
+<div>
+<p style="margin:0 0 20px;font:500 12px/1 Assistant,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.62)">Visual foundation · board 01 · for approval</p>
+<h1 style="margin:0;font:600 64px/1.02 Caveat,cursive;font-size:clamp(42px, 7.23vw, 64px);color:#fff;letter-spacing:.01em">Before I Do — Visual DNA</h1>
+<p style="margin:22px 0 0;max-width:58ch;font:300 19px/1.65 Assistant,sans-serif;color:rgba(255,255,255,.88);text-wrap:pretty">Extracted from the physical product only: the card box back and the card back. No outside aesthetic has been introduced. Every value below is a locked token; components do not set their own.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="height:1px;background:rgba(255,255,255,.35)"></div>
+<p style="margin:0;font:300 14px/1.6 Assistant,sans-serif;color:rgba(255,255,255,.75)">Source of truth<br>Box Back.png · Card Back.png<br>Fonts are temporary tokens pending the Canva names.</p>
+</div>
+</header>
+
+<section style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px">
+<div style="background:#fff;border-radius:6px;padding:14px">
+<img src="/assets/img/box-back-a6426f.png" alt="Before I Do box back" style="display:block;width:100%;height:auto;border-radius:3px">
+<p style="margin:14px 4px 4px;font:300 13px/1.5 Assistant,sans-serif;color:#2F3F63">Reference A — card faces on blue. Four cards, controlled rotation, soft single shadow, white paper reading as light against saturated blue.</p>
+</div>
+<div style="background:#fff;border-radius:6px;padding:14px;display:flex;flex-direction:column">
+<img src="/assets/img/card-back-be3bd4.png" alt="Before I Do card back" style="display:block;width:100%;height:340px;object-fit:cover;object-position:center 34%;border-radius:3px">
+<p style="margin:14px 4px 4px;font:300 13px/1.5 Assistant,sans-serif;color:#2F3F63">Reference B — the fingerprint heart and the handwritten wordmark. One coral element, one handwritten element, nothing else on the sheet.</p>
+</div>
+</section>
+
+<section>
+<p style="margin:0 0 6px;font:500 12px/1 Assistant,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.62)">01</p>
+<h2 style="margin:0 0 32px;font:700 34px/1.1 Heebo,sans-serif;font-size:clamp(22px, 3.84vw, 34px);color:#fff">Color system</h2>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px">
+<div style="background:#fff;border-radius:6px;overflow:hidden">
+<div style="height:150px;background:#4F6BA5"></div>
+<div style="padding:20px 22px 24px">
+<p style="margin:0;font:700 17px/1.2 Heebo,sans-serif;color:#2F3F63">brandBlue</p>
+<p style="margin:6px 0 12px;font:500 13px/1.2 ui-monospace,Menlo,monospace;color:#4F6BA5">#4F6BA5</p>
+<p style="margin:0;font:300 14px/1.55 Assistant,sans-serif;color:#2F3F63">The ground and the ink. Backgrounds, all rules, all illustration line, all card text. Locked.</p>
+</div>
+</div>
+<div style="background:#fff;border-radius:6px;overflow:hidden">
+<div style="height:150px;background:#EF453D"></div>
+<div style="padding:20px 22px 24px">
+<p style="margin:0;font:700 17px/1.2 Heebo,sans-serif;color:#2F3F63">brandCoral</p>
+<p style="margin:6px 0 12px;font:500 13px/1.2 ui-monospace,Menlo,monospace;color:#4F6BA5">#EF453D</p>
+<p style="margin:0;font:300 14px/1.55 Assistant,sans-serif;color:#2F3F63">The fingerprint heart, and after that almost nothing. Budget: one coral element per screen region.</p>
+</div>
+</div>
+<div style="background:#fff;border-radius:6px;overflow:hidden">
+<div style="height:150px;background:#fff;border-bottom:1.5px solid #4F6BA5;box-shadow:inset 0 0 0 1px rgba(79,107,165,.18)"></div>
+<div style="padding:20px 22px 24px">
+<p style="margin:0;font:700 17px/1.2 Heebo,sans-serif;color:#2F3F63">brandWhite</p>
+<p style="margin:6px 0 12px;font:500 13px/1.2 ui-monospace,Menlo,monospace;color:#4F6BA5">#FFFFFF</p>
+<p style="margin:0;font:300 14px/1.55 Assistant,sans-serif;color:#2F3F63">Paper. Always a defined sheet with an edge, never an undefined empty area.</p>
+</div>
+</div>
+</div>
+
+<div style="margin-top:28px;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:28px">
+<div style="background:#fff;border-radius:6px;padding:28px 30px 30px">
+<h3 style="margin:0 0 18px;font:700 19px/1.2 Heebo,sans-serif;color:#2F3F63">Blue · white · coral</h3>
+<div style="display:flex;height:34px;border-radius:3px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(79,107,165,.18)">
+<div style="flex:64;background:#4F6BA5"></div><div style="flex:34;background:#fff;box-shadow:inset 0 0 0 1px rgba(79,107,165,.3)"></div><div style="flex:2;background:#EF453D"></div>
+</div>
+<p style="margin:14px 0 0;font:300 15px/1.6 Assistant,sans-serif;color:#2F3F63;text-wrap:pretty">Roughly 64 / 34 / 2. Blue holds the environment, white holds the content, coral marks the heart. Coral never fills a surface, never tints a section, never appears twice in one glance.</p>
+<div style="margin-top:22px;display:flex;flex-direction:column;gap:10px">
+<p style="margin:0;font:600 13px/1.4 Assistant,sans-serif;color:#2F3F63">textPrimary #4F6BA5 on white — 5.2:1, all sizes.</p>
+<p style="margin:0;font:600 13px/1.4 Assistant,sans-serif;color:#2F3F63">textSecondary #2F3F63 — deep tint of the same hue, for dense reading only.</p>
+<p style="margin:0;font:600 13px/1.4 Assistant,sans-serif;color:#EF453D">coral on white — 3.7:1, so headline scale or graphic only. Never body copy.</p>
+</div>
+</div>
+<div style="background:#3E568A;border-radius:6px;padding:28px 30px 30px">
+<h3 style="margin:0 0 14px;font:700 19px/1.2 Heebo,sans-serif;color:#fff">On the blue ground</h3>
+<p style="margin:0 0 18px;font:300 15px/1.65 Assistant,sans-serif;color:rgba(255,255,255,.9)">Text on blue is white at full strength. White at reduced opacity is allowed for one supporting line only, never for a paragraph the reader has to work through.</p>
+<div style="display:flex;flex-direction:column;gap:8px">
+<p style="margin:0;font:400 16px/1.4 Assistant,sans-serif;color:#fff">#FFFFFF — 5.2:1 · primary</p>
+<p style="margin:0;font:400 16px/1.4 Assistant,sans-serif;color:rgba(255,255,255,.75)">75% white — supporting line</p>
+<p style="margin:0;font:400 16px/1.4 Assistant,sans-serif;color:rgba(255,255,255,.4)">40% white — rules and hairlines only, never type</p>
+</div>
+</div>
+</div>
+</section>
+
+<section>
+<p style="margin:0 0 6px;font:500 12px/1 Assistant,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.62)">02</p>
+<h2 style="margin:0 0 32px;font:700 34px/1.1 Heebo,sans-serif;font-size:clamp(22px, 3.84vw, 34px);color:#fff">Typography roles</h2>
+<div style="display:flex;flex-direction:column;gap:24px">
+
+<div style="background:#fff;border-radius:6px;padding:34px 36px;display:grid;grid-template-columns:200px minmax(0,1fr);gap:40px;align-items:start">
+<div>
+<p style="margin:0;font:500 13px/1.3 ui-monospace,Menlo,monospace;color:#EF453D">fontHebrewDisplay</p>
+<p style="margin:10px 0 0;font:300 14px/1.55 Assistant,sans-serif;color:#2F3F63">Temporary: Heebo 700–800.<br>Questions, headlines, the bold <span dir="rtl">או</span>.</p>
+<p style="margin:14px 0 0;font:300 13px/1.55 Assistant,sans-serif;color:#4F6BA5">Personality: upright, geometric, friendly but not cute. Even stroke, open counters, no calligraphic contrast. It has to survive being printed small and centered on paper.</p>
+</div>
+<div dir="rtl" style="text-align:center;padding:8px 0">
+<p style="margin:0;font:700 44px/1.25 Heebo,sans-serif;font-size:clamp(29px, 4.97vw, 44px);color:#4F6BA5">מוזיקה חיה בחופה</p>
+<p style="margin:12px 0;font:800 30px/1 Heebo,sans-serif;font-size:clamp(20px, 3.39vw, 30px);color:#4F6BA5">או</p>
+<p style="margin:0;font:400 34px/1.3 Heebo,sans-serif;font-size:clamp(22px, 3.84vw, 34px);color:#4F6BA5">פלייליסט</p>
+</div>
+</div>
+
+<div style="background:#fff;border-radius:6px;padding:34px 36px;display:grid;grid-template-columns:200px minmax(0,1fr);gap:40px;align-items:start">
+<div>
+<p style="margin:0;font:500 13px/1.3 ui-monospace,Menlo,monospace;color:#EF453D">fontHebrewBody</p>
+<p style="margin:10px 0 0;font:300 14px/1.55 Assistant,sans-serif;color:#2F3F63">Temporary: Assistant 300–600.<br>Instructions, long copy, labels.</p>
+<p style="margin:14px 0 0;font:300 13px/1.55 Assistant,sans-serif;color:#4F6BA5">Personality: quiet, generous line height (1.7 for Hebrew), bold used to lift one sentence per paragraph — exactly as the box back does.</p>
+</div>
+<div dir="rtl" style="max-width:52ch">
+<p style="margin:0 0 18px;font:300 19px/1.7 Assistant,sans-serif;color:#2F3F63">בקופסא תמצאו מחברת, עט וחמישים כרטיסיות עם שאלות שהן חובה ויעשו לכם סדר.</p>
+<p style="margin:0;font:700 19px/1.7 Assistant,sans-serif;color:#2F3F63">זה המקום לדבר, לשתף, ולפעמים גם לצחוק, בלי שיפוטיות, רק הקשבה וכיף.</p>
+</div>
+</div>
+
+<div style="background:#fff;border-radius:6px;padding:34px 36px;display:grid;grid-template-columns:200px minmax(0,1fr);gap:40px;align-items:center">
+<div>
+<p style="margin:0;font:500 13px/1.3 ui-monospace,Menlo,monospace;color:#EF453D">fontHandwrittenBrand</p>
+<p style="margin:10px 0 0;font:300 14px/1.55 Assistant,sans-serif;color:#2F3F63">Temporary: Caveat 500–600.<br>The wordmark, the card footer, nothing else.</p>
+<p style="margin:14px 0 0;font:300 13px/1.55 Assistant,sans-serif;color:#4F6BA5">Personality: thin marker, wide spacing, slightly irregular baseline. It is a signature, not a typeface for the interface. Never used for a button, a label or a paragraph.</p>
+</div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:26px">
+<div style="display:flex;align-items:center;gap:20px;width:100%">
+<div style="flex:1;height:1px;background:rgba(79,107,165,.55)"></div>
+<p style="margin:0;font:500 52px/1 Caveat,cursive;font-size:clamp(34px, 5.88vw, 52px);color:#4F6BA5;white-space:nowrap">Before I Do</p>
+<div style="flex:1;height:1px;background:rgba(79,107,165,.55)"></div>
+</div>
+<p style="margin:0;font:500 22px/1 Caveat,cursive;font-size:clamp(14px, 2.49vw, 22px);color:#4F6BA5">Liver Production</p>
+</div>
+</div>
+
+<div style="background:#fff;border-radius:6px;padding:30px 36px 34px">
+<h3 style="margin:0 0 20px;font:700 19px/1.2 Heebo,sans-serif;color:#2F3F63">typographyScale · lineHeightScale</h3>
+<div style="display:flex;flex-wrap:wrap;gap:26px 34px;align-items:baseline">
+<span style="font:300 12px/1 Assistant,sans-serif;color:#4F6BA5">12</span>
+<span style="font:300 14px/1 Assistant,sans-serif;color:#4F6BA5">14</span>
+<span style="font:300 16px/1 Assistant,sans-serif;color:#4F6BA5">16</span>
+<span style="font:300 19px/1 Assistant,sans-serif;color:#4F6BA5">19</span>
+<span style="font:400 23px/1 Heebo,sans-serif;font-size:clamp(15px, 2.60vw, 23px);color:#4F6BA5">23</span>
+<span style="font:700 28px/1 Heebo,sans-serif;font-size:clamp(18px, 3.16vw, 28px);color:#4F6BA5">28</span>
+<span style="font:700 34px/1 Heebo,sans-serif;font-size:clamp(22px, 3.84vw, 34px);color:#4F6BA5">34</span>
+<span style="font:700 44px/1 Heebo,sans-serif;font-size:clamp(29px, 4.97vw, 44px);color:#4F6BA5">44</span>
+<span style="font:800 60px/1 Heebo,sans-serif;font-size:clamp(39px, 6.78vw, 60px);color:#4F6BA5">60</span>
+</div>
+<p style="margin:22px 0 0;font:300 15px/1.6 Assistant,sans-serif;color:#2F3F63">Steps: 12 · 14 · 16 · 19 · 23 · 28 · 34 · 44 · 60. Line height 1.15 display / 1.35 subhead / 1.7 Hebrew body. Two type sizes per card face, three per section. No size outside the scale.</p>
+</div>
+</div>
+</section>
+
+<section>
+<p style="margin:0 0 6px;font:500 12px/1 Assistant,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.62)">03</p>
+<h2 style="margin:0 0 12px;font:700 34px/1.1 Heebo,sans-serif;font-size:clamp(22px, 3.84vw, 34px);color:#fff">Card anatomy</h2>
+<p style="margin:0 0 36px;max-width:60ch;font:300 17px/1.6 Assistant,sans-serif;color:rgba(255,255,255,.85)">The card is the only container this brand has. Everything else on the website is a card that has been given a job.</p>
+
+<div style="background:#fff;border-radius:6px;padding:56px 48px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:64px;align-items:center">
+
+<div style="position:relative;padding:0 0 0 0">
+<div style="position:relative;width:300px;height:420px;background:#fff;border-radius:18px;box-shadow:0 10px 26px rgba(31,44,74,.18);border:1px solid rgba(79,107,165,.16)">
+<div style="position:absolute;inset:14px;border:1.5px solid #4F6BA5;border-radius:11px"></div>
+<div style="position:absolute;top:14px;left:50%;transform:translate(-50%,-50%);width:42px;height:18px;background:#fff"></div>
+<div style="position:absolute;top:14px;left:50%;transform:translate(-50%,-52%);width:26px;height:22px"><svg width="26" height="22" viewBox="0 0 24 21" fill="#EF453D" style="display:block"><path d="M12 20.4C12 20.4 1.2 13.3 1.2 7.1 1.2 3.7 3.9 1 7.1 1 9.2 1 11.1 2.1 12 3.8 12.9 2.1 14.8 1 16.9 1 20.1 1 22.8 3.7 22.8 7.1 22.8 13.3 12 20.4 12 20.4Z"/></svg></div>
+<div dir="rtl" style="position:absolute;inset:14px;display:flex;flex-direction:column;align-items:center;padding:44px 26px 22px">
+<p style="margin:0;font:400 20px/1.35 Heebo,sans-serif;color:#4F6BA5;text-align:center">הגשה לשולחן</p>
+<p style="margin:9px 0;font:800 17px/1 Heebo,sans-serif;color:#4F6BA5">או</p>
+<p style="margin:0;font:400 20px/1.35 Heebo,sans-serif;color:#4F6BA5;text-align:center">בופה</p>
+<div style="flex:1;display:flex;align-items:center;justify-content:center;width:100%">
+<svg width="118" height="104" viewBox="0 0 118 104" fill="none" stroke="#4F6BA5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M19 74c0-22 18-40 40-40s40 18 40 40"/>
+<path d="M8 74h102"/>
+<path d="M16 82h86"/>
+<circle cx="59" cy="30" r="4"/>
+<path d="M45 20c4-5 1-9-1-12"/><path d="M59 14c4-5 1-9-1-12"/><path d="M73 20c4-5 1-9-1-12"/>
+</svg>
+</div>
+<p style="margin:0;font:500 15px/1 Caveat,cursive;color:#4F6BA5">Liver Production</p>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:20px">
+<sc-if value="{{ showAnnotations }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:18px">
+<div style="display:grid;grid-template-columns:150px minmax(0,1fr);gap:18px;align-items:baseline"><p style="margin:0;font:500 12px/1.4 ui-monospace,Menlo,monospace;color:#EF453D">proportion</p><p style="margin:0;font:300 15px/1.55 Assistant,sans-serif;color:#2F3F63">5 : 7 (0.714). Portrait always. Landscape cards do not exist in this brand.</p></div>
+<div style="display:grid;grid-template-columns:150px minmax(0,1fr);gap:18px;align-items:baseline"><p style="margin:0;font:500 12px/1.4 ui-monospace,Menlo,monospace;color:#EF453D">cardRadius</p><p style="margin:0;font:300 15px/1.55 Assistant,sans-serif;color:#2F3F63">6% of the short edge — 18px on a 300px card. Inner rule radius 11px, so the two curves stay concentric. Never a pill, never a square corner.</p></div>
+<div style="display:grid;grid-template-columns:150px minmax(0,1fr);gap:18px;align-items:baseline"><p style="margin:0;font:500 12px/1.4 ui-monospace,Menlo,monospace;color:#EF453D">cardBorder</p><p style="margin:0;font:300 15px/1.55 Assistant,sans-serif;color:#2F3F63">1.5px solid brandBlue, inset 14px from the edge (4.7% of width). This inset rule — not the paper edge — is the brand's frame. On white grounds the paper edge adds a 1px rgba(79,107,165,.16) hairline so the sheet still reads.</p></div>
+<div style="display:grid;grid-template-columns:150px minmax(0,1fr);gap:18px;align-items:baseline"><p style="margin:0;font:500 12px/1.4 ui-monospace,Menlo,monospace;color:#EF453D">heart</p><p style="margin:0;font:300 15px/1.55 Assistant,sans-serif;color:#2F3F63">Sits centred on the top rule, interrupting it. Height ≈ 5% of card height. The rule breaks; the heart does not overlap type.</p></div>
+<div style="display:grid;grid-template-columns:150px minmax(0,1fr);gap:18px;align-items:baseline"><p style="margin:0;font:500 12px/1.4 ui-monospace,Menlo,monospace;color:#EF453D">cardShadow</p><p style="margin:0;font:300 15px/1.55 Assistant,sans-serif;color:#2F3F63">0 10px 26px rgba(31,44,74,.18). One shadow, blue-tinted, soft, directional down. Never layered, never spread wide, never on a white-on-white panel at rest.</p></div>
+<div style="display:grid;grid-template-columns:150px minmax(0,1fr);gap:18px;align-items:baseline"><p style="margin:0;font:500 12px/1.4 ui-monospace,Menlo,monospace;color:#EF453D">interior</p><p style="margin:0;font:300 15px/1.55 Assistant,sans-serif;color:#2F3F63">Question at the top, illustration floating in the middle third, signature at the foot. Roughly 45% of the interior is empty. That emptiness is the brand.</p></div>
+</div>
+</sc-if>
+</div>
+</div>
+</section>
+
+<section>
+<p style="margin:0 0 6px;font:500 12px/1 Assistant,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.62)">04</p>
+<h2 style="margin:0 0 32px;font:700 34px/1.1 Heebo,sans-serif;font-size:clamp(22px, 3.84vw, 34px);color:#fff">Spacing, rotation, composition</h2>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start">
+
+<div style="background:#fff;border-radius:6px;padding:30px clamp(20px,5vw,32px) 34px">
+<h3 style="margin:0 0 18px;font:700 19px/1.2 Heebo,sans-serif;color:#2F3F63">spacingScale</h3>
+<div style="display:flex;align-items:flex-end;gap:8px;height:130px">
+<div style="width:26px;height:4px;background:#4F6BA5"></div>
+<div style="width:26px;height:8px;background:#4F6BA5"></div>
+<div style="width:26px;height:12px;background:#4F6BA5"></div>
+<div style="width:26px;height:20px;background:#4F6BA5"></div>
+<div style="width:26px;height:32px;background:#4F6BA5"></div>
+<div style="width:26px;height:48px;background:#4F6BA5"></div>
+<div style="width:26px;height:72px;background:#4F6BA5"></div>
+<div style="width:26px;height:96px;background:#4F6BA5"></div>
+<div style="width:26px;height:128px;background:#EF453D"></div>
+</div>
+<p style="margin:18px 0 0;font:300 15px/1.6 Assistant,sans-serif;color:#2F3F63">4 · 8 · 12 · 20 · 32 · 48 · 72 · 96 · 128. Inside a card: 12–32. Between cards: 32–48. Between sections: 96–128. The large steps are used far more often than the small ones.</p>
+<div style="margin-top:22px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px">
+<p style="margin:0;font:300 14px/1.55 Assistant,sans-serif;color:#2F3F63"><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#EF453D">contentWidth</span><br>1180px</p>
+<p style="margin:0;font:300 14px/1.55 Assistant,sans-serif;color:#2F3F63"><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#EF453D">readingWidth</span><br>52ch Hebrew / 62ch English</p>
+<p style="margin:0;font:300 14px/1.55 Assistant,sans-serif;color:#2F3F63"><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#EF453D">touchTarget</span><br>44px minimum</p>
+<p style="margin:0;font:300 14px/1.55 Assistant,sans-serif;color:#2F3F63"><span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#EF453D">focusState</span><br>2px #EF453D, offset 3px</p>
+</div>
+</div>
+
+<div style="background:#3E568A;border-radius:6px;padding:30px clamp(20px,5vw,32px) 40px;overflow:hidden">
+<h3 style="margin:0 0 6px;font:700 19px/1.2 Heebo,sans-serif;color:#fff">cardRotationSmall · cardRotationMedium</h3>
+<p style="margin:0 0 28px;font:300 15px/1.6 Assistant,sans-serif;color:rgba(255,255,255,.85)">Small ±2°, medium ±{{ rotationMedium }}°. Rotation is only ever applied to a group of two or more cards, alternating sign, and never to a card holding more than four lines of text. Nothing in this brand is rotated for decoration.</p>
+<div style="position:relative;height:250px">
+<div style="position:absolute;left:8%;top:10px;width:150px;height:210px;background:#fff;border-radius:9px;box-shadow:0 10px 26px rgba(31,44,74,.28);transform:rotate(-6deg)"><div style="position:absolute;inset:7px;border:1.5px solid #4F6BA5;border-radius:5px"></div></div>
+<div style="position:absolute;left:34%;top:26px;width:150px;height:210px;background:#fff;border-radius:9px;box-shadow:0 10px 26px rgba(31,44,74,.28);transform:rotate(4deg)"><div style="position:absolute;inset:7px;border:1.5px solid #4F6BA5;border-radius:5px"></div></div>
+<div style="position:absolute;left:60%;top:6px;width:150px;height:210px;background:#fff;border-radius:9px;box-shadow:0 10px 26px rgba(31,44,74,.28);transform:rotate(-2deg)"><div style="position:absolute;inset:7px;border:1.5px solid #4F6BA5;border-radius:5px"></div></div>
+</div>
+</div>
+</div>
+
+<div style="margin-top:28px;background:#fff;border-radius:6px;padding:34px 36px 38px">
+<h3 style="margin:0 0 18px;font:700 19px/1.2 Heebo,sans-serif;color:#2F3F63">Composition principles</h3>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:34px">
+<div>
+<svg width="100%" height="120" viewBox="0 0 220 130" fill="none" style="display:block"><rect x="0" y="0" width="220" height="130" fill="#4F6BA5"/><rect x="14" y="20" width="78" height="100" rx="5" fill="#fff" transform="rotate(-5 53 70)"/><rect x="120" y="34" width="86" height="8" rx="2" fill="#fff"/><rect x="120" y="50" width="62" height="6" rx="2" fill="#fff" opacity=".6"/><rect x="120" y="62" width="70" height="6" rx="2" fill="#fff" opacity=".6"/></svg>
+<p style="margin:14px 0 0;font:300 14px/1.55 Assistant,sans-serif;color:#2F3F63"><strong style="font-weight:600">Two-part, unequal.</strong> The box back's own layout: object on one side, words on the other, weighted about 40/60. Copied directly into the website's section grammar.</p>
+</div>
+<div>
+<svg width="100%" height="120" viewBox="0 0 220 130" fill="none" style="display:block"><rect x="0" y="0" width="220" height="130" fill="#4F6BA5"/><rect x="42" y="16" width="62" height="46" rx="4" fill="#fff" transform="rotate(-7 73 39)"/><rect x="112" y="22" width="62" height="46" rx="4" fill="#fff" transform="rotate(5 143 45)"/><rect x="40" y="70" width="62" height="46" rx="4" fill="#fff" transform="rotate(4 71 93)"/><rect x="110" y="76" width="62" height="46" rx="4" fill="#fff" transform="rotate(-4 141 99)"/></svg>
+<p style="margin:14px 0 0;font:300 14px/1.55 Assistant,sans-serif;color:#2F3F63"><strong style="font-weight:600">Loose cluster.</strong> Cards overlap slightly and rotate in alternating directions, as if set down by hand. Never a tidy row of three identical cards on an even grid.</p>
+</div>
+<div>
+<svg width="100%" height="120" viewBox="0 0 220 130" fill="none" style="display:block"><rect x="0" y="0" width="220" height="130" fill="#4F6BA5"/><circle cx="110" cy="56" r="20" fill="#EF453D"/><rect x="58" y="98" width="104" height="8" rx="2" fill="#fff" opacity=".8"/><rect x="18" y="102" width="30" height="1.5" fill="#fff" opacity=".5"/><rect x="172" y="102" width="30" height="1.5" fill="#fff" opacity=".5"/></svg>
+<p style="margin:14px 0 0;font:300 14px/1.55 Assistant,sans-serif;color:#2F3F63"><strong style="font-weight:600">Single centred subject.</strong> Reserved for the heart and the wordmark — one moment per page, flanked by hairlines, surrounded by empty blue. Everything else is asymmetric.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section>
+<p style="margin:0 0 6px;font:500 12px/1 Assistant,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.62)">05</p>
+<h2 style="margin:0 0 32px;font:700 34px/1.1 Heebo,sans-serif;font-size:clamp(22px, 3.84vw, 34px);color:#fff">Illustration language</h2>
+<div style="background:#fff;border-radius:6px;padding:38px 36px 40px">
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:30px;align-items:center;justify-items:center">
+<svg width="132" height="120" viewBox="0 0 132 120" fill="none" stroke="#4F6BA5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="66" cy="60" r="42"/><path d="M52 46c0-8 6-14 14-14s14 6 14 13c0 8-8 10-11 15-2 3-2 6-2 8"/><circle cx="67" cy="84" r="2.4"/></svg>
+<svg width="132" height="120" viewBox="0 0 132 120" fill="none" stroke="#4F6BA5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 82c0-24 19-43 42-43s42 19 42 43"/><path d="M12 82h108"/><path d="M20 90h92"/><circle cx="66" cy="34" r="4"/><path d="M50 24c4-6 1-10-1-13"/><path d="M66 18c4-6 1-10-1-13"/><path d="M82 24c4-6 1-10-1-13"/></svg>
+<svg width="132" height="120" viewBox="0 0 132 120" fill="none" stroke="#4F6BA5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M30 96c-8 0-14-6-14-13 0-8 6-14 14-14 5 0 9 2 11 5V26l44-10v44"/><path d="M85 74c-8 0-14-6-14-13 0-8 6-14 14-14 5 0 9 2 11 5"/><path d="M41 74V32"/><path d="M96 52V22"/><path d="M108 26c5-4 5-10 1-14"/><path d="M116 34c8-6 8-18 1-25"/></svg>
+<div style="width:132px;height:120px;border:1.5px dashed rgba(79,107,165,.5);border-radius:6px;display:flex;align-items:center;justify-content:center;text-align:center"><p style="margin:0;font:300 12px/1.4 Assistant,sans-serif;color:#4F6BA5;padding:0 10px">placeholder<br>commission in<br>the same family</p></div>
+</div>
+<div style="margin-top:34px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:32px">
+<div>
+<h3 style="margin:0 0 12px;font:700 19px/1.2 Heebo,sans-serif;color:#2F3F63">Rules</h3>
+<p style="margin:0;font:300 15px/1.65 Assistant,sans-serif;color:#2F3F63;text-wrap:pretty">Single continuous outline, no fill, no shading, no second colour. Stroke 2px at a 120px drawing — scale the stroke with the drawing so the weight stays optically constant (1.5px at 90px, 2.5px at 160px). Round caps and round joins. One subject per drawing, drawn slightly imperfectly, floating with no ground line or frame. Blue only; the heart is the single exception in coral.</p>
+</div>
+<div>
+<h3 style="margin:0 0 12px;font:700 19px/1.2 Heebo,sans-serif;color:#2F3F63">Not this</h3>
+<p style="margin:0;font:300 15px/1.65 Assistant,sans-serif;color:#2F3F63;text-wrap:pretty">No icon library standing in for a prominent illustration. No filled glyphs, no duotone, no two-weight strokes, no geometric grid-built icons, no isometric or 3D. Small functional UI marks (arrow, close, menu) may be simple 2px strokes from the same pen, but they are furniture, not illustration — the three drawings above show what the reader should recognise as the brand's hand.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section>
+<p style="margin:0 0 6px;font:500 12px/1 Assistant,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.62)">06</p>
+<h2 style="margin:0 0 32px;font:700 34px/1.1 Heebo,sans-serif;font-size:clamp(22px, 3.84vw, 34px);color:#fff">The fingerprint heart</h2>
+<div style="display:grid;grid-template-columns:300px minmax(0,1fr);gap:28px;align-items:stretch">
+<div style="background:#4F6BA5;border-radius:6px;display:flex;align-items:center;justify-content:center;padding:30px">
+<div style="width:240px;height:203px;background-image:url('/assets/img/card-back-be3bd4.png');background-size:319px 479px;background-position:-38.9px -116.6px;background-repeat:no-repeat"></div>
+</div>
+<div style="background:#fff;border-radius:6px;padding:32px 34px 34px">
+<h3 style="margin:0 0 14px;font:700 19px/1.2 Heebo,sans-serif;color:#2F3F63">One motif, three permitted uses</h3>
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="margin:0;font:300 15px/1.6 Assistant,sans-serif;color:#2F3F63"><strong style="font-weight:600">1 · Full asset.</strong> Large, coral, on blue, with the <em>love</em> script ring intact. One per page maximum, and only where the page is otherwise empty.</p>
+<p style="margin:0;font:300 15px/1.6 Assistant,sans-serif;color:#2F3F63"><strong style="font-weight:600">2 · Card seal.</strong> Small solid coral heart centred on a card's top rule, breaking it. Marks a thing as a card. No ring, no text.</p>
+<p style="margin:0;font:300 15px/1.6 Assistant,sans-serif;color:#2F3F63"><strong style="font-weight:600">3 · Favicon / app mark.</strong> The heart alone, no wordmark.</p>
+</div>
+<div style="margin-top:26px;padding-top:22px;border-top:1px solid rgba(79,107,165,.2)">
+<p style="margin:0 0 10px;font:600 13px/1.4 Assistant,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#EF453D">Never</p>
+<p style="margin:0;font:300 15px/1.6 Assistant,sans-serif;color:#2F3F63">Never as a bullet, a loading spinner, a hover cursor, a background pattern, a section divider or a repeated texture. Never recoloured, never outlined, never rotated, never cropped, never placed on a photograph. Never animated beyond a single slow fade or draw-in. It is a signature — it loses all of its value the moment it appears twice.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section>
+<p style="margin:0 0 6px;font:500 12px/1 Assistant,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.62)">07</p>
+<h2 style="margin:0 0 32px;font:700 34px/1.1 Heebo,sans-serif;font-size:clamp(22px, 3.84vw, 34px);color:#fff">Interface, derived</h2>
+
+<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start">
+
+<div style="background:#fff;border-radius:6px;padding:32px 34px 36px">
+<h3 style="margin:0 0 6px;font:700 19px/1.2 Heebo,sans-serif;color:#2F3F63">Buttons</h3>
+<p style="margin:0 0 26px;font:300 14px/1.55 Assistant,sans-serif;color:#4F6BA5">A button is a small card: 1.5px blue rule, 8px radius, 44px tall, wide letter-spacing, generous horizontal padding. No pill, no gradient, no shadow at rest.</p>
+<div dir="rtl" style="display:flex;flex-wrap:wrap;gap:16px;align-items:center">
+<button style="font:600 16px/1 Assistant,sans-serif;color:#fff;background:#4F6BA5;border:1.5px solid #4F6BA5;border-radius:8px;padding:0 30px;height:44px;cursor:pointer;letter-spacing:.02em;transition:background 260ms cubic-bezier(.2,.7,.2,1),transform 140ms cubic-bezier(.2,.7,.2,1)" style-hover="background:#3E568A" style-active="transform:translateY(1px)">לרכישה</button>
+<button style="font:600 16px/1 Assistant,sans-serif;color:#4F6BA5;background:#fff;border:1.5px solid #4F6BA5;border-radius:8px;padding:0 30px;height:44px;cursor:pointer;letter-spacing:.02em;transition:background 260ms cubic-bezier(.2,.7,.2,1)" style-hover="background:rgba(79,107,165,.08)">איך משחקים</button>
+<button style="font:600 16px/1 Assistant,sans-serif;color:#4F6BA5;background:transparent;border:0;border-bottom:1.5px solid #EF453D;border-radius:0;padding:0 2px 6px;height:auto;cursor:pointer" style-hover="color:#EF453D">עוד על המשחק</button>
+</div>
+<p style="margin:24px 0 0;font:300 14px/1.55 Assistant,sans-serif;color:#2F3F63">Coral appears in exactly one button state: the underline of the quiet tertiary link. Primary is blue on blue-bordered paper, because that is how the cards are printed.</p>
+</div>
+
+<div style="background:#3E568A;border-radius:6px;padding:32px 34px 36px">
+<h3 style="margin:0 0 6px;font:700 19px/1.2 Heebo,sans-serif;color:#fff">Interactive card</h3>
+<p style="margin:0 0 24px;font:300 14px/1.55 Assistant,sans-serif;color:rgba(255,255,255,.8)">Hover the cards. Rest: −2°, soft shadow. Hover: rotation relaxes to 0°, lifts 6px, shadow deepens. The gesture is picking a card up off a table, not a UI element glowing.</p>
+<div style="display:flex;gap:26px;justify-content:center;padding:10px 0 4px">
+<div style="width:150px;height:210px;background:#fff;border-radius:9px;box-shadow:0 10px 26px rgba(31,44,74,.28);transform:rotate(-2deg);transition:transform 260ms cubic-bezier(.2,.7,.2,1),box-shadow 260ms cubic-bezier(.2,.7,.2,1);cursor:pointer;position:relative" style-hover="transform:rotate(0deg) translateY(-6px);box-shadow:0 18px 38px rgba(31,44,74,.34)">
+<div style="position:absolute;inset:7px;border:1.5px solid #4F6BA5;border-radius:5px"></div>
+<div style="position:absolute;top:7px;left:50%;transform:translate(-50%,-50%);width:26px;height:12px;background:#fff"></div>
+<div style="position:absolute;top:7px;left:50%;transform:translate(-50%,-52%);width:18px;height:15px"><svg width="18" height="15" viewBox="0 0 24 21" fill="#EF453D" style="display:block"><path d="M12 20.4C12 20.4 1.2 13.3 1.2 7.1 1.2 3.7 3.9 1 7.1 1 9.2 1 11.1 2.1 12 3.8 12.9 2.1 14.8 1 16.9 1 20.1 1 22.8 3.7 22.8 7.1 22.8 13.3 12 20.4 12 20.4Z"/></svg></div>
+<div dir="rtl" style="position:absolute;inset:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px 14px 14px"><p style="margin:0;font:400 15px/1.35 Heebo,sans-serif;color:#4F6BA5;text-align:center">להביא את הכלב</p><p style="margin:7px 0;font:800 13px/1 Heebo,sans-serif;color:#4F6BA5">או</p><p style="margin:0;font:400 15px/1.35 Heebo,sans-serif;color:#4F6BA5;text-align:center">להשאיר אותו בבית</p></div>
+</div>
+<div style="width:150px;height:210px;background:#fff;border-radius:9px;box-shadow:0 10px 26px rgba(31,44,74,.28);transform:rotate(3deg);transition:transform 260ms cubic-bezier(.2,.7,.2,1),box-shadow 260ms cubic-bezier(.2,.7,.2,1);cursor:pointer;position:relative" style-hover="transform:rotate(0deg) translateY(-6px);box-shadow:0 18px 38px rgba(31,44,74,.34)">
+<div style="position:absolute;inset:7px;border:1.5px solid #4F6BA5;border-radius:5px"></div>
+<div style="position:absolute;top:7px;left:50%;transform:translate(-50%,-50%);width:26px;height:12px;background:#fff"></div>
+<div style="position:absolute;top:7px;left:50%;transform:translate(-50%,-52%);width:18px;height:15px"><svg width="18" height="15" viewBox="0 0 24 21" fill="#EF453D" style="display:block"><path d="M12 20.4C12 20.4 1.2 13.3 1.2 7.1 1.2 3.7 3.9 1 7.1 1 9.2 1 11.1 2.1 12 3.8 12.9 2.1 14.8 1 16.9 1 20.1 1 22.8 3.7 22.8 7.1 22.8 13.3 12 20.4 12 20.4Z"/></svg></div>
+<div dir="rtl" style="position:absolute;inset:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px 14px 14px"><p style="margin:0;font:400 15px/1.45 Heebo,sans-serif;color:#4F6BA5;text-align:center">מה הדבר שהכי חשוב לי ולא אוותר עליו בחתונה</p></div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="margin-top:28px;background:#fff;border-radius:6px;overflow:hidden">
+<div style="padding:22px 30px;border-bottom:1.5px solid rgba(79,107,165,.25);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+<div style="display:flex;align-items:center;gap:12px">
+<div style="width:20px;height:17px"><svg width="20" height="17" viewBox="0 0 24 21" fill="#EF453D" style="display:block"><path d="M12 20.4C12 20.4 1.2 13.3 1.2 7.1 1.2 3.7 3.9 1 7.1 1 9.2 1 11.1 2.1 12 3.8 12.9 2.1 14.8 1 16.9 1 20.1 1 22.8 3.7 22.8 7.1 22.8 13.3 12 20.4 12 20.4Z"/></svg></div>
+<p style="margin:0;font:500 26px/1 Caveat,cursive;font-size:clamp(17px, 2.94vw, 26px);color:#4F6BA5">Before I Do</p>
+</div>
+<div dir="rtl" style="display:flex;align-items:center;gap:30px">
+<a href="#" style="font:400 16px/1 Assistant,sans-serif;color:#4F6BA5">המשחק</a>
+<a href="#" style="font:400 16px/1 Assistant,sans-serif;color:#4F6BA5">איך משחקים</a>
+<a href="#" style="font:400 16px/1 Assistant,sans-serif;color:#4F6BA5">שאלות</a>
+<button style="font:600 15px/1 Assistant,sans-serif;color:#4F6BA5;background:#fff;border:1.5px solid #4F6BA5;border-radius:8px;padding:0 22px;height:44px;cursor:pointer" style-hover="background:rgba(79,107,165,.08)">לרכישה</button>
+</div>
+</div>
+<p style="margin:0;padding:14px 30px;font:300 13px/1.5 Assistant,sans-serif;color:#2F3F63">Navigation is the card's top edge: paper, one 1.5px blue rule beneath, the small heart seal at the wordmark. No shadow, no blur, no floating capsule.</p>
+</div>
+
+<div style="margin-top:28px;background:#4F6BA5;border:1.5px solid rgba(255,255,255,.35);border-radius:6px;padding:64px 56px;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:72px;align-items:center" dir="rtl">
+<div>
+<p style="margin:0 0 20px;font:500 13px/1 Assistant,sans-serif;letter-spacing:.2em;color:rgba(255,255,255,.6)">EXAMPLE SECTION COMPOSITION</p>
+<h3 style="margin:0;font:700 44px/1.2 Heebo,sans-serif;font-size:clamp(29px, 4.97vw, 44px);color:#fff">התארסתם? מזל טוב!<br><span style="font-weight:800">ומה עכשיו?</span></h3>
+<p style="margin:26px 0 0;max-width:46ch;font:300 19px/1.7 Assistant,sans-serif;color:rgba(255,255,255,.9)">עכשיו אתם לוקחים לעצמכם שעה על איזה משקה אהוב. בקופסא תמצאו מחברת, עט וחמישים כרטיסיות עם שאלות שהן חובה ויעשו לכם סדר.</p>
+<div style="margin-top:34px;display:flex;gap:16px;align-items:center">
+<button style="font:600 16px/1 Assistant,sans-serif;color:#4F6BA5;background:#fff;border:1.5px solid #fff;border-radius:8px;padding:0 30px;height:44px;cursor:pointer" style-hover="background:rgba(255,255,255,.88)">לרכישה</button>
+<button style="font:600 16px/1 Assistant,sans-serif;color:#fff;background:transparent;border:1.5px solid rgba(255,255,255,.6);border-radius:8px;padding:0 30px;height:44px;cursor:pointer" style-hover="border-color:#fff">איך משחקים</button>
+</div>
+</div>
+<div style="position:relative;height:300px">
+<div style="position:absolute;right:0;top:20px;width:196px;height:274px;background:#fff;border-radius:12px;box-shadow:0 10px 26px rgba(31,44,74,.3);transform:rotate(4deg)"><div style="position:absolute;inset:9px;border:1.5px solid #4F6BA5;border-radius:7px"></div></div>
+<div style="position:absolute;right:70px;top:0;width:196px;height:274px;background:#fff;border-radius:12px;box-shadow:0 10px 26px rgba(31,44,74,.3);transform:rotate(-5deg)">
+<div style="position:absolute;inset:9px;border:1.5px solid #4F6BA5;border-radius:7px"></div>
+<div style="position:absolute;top:9px;left:50%;transform:translate(-50%,-50%);width:30px;height:14px;background:#fff"></div>
+<div style="position:absolute;top:9px;left:50%;transform:translate(-50%,-52%);width:21px;height:18px"><svg width="21" height="18" viewBox="0 0 24 21" fill="#EF453D" style="display:block"><path d="M12 20.4C12 20.4 1.2 13.3 1.2 7.1 1.2 3.7 3.9 1 7.1 1 9.2 1 11.1 2.1 12 3.8 12.9 2.1 14.8 1 16.9 1 20.1 1 22.8 3.7 22.8 7.1 22.8 13.3 12 20.4 12 20.4Z"/></svg></div>
+<div style="position:absolute;inset:9px;display:flex;flex-direction:column;align-items:center;padding:34px 18px 16px">
+<p style="margin:0;font:400 16px/1.35 Heebo,sans-serif;color:#4F6BA5;text-align:center">מוזיקה חיה בחופה</p>
+<p style="margin:7px 0;font:800 14px/1 Heebo,sans-serif;color:#4F6BA5">או</p>
+<p style="margin:0;font:400 16px/1.35 Heebo,sans-serif;color:#4F6BA5;text-align:center">פלייליסט</p>
+<div style="flex:1;display:flex;align-items:center;justify-content:center"><svg width="86" height="78" viewBox="0 0 132 120" fill="none" stroke="#4F6BA5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M30 96c-8 0-14-6-14-13 0-8 6-14 14-14 5 0 9 2 11 5V26l44-10v44"/><path d="M85 74c-8 0-14-6-14-13 0-8 6-14 14-14 5 0 9 2 11 5"/><path d="M41 74V32"/><path d="M96 52V22"/></svg></div>
+<p style="margin:0;font:500 13px/1 Caveat,cursive;color:#4F6BA5">Liver Production</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section>
+<p style="margin:0 0 6px;font:500 12px/1 Assistant,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.62)">08</p>
+<h2 style="margin:0 0 32px;font:700 34px/1.1 Heebo,sans-serif;font-size:clamp(22px, 3.84vw, 34px);color:#fff">Motion</h2>
+<div style="background:#fff;border-radius:6px;padding:34px 36px 38px;display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:48px;align-items:center">
+<div>
+<div style="display:grid;grid-template-columns:130px minmax(0,1fr);gap:16px 20px;align-items:baseline">
+<p style="margin:0;font:500 12px/1.4 ui-monospace,Menlo,monospace;color:#EF453D">motionFast</p><p style="margin:0;font:300 15px/1.5 Assistant,sans-serif;color:#2F3F63">140ms — press, focus, rule draw</p>
+<p style="margin:0;font:500 12px/1.4 ui-monospace,Menlo,monospace;color:#EF453D">motionNormal</p><p style="margin:0;font:300 15px/1.5 Assistant,sans-serif;color:#2F3F63">260ms — card lift, hover, colour</p>
+<p style="margin:0;font:500 12px/1.4 ui-monospace,Menlo,monospace;color:#EF453D">motionSlow</p><p style="margin:0;font:300 15px/1.5 Assistant,sans-serif;color:#2F3F63">520ms — card flip, section entrance, heart fade</p>
+<p style="margin:0;font:500 12px/1.4 ui-monospace,Menlo,monospace;color:#EF453D">motionEasing</p><p style="margin:0;font:300 15px/1.5 Assistant,sans-serif;color:#2F3F63">cubic-bezier(.2,.7,.2,1) — quick out, settles like paper</p>
+</div>
+<p style="margin:26px 0 0;max-width:58ch;font:300 15px/1.65 Assistant,sans-serif;color:#2F3F63;text-wrap:pretty">Every movement in this brand is something happening to a card: lifting, turning over, being dealt, settling. Motion is allowed only when it carries product meaning. No parallax, no scroll-triggered decoration, no counters, no looping ambient drift, no bounce.</p>
+</div>
+<div style="display:flex;align-items:center;justify-content:center">
+<div style="width:160px;height:224px;background:#fff;border-radius:10px;border:1px solid rgba(79,107,165,.16);box-shadow:0 10px 26px rgba(31,44,74,.18);animation:bidLift 2600ms cubic-bezier(.2,.7,.2,1) infinite;position:relative">
+<div style="position:absolute;inset:8px;border:1.5px solid #4F6BA5;border-radius:6px"></div>
+<div style="position:absolute;top:8px;left:50%;transform:translate(-50%,-50%);width:28px;height:13px;background:#fff"></div>
+<div style="position:absolute;top:8px;left:50%;transform:translate(-50%,-52%);width:19px;height:16px"><svg width="19" height="16" viewBox="0 0 24 21" fill="#EF453D" style="display:block"><path d="M12 20.4C12 20.4 1.2 13.3 1.2 7.1 1.2 3.7 3.9 1 7.1 1 9.2 1 11.1 2.1 12 3.8 12.9 2.1 14.8 1 16.9 1 20.1 1 22.8 3.7 22.8 7.1 22.8 13.3 12 20.4 12 20.4Z"/></svg></div>
+</div>
+</div>
+</div>
+</section>
+
+<sc-if value="{{ showRejected }}" hint-placeholder-val="{{ true }}">
+<section>
+<p style="margin:0 0 6px;font:500 12px/1 Assistant,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.62)">09</p>
+<h2 style="margin:0 0 32px;font:700 34px/1.1 Heebo,sans-serif;font-size:clamp(22px, 3.84vw, 34px);color:#fff">Belongs · rejected</h2>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start">
+<div style="background:#fff;border-radius:6px;padding:32px 34px 36px">
+<p style="margin:0 0 18px;font:600 13px/1 Assistant,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#4F6BA5">Belongs to the brand</p>
+<div style="display:flex;flex-direction:column;gap:12px;font:300 15px/1.6 Assistant,sans-serif;color:#2F3F63">
+<p style="margin:0">White paper sheets with a thin inset blue rule, set on saturated blue.</p>
+<p style="margin:0">Two or three cards overlapping at slight alternating angles.</p>
+<p style="margin:0">A centred Hebrew question with a bold <span dir="rtl">או</span> between two options.</p>
+<p style="margin:0">One hand-drawn 2px blue line illustration floating with no frame.</p>
+<p style="margin:0">The handwritten signature at a card's foot, small and unemphasised.</p>
+<p style="margin:0">Large empty blue areas carrying nothing at all.</p>
+<p style="margin:0">Asymmetric two-part sections weighted about 40/60.</p>
+<p style="margin:0">One coral fingerprint heart, once.</p>
+</div>
+</div>
+<div style="background:#fff;border-radius:6px;padding:32px 34px 36px">
+<p style="margin:0 0 18px;font:600 13px/1 Assistant,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#EF453D">Rejected · permanent rule</p>
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 22px;font:300 14.5px/1.5 Assistant,sans-serif;color:#2F3F63">
+<p style="margin:0">Generic SaaS layouts</p><p style="margin:0">Rows of three identical cards</p>
+<p style="margin:0">Bento grids</p><p style="margin:0">Glassmorphism</p>
+<p style="margin:0">Gradient blobs</p><p style="margin:0">Purple gradients</p>
+<p style="margin:0">Wedding pink</p><p style="margin:0">Gold wedding styling</p>
+<p style="margin:0">Stock bridal imagery</p><p style="margin:0">Huge pill buttons</p>
+<p style="margin:0">Startup icon sets</p><p style="margin:0">Symmetry everywhere</p>
+<p style="margin:0">Identical section layouts</p><p style="margin:0">Floating shapes</p>
+<p style="margin:0">Artificial 3D</p><p style="margin:0">Stacked shadows</p>
+<p style="margin:0">Everything rounded</p><p style="margin:0">Decorative animation</p>
+</div>
+<p style="margin:22px 0 0;padding-top:20px;border-top:1px solid rgba(79,107,165,.2);font:300 14px/1.6 Assistant,sans-serif;color:#2F3F63">This list is active for the life of the project. If a layout could be lifted onto another brand without changing, it is rejected regardless of quality.</p>
+</div>
+</div>
+</section>
+</sc-if>
+
+<section>
+<p style="margin:0 0 6px;font:500 12px/1 Assistant,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.62)">10</p>
+<h2 style="margin:0 0 12px;font:700 34px/1.1 Heebo,sans-serif;font-size:clamp(22px, 3.84vw, 34px);color:#fff">Token sheet</h2>
+<p style="margin:0 0 32px;max-width:60ch;font:300 17px/1.6 Assistant,sans-serif;color:rgba(255,255,255,.85)">No component sets a value independently. Font tokens are temporary; supplying the three Canva names replaces three strings and nothing else.</p>
+<div style="background:#fff;border-radius:6px;padding:14px 30px 26px">
+<sc-for list="{{ tokens }}" as="t" hint-placeholder-count="12">
+<div style="display:grid;grid-template-columns:200px 220px minmax(0,1fr);gap:24px;padding:13px 0;border-bottom:1px solid rgba(79,107,165,.14);align-items:baseline">
+<p style="margin:0;font:500 13px/1.4 ui-monospace,Menlo,monospace;color:#EF453D">{{ t.name }}</p>
+<p style="margin:0;font:400 13.5px/1.45 ui-monospace,Menlo,monospace;color:#2F3F63">{{ t.value }}</p>
+<p style="margin:0;font:300 14px/1.5 Assistant,sans-serif;color:#4F6BA5">{{ t.note }}</p>
+</div>
+</sc-for>
+</div>
+</section>
+
+<footer style="display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:64px;align-items:start;padding-top:24px;border-top:1px solid rgba(255,255,255,.3)">
+<div>
+<h3 style="margin:0 0 16px;font:700 22px/1.25 Heebo,sans-serif;font-size:clamp(14px, 2.49vw, 22px);color:#fff">Brand fidelity test</h3>
+<p style="margin:0;max-width:64ch;font:300 16px/1.7 Assistant,sans-serif;color:rgba(255,255,255,.85);text-wrap:pretty">Each element on this board was checked by printing it, mentally, onto a physical card beside the supplied product. The blue and coral are the sampled values unchanged. The rule weight, radius ratio, inset and shadow are measured from the artwork rather than chosen. The spacing is deliberately looser than a website would normally be, because the cards are. The one thing still unresolved is typography: Heebo, Assistant and Caveat are stand-ins with the right personality, not matches — the Hebrew display face in particular needs the real name before the system can pass.</p>
+</div>
+<div>
+<h3 style="margin:0 0 16px;font:700 22px/1.25 Heebo,sans-serif;font-size:clamp(14px, 2.49vw, 22px);color:#fff">Next</h3>
+<p style="margin:0;font:300 16px/1.7 Assistant,sans-serif;color:rgba(255,255,255,.85)">Send the three Canva font names. Then, on approval of this DNA, the next board is page architecture — not visuals.</p>
+</div>
+</footer>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showAnnotations&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Board&quot;},&quot;showRejected&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Board&quot;},&quot;cardRotationMedium&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:6,&quot;min&quot;:2,&quot;max&quot;:12,&quot;step&quot;:1,&quot;unit&quot;:&quot;deg&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Tokens&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const rot = this.props.cardRotationMedium ?? 6;
+    return {
+      showAnnotations: this.props.showAnnotations ?? true,
+      showRejected: this.props.showRejected ?? true,
+      rotationMedium: rot,
+      tokens: [
+        {name:"brandBlue", value:"#4F6BA5", note:"ground, ink, all rules and illustration"},
+        {name:"brandCoral", value:"#EF453D", note:"fingerprint heart, focus ring, one tertiary underline"},
+        {name:"brandWhite", value:"#FFFFFF", note:"paper"},
+        {name:"textPrimary", value:"#4F6BA5", note:"5.2:1 on white, all sizes"},
+        {name:"textSecondary", value:"#2F3F63", note:"deep tint of brandBlue, dense reading only"},
+        {name:"cardBackground", value:"#FFFFFF", note:"never tinted, never translucent"},
+        {name:"cardBorder", value:"1.5px solid #4F6BA5, inset 4.7%", note:"the brand's frame; +1px rgba(79,107,165,.16) paper edge on white grounds"},
+        {name:"cardRadius", value:"18px @ 300px wide (6%) · inner 11px", note:"scales with the card; buttons and panels take 8px / 6px"},
+        {name:"cardShadow", value:"0 10px 26px rgba(31,44,74,.18)", note:"hover 0 18px 38px rgba(31,44,74,.34); never layered"},
+        {name:"spacingScale", value:"4 8 12 20 32 48 72 96 128", note:"card 12–32 · group 32–48 · section 96–128"},
+        {name:"contentWidth", value:"1180px", note:"outer measure"},
+        {name:"readingWidth", value:"52ch he / 62ch en", note:"hard cap on paragraphs"},
+        {name:"typographyScale", value:"12 14 16 19 23 28 34 44 60", note:"two sizes per card, three per section"},
+        {name:"lineHeightScale", value:"1.15 / 1.35 / 1.7", note:"display / subhead / Hebrew body"},
+        {name:"fontHebrewDisplay", value:"Heebo 700–800 (temporary)", note:"questions, headlines, the bold או"},
+        {name:"fontHebrewBody", value:"Assistant 300–600 (temporary)", note:"instructions, labels, long copy"},
+        {name:"fontHandwrittenBrand", value:"Caveat 500–600 (temporary)", note:"wordmark and card signature only"},
+        {name:"cardRotationSmall", value:"±2deg", note:"resting state of a single interactive card"},
+        {name:"cardRotationMedium", value:"±" + rot + "deg", note:"clusters only, alternating sign"},
+        {name:"motionFast", value:"140ms", note:"press, focus, rule draw"},
+        {name:"motionNormal", value:"260ms", note:"card lift, hover, colour"},
+        {name:"motionSlow", value:"520ms", note:"flip, entrance, heart fade"},
+        {name:"motionEasing", value:"cubic-bezier(.2,.7,.2,1)", note:"settles like paper; no bounce"},
+        {name:"focusState", value:"2px solid #EF453D, offset 3px", note:"the only functional use of coral"},
+        {name:"touchTarget", value:"44px", note:"minimum on every control"}
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

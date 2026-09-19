@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>הזמנה — Before I Do</title>
+<meta name="description" content="משחק קלפים לזוגות מאורסים">
+<meta name="theme-color" content="#4F6BA5">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/fonts.css">
+<script>
+  window.__resources = {
+    "https://unpkg.com/react@18.3.1/umd/react.production.min.js": "assets/js/react.production.min.js",
+    "https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js": "assets/js/react-dom.production.min.js"
+  };
+</script>
+<script src="/assets/js/app.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;background:#4F6BA5}
+input,textarea{font-family:Assistant,sans-serif}
+input:focus-visible,textarea:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid #EF453D;outline-offset:3px}
+a{color:#4F6BA5}
+a:hover{color:#EF453D}
+</style>
+<style>
+  a:focus-visible, button:focus-visible, input:focus-visible,
+  select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+    outline: 3px solid #EF453D !important; outline-offset: 3px !important;
+  }
+  nav a, footer a, header a { min-height: 44px; display: inline-flex; align-items: center; }
+</style>
+</helmet>
+
+<div dir="rtl" style="min-height:100vh;background:#4F6BA5;padding:0 0 80px">
+
+<div style="max-width:980px;margin:0 auto;padding:26px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px">
+<div style="display:flex;align-items:center;gap:10px">
+<svg width="20" height="17" viewBox="0 0 24 21" fill="#EF453D" style="display:block"><path d="M12 20.4C12 20.4 1.2 13.3 1.2 7.1 1.2 3.7 3.9 1 7.1 1 9.2 1 11.1 2.1 12 3.8 12.9 2.1 14.8 1 16.9 1 20.1 1 22.8 3.7 22.8 7.1 22.8 13.3 12 20.4 12 20.4Z"/></svg>
+<p style="margin:0;font:500 26px/1 Caveat,cursive;font-size:clamp(17px, 2.94vw, 26px);color:#fff">Before I Do</p>
+</div>
+<a href="/" style="font:300 15px/1 Assistant,sans-serif;color:rgba(255,255,255,.85);text-decoration:none">חזרה לעמוד המשחק</a>
+</div>
+
+<div style="max-width:980px;margin:0 auto;padding:0 24px">
+<div style="background:#fff;border-radius:14px;box-shadow:0 18px 44px rgba(31,44,74,.28);overflow:hidden">
+
+<div style="padding:30px 34px 26px;border-bottom:1.5px solid rgba(79,107,165,.18);display:flex;align-items:center;gap:28px;flex-wrap:wrap">
+<div style="width:64px;height:58px;flex:none">
+<svg viewBox="0 0 24 21" width="64" height="58" style="display:block;overflow:visible">
+<defs><clipPath id="heartClip"><path d="M12 20.4C12 20.4 1.2 13.3 1.2 7.1 1.2 3.7 3.9 1 7.1 1 9.2 1 11.1 2.1 12 3.8 12.9 2.1 14.8 1 16.9 1 20.1 1 22.8 3.7 22.8 7.1 22.8 13.3 12 20.4 12 20.4Z"></path></clipPath></defs>
+<rect x="0" width="24" height="21" fill="#EF453D" clip-path="url(#heartClip)" y="{{ fillY }}" style="transition:y 520ms cubic-bezier(.2,.7,.2,1)"></rect>
+<path d="M12 20.4C12 20.4 1.2 13.3 1.2 7.1 1.2 3.7 3.9 1 7.1 1 9.2 1 11.1 2.1 12 3.8 12.9 2.1 14.8 1 16.9 1 20.1 1 22.8 3.7 22.8 7.1 22.8 13.3 12 20.4 12 20.4Z" fill="none" stroke="#EF453D" stroke-width="1.3"></path>
+</svg>
+</div>
+<div style="flex:1 1 260px;min-width:0">
+<div style="display:flex;gap:10px;margin-bottom:12px">
+<div style="flex:1;height:4px;border-radius:2px;background:{{ bar1 }};transition:background 320ms cubic-bezier(.2,.7,.2,1)"></div>
+<div style="flex:1;height:4px;border-radius:2px;background:{{ bar2 }};transition:background 320ms cubic-bezier(.2,.7,.2,1)"></div>
+<div style="flex:1;height:4px;border-radius:2px;background:{{ bar3 }};transition:background 320ms cubic-bezier(.2,.7,.2,1)"></div>
+</div>
+<div style="display:flex;gap:10px">
+<p style="flex:1;margin:0;font:600 13px/1.4 Assistant,sans-serif;color:{{ lbl1 }}">1 · פרטים</p>
+<p style="flex:1;margin:0;font:600 13px/1.4 Assistant,sans-serif;color:{{ lbl2 }}">2 · איך מקבלים</p>
+<p style="flex:1;margin:0;font:600 13px/1.4 Assistant,sans-serif;color:{{ lbl3 }}">3 · תשלום</p>
+</div>
+</div>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr))">
+
+<div style="padding:36px 34px 40px;min-width:0">
+
+<sc-if value="{{ isStep1 }}" hint-placeholder-val="{{ true }}">
+<div>
+<h1 style="margin:0;font:700 30px/1.3 Heebo,sans-serif;font-size:clamp(20px, 3.39vw, 30px);color:#4F6BA5">נעים להכיר. איך קוראים לכם?</h1>
+<p style="margin:12px 0 0;font:300 17px/1.6 Assistant,sans-serif;color:#2F3F63">שני שדות, ואפשר להתקדם.</p>
+<div style="margin-top:28px;display:flex;flex-direction:column;gap:18px;max-width:420px">
+<div>
+<label style="display:block;margin-bottom:7px;font:600 14px/1 Assistant,sans-serif;color:#4F6BA5">שם מלא</label>
+<input value="{{ name }}" onChange="{{ setName }}" placeholder="ישראל ישראלי" style="width:100%;box-sizing:border-box;height:48px;padding:0 14px;font:300 17px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
+</div>
+<div>
+<label style="display:block;margin-bottom:7px;font:600 14px/1 Assistant,sans-serif;color:#4F6BA5">טלפון</label>
+<input value="{{ phone }}" onChange="{{ setPhone }}" inputMode="tel" placeholder="050-0000000" style="width:100%;box-sizing:border-box;height:48px;padding:0 14px;font:300 17px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
+</div>
+<p style="margin:0;font:300 14px/1.6 Assistant,sans-serif;color:rgba(47,63,99,.75)">הטלפון משמש רק לעדכון על ההזמנה.</p>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isStep2 }}" hint-placeholder-val="{{ false }}">
+<div>
+<h1 style="margin:0;font:700 30px/1.3 Heebo,sans-serif;font-size:clamp(20px, 3.39vw, 30px);color:#4F6BA5">איך נוח לכם לקבל את הקופסה?</h1>
+<div style="margin-top:26px;display:flex;flex-direction:column;gap:14px;max-width:460px">
+<div onClick="{{ pickSelf }}" role="button" tabIndex="0" style="cursor:pointer;border:1.5px solid {{ selfBorder }};background:{{ selfBg }};border-radius:10px;padding:18px 20px;transition:border-color 260ms cubic-bezier(.2,.7,.2,1),background 260ms cubic-bezier(.2,.7,.2,1)">
+<p style="margin:0;font:700 19px/1.3 Heebo,sans-serif;color:#4F6BA5">איסוף עצמי</p>
+<p style="margin:6px 0 0;font:300 15px/1.6 Assistant,sans-serif;color:#2F3F63">ללא עלות. שתי נקודות איסוף, בתיאום טלפוני.</p>
+</div>
+<sc-if value="{{ isSelf }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:10px;padding:2px 14px 6px">
+<p style="margin:0;font:600 14px/1 Assistant,sans-serif;color:#4F6BA5">בחרו נקודת איסוף</p>
+<div onClick="{{ pickHod }}" role="button" tabIndex="0" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1.5px solid {{ hodBorder }};border-radius:8px;padding:14px 16px;transition:border-color 260ms cubic-bezier(.2,.7,.2,1)">
+<p style="margin:0;font:600 16px/1.3 Assistant,sans-serif;color:#4F6BA5">הוד השרון</p>
+<p style="margin:0;font:300 14px/1.3 Assistant,sans-serif;color:#2F3F63">בתיאום טלפוני</p>
+</div>
+<div onClick="{{ pickGivat }}" role="button" tabIndex="0" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1.5px solid {{ givatBorder }};border-radius:8px;padding:14px 16px;transition:border-color 260ms cubic-bezier(.2,.7,.2,1)">
+<p style="margin:0;font:600 16px/1.3 Assistant,sans-serif;color:#4F6BA5">גבעת שמואל</p>
+<p style="margin:0;font:300 14px/1.3 Assistant,sans-serif;color:#2F3F63">בתיאום טלפוני</p>
+</div>
+</div>
+</sc-if>
+<div onClick="{{ pickShip }}" role="button" tabIndex="0" style="cursor:pointer;border:1.5px solid {{ shipBorder }};background:{{ shipBg }};border-radius:10px;padding:18px 20px;transition:border-color 260ms cubic-bezier(.2,.7,.2,1),background 260ms cubic-bezier(.2,.7,.2,1)">
+<p style="margin:0;font:700 19px/1.3 Heebo,sans-serif;color:#4F6BA5">משלוח עד הבית</p>
+<p style="margin:6px 0 0;font:300 15px/1.6 Assistant,sans-serif;color:#2F3F63">39 ₪. אספקה תוך 1–5 ימי עסקים.</p>
+</div>
+<sc-if value="{{ isShip }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:14px;padding:2px 14px 6px">
+<p style="margin:0;font:600 14px/1 Assistant,sans-serif;color:#4F6BA5">כתובת למשלוח</p>
+<select value="{{ city }}" onChange="{{ setCity }}" style="width:100%;box-sizing:border-box;height:46px;padding:0 12px;font:300 16px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
+<option value="">בחרו עיר</option>
+<sc-for list="{{ cities }}" as="c" hint-placeholder-count="6">
+<option value="{{ c }}">{{ c }}</option>
+</sc-for>
+</select>
+<div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:12px">
+<input value="{{ street }}" onChange="{{ setStreet }}" placeholder="רחוב" style="width:100%;box-sizing:border-box;height:46px;padding:0 14px;font:300 16px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
+<input value="{{ houseNo }}" onChange="{{ setHouseNo }}" inputMode="numeric" placeholder="מספר" style="width:100%;box-sizing:border-box;height:46px;padding:0 14px;font:300 16px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
+</div>
+<input value="{{ notes }}" onChange="{{ setNotes }}" placeholder="הערות לשליח (לא חובה)" style="width:100%;box-sizing:border-box;height:46px;padding:0 14px;font:300 16px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
+</div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isStep3 }}" hint-placeholder-val="{{ false }}">
+<div>
+<h1 style="margin:0;font:700 30px/1.3 Heebo,sans-serif;font-size:clamp(20px, 3.39vw, 30px);color:#4F6BA5">הכול מוכן. נשאר רק לשלם.</h1>
+<p style="margin:12px 0 0;max-width:42ch;font:300 17px/1.7 Assistant,sans-serif;color:#2F3F63">התשלום מתבצע בעמוד סליקה מאובטח. פרטי האשראי נמסרים ישירות לחברת הסליקה ולא נשמרים אצלנו.</p>
+<div style="margin-top:26px;display:flex;flex-direction:column;gap:12px;max-width:440px">
+<div style="display:flex;justify-content:space-between;gap:16px;font:300 16px/1.6 Assistant,sans-serif;color:#2F3F63"><p style="margin:0">שם</p><p style="margin:0;font-weight:600;color:#4F6BA5">{{ name }}</p></div>
+<div style="display:flex;justify-content:space-between;gap:16px;font:300 16px/1.6 Assistant,sans-serif;color:#2F3F63"><p style="margin:0">טלפון</p><p style="margin:0;font-weight:600;color:#4F6BA5">{{ phone }}</p></div>
+<div style="display:flex;justify-content:space-between;gap:16px;font:300 16px/1.6 Assistant,sans-serif;color:#2F3F63"><p style="margin:0">קבלה</p><p style="margin:0;font-weight:600;color:#4F6BA5;text-align:left">{{ methodLabel }}</p></div>
+<div style="display:flex;justify-content:space-between;gap:16px;font:300 16px/1.6 Assistant,sans-serif;color:#2F3F63"><p style="margin:0">משלוח</p><p style="margin:0;font-weight:600;color:#4F6BA5">{{ shipLabel }}</p></div>
+<div style="display:flex;justify-content:space-between;gap:16px;padding-top:12px;border-top:1.5px solid rgba(79,107,165,.2)"><p style="margin:0;font:700 18px/1.4 Heebo,sans-serif;color:#4F6BA5">סה״כ לתשלום</p><p style="margin:0;font:700 20px/1.4 Heebo,sans-serif;color:#4F6BA5">{{ total }} ₪</p></div>
+<p style="margin:0;font:300 13px/1.6 Assistant,sans-serif;color:rgba(47,63,99,.7)">המחיר סופי וכולל מע״מ.</p>
+</div>
+<div style="margin-top:24px;display:flex;flex-direction:column;gap:12px;max-width:460px">
+<label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer">
+<input type="checkbox" checked="{{ consentTerms }}" onChange="{{ toggleTerms }}" style="width:20px;height:20px;margin-top:2px;accent-color:#EF453D;flex:none">
+<span style="font:300 15px/1.6 Assistant,sans-serif;color:#2F3F63">קראתי ואני מאשר/ת את <a href="/privacy#terms">תנאי השימוש</a>, <a href="/privacy#privacy">מדיניות הפרטיות</a> ו<a href="/privacy#returns">מדיניות הביטול וההחזרות</a>.</span>
+</label>
+<label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer">
+<input type="checkbox" checked="{{ consentMarketing }}" onChange="{{ toggleMarketing }}" style="width:20px;height:20px;margin-top:2px;accent-color:#EF453D;flex:none">
+<span style="font:300 15px/1.6 Assistant,sans-serif;color:#2F3F63">אשמח לקבל עדכונים ומבצעים במייל או בוואטסאפ. אפשר להסיר בכל רגע (לא חובה).</span>
+</label>
+</div>
+<a href="{{ payUrl }}" aria-disabled="{{ payBlocked }}" onClick="{{ onPay }}" style="margin-top:30px;display:inline-flex;align-items:center;gap:10px;height:52px;padding:0 30px;border-radius:9px;background:{{ payBg }};color:#fff;font:700 17px/1 Assistant,sans-serif;text-decoration:none;opacity:{{ payOpacity }};transition:background 260ms cubic-bezier(.2,.7,.2,1),opacity 260ms cubic-bezier(.2,.7,.2,1)" style-hover="background:#d63a33">
+<svg width="17" height="19" viewBox="0 0 18 20" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"><rect x="1.5" y="8" width="15" height="10.5" rx="2.5"></rect><path d="M5 8V5.2A4 4 0 0 1 13 5.2V8"></path></svg>
+מעבר לתשלום מאובטח
+</a>
+<p style="margin:14px 0 0;font:300 13px/1.6 Assistant,sans-serif;color:rgba(47,63,99,.7)">עמוד הסליקה יתחבר כאן.</p>
+</div>
+</sc-if>
+
+<div style="margin-top:34px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+<sc-if value="{{ canGoBack }}" hint-placeholder-val="{{ false }}">
+<button onClick="{{ back }}" style="height:48px;padding:0 22px;border-radius:9px;border:1.5px solid rgba(79,107,165,.35);background:#fff;color:#4F6BA5;font:600 16px/1 Assistant,sans-serif;cursor:pointer;transition:background 260ms cubic-bezier(.2,.7,.2,1)" style-hover="background:rgba(79,107,165,.08)">חזרה</button>
+</sc-if>
+<sc-if value="{{ showNext }}" hint-placeholder-val="{{ true }}">
+<button onClick="{{ next }}" disabled="{{ nextDisabled }}" style="height:48px;padding:0 clamp(20px,5vw,32px);border-radius:9px;border:0;background:{{ nextBg }};color:#fff;font:700 17px/1 Assistant,sans-serif;cursor:{{ nextCursor }};opacity:{{ nextOpacity }};transition:background 260ms cubic-bezier(.2,.7,.2,1),opacity 260ms cubic-bezier(.2,.7,.2,1)">{{ nextLabel }}</button>
+</sc-if>
+<p style="margin:0;font:300 14px/1.5 Assistant,sans-serif;color:rgba(47,63,99,.7)">{{ hint }}</p>
+</div>
+
+</div>
+
+<div style="background:#F1F4F9;padding:36px clamp(20px,5vw,32px);min-width:0;display:flex;flex-direction:column;gap:22px">
+<div>
+<p style="margin:0 0 14px;font:600 12px/1 Assistant,sans-serif;letter-spacing:.2em;color:rgba(79,107,165,.7)">ההזמנה</p>
+<div style="background:#fff;border-radius:10px;padding:18px">
+<img src="/assets/img/gemini-generated-image-ytp4j-4ec770.png" alt="קופסת Before I Do" style="display:block;width:100%;height:auto;border-radius:6px">
+<p style="margin:14px 0 0;font:700 18px/1.3 Heebo,sans-serif;color:#4F6BA5">Before I Do — 50 כרטיסיות</p>
+<div style="margin-top:10px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+<p style="margin:0;font:700 26px/1 Heebo,sans-serif;font-size:clamp(17px, 2.94vw, 26px);color:#4F6BA5">129 ₪</p>
+<p style="margin:0;font:300 17px/1 Assistant,sans-serif;color:rgba(47,63,99,.6);text-decoration:line-through">169 ₪</p>
+<p style="margin:0;font:600 12px/1 Assistant,sans-serif;letter-spacing:.08em;color:#fff;background:#EF453D;border-radius:4px;padding:6px 9px">מבצע</p>
+</div>
+<div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(79,107,165,.2);display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;justify-content:space-between;gap:12px;font:300 15px/1.5 Assistant,sans-serif;color:#2F3F63"><p style="margin:0">משלוח</p><p style="margin:0">{{ shipLabel }}</p></div>
+<div style="display:flex;justify-content:space-between;gap:12px;font:600 16px/1.5 Assistant,sans-serif;color:#4F6BA5"><p style="margin:0">סה״כ</p><p style="margin:0">{{ total }} ₪</p></div>
+<p style="margin:0;font:300 13px/1.5 Assistant,sans-serif;color:rgba(47,63,99,.7)">המחירים כוללים מע״מ.</p>
+</div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:flex-start;gap:10px">
+<svg width="16" height="18" viewBox="0 0 18 20" fill="none" stroke="#4F6BA5" stroke-width="1.7" stroke-linecap="round" style="flex:none;margin-top:2px"><rect x="1.5" y="8" width="15" height="10.5" rx="2.5"></rect><path d="M5 8V5.2A4 4 0 0 1 13 5.2V8"></path></svg>
+<p style="margin:0;font:300 15px/1.6 Assistant,sans-serif;color:#2F3F63">תשלום מאובטח בתקן SSL. פרטי האשראי לא נשמרים אצלנו.</p>
+</div>
+<div style="display:flex;align-items:flex-start;gap:10px">
+<svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="#4F6BA5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:3px"><path d="M9 1.5 16 4.4v5c0 4-3 6.4-7 7.6-4-1.2-7-3.6-7-7.6v-5L9 1.5Z"></path><path d="m6 9 2.2 2.2L12.4 7"></path></svg>
+<p style="margin:0;font:300 15px/1.6 Assistant,sans-serif;color:#2F3F63">אפשר לבטל תוך 14 יום, כל עוד הקופסה סגורה.</p>
+</div>
+<div style="display:flex;align-items:flex-start;gap:10px">
+<svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="#4F6BA5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:3px"><rect x="1.6" y="5" width="11" height="8" rx="1.4"></rect><path d="M12.6 8h2.3l1.5 2.2V13h-3.8"></path><circle cx="5" cy="14.4" r="1.6"></circle><circle cx="13.4" cy="14.4" r="1.6"></circle></svg>
+<p style="margin:0;font:300 15px/1.6 Assistant,sans-serif;color:#2F3F63">משלוח 39 ₪, אספקה תוך 1–5 ימי עסקים. איסוף עצמי ללא עלות.</p>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+
+<div dir="rtl" style="background:#3E568A;padding:44px 24px 40px">
+<div style="max-width:980px;margin:0 auto;display:flex;flex-wrap:wrap;gap:28px 48px;justify-content:space-between">
+<div style="max-width:34ch">
+<p style="margin:0;font:500 22px/1 Caveat,cursive;font-size:clamp(14px, 2.49vw, 22px);color:#fff">Before I Do</p>
+<p style="margin:12px 0 0;font:300 14px/1.8 Assistant,sans-serif;color:rgba(255,255,255,.85)">ברק ליור, עוסק מורשה 207613829<br>החומש 2, הוד השרון<br>052-6604320 · barakliver@gmail.com</p>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:10px 28px;align-content:flex-start;max-width:46ch">
+<a href="/privacy#terms" style="font:300 14px/1.6 Assistant,sans-serif;color:rgba(255,255,255,.9)">תנאי שימוש</a>
+<a href="/privacy#privacy" style="font:300 14px/1.6 Assistant,sans-serif;color:rgba(255,255,255,.9)">מדיניות פרטיות</a>
+<a href="/privacy#accessibility" style="font:300 14px/1.6 Assistant,sans-serif;color:rgba(255,255,255,.9)">הצהרת נגישות</a>
+<a href="/privacy#cookies" style="font:300 14px/1.6 Assistant,sans-serif;color:rgba(255,255,255,.9)">מדיניות עוגיות</a>
+<a href="/privacy#returns" style="font:300 14px/1.6 Assistant,sans-serif;color:rgba(255,255,255,.9)">משלוחים, ביטול והחזרות</a>
+<a href="/privacy#contact" style="font:300 14px/1.6 Assistant,sans-serif;color:rgba(255,255,255,.9)">יצירת קשר</a>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;payUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;#&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { step: 1, name: "", phone: "", method: null, point: null, city: "", street: "", houseNo: "", notes: "", consentTerms: false, consentMarketing: false };
+
+  cities = ["אילת","אריאל","אשדוד","אשקלון","באר שבע","בית שאן","בית שמש","ביתר עילית","בני ברק","בת ים","גבעת שמואל","גבעתיים","דימונה","הוד השרון","הרצליה","זכרון יעקב","חדרה","חולון","חיפה","טבריה","טירת כרמל","יבנה","יהוד־מונוסון","יקנעם עילית","ירושלים","כפר סבא","כרמיאל","לוד","מודיעין־מכבים־רעות","מעלה אדומים","נהריה","נס ציונה","נצרת","נשר","נתיבות","נתניה","עכו","עפולה","ערד","פתח תקווה","צפת","קריית אונו","קריית אתא","קריית ביאליק","קריית גת","קריית ים","קריית מוצקין","קריית מלאכי","קריית שמונה","ראש העין","ראשון לציון","רהט","רחובות","רמלה","רמת גן","רמת השרון","רעננה","שדרות","תל אביב־יפו"];
+
+  valid(step) {
+    const s = this.state;
+    if (step === 1) return s.name.trim().length > 1 && s.phone.replace(/\D/g, "").length >= 9;
+    if (step === 2) {
+      if (s.method === "self") return !!s.point;
+      if (s.method === "ship") return !!s.city && s.street.trim().length > 1 && s.houseNo.trim().length > 0;
+      return false;
+    }
+    return true;
+  }
+
+  go(n) { this.setState({ step: n }); if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" }); }
+
+  renderVals() {
+    const s = this.state, step = s.step;
+    const done = (step - 1) + (this.valid(step) ? 1 : 0);
+    const pct = Math.min(1, done / 3);
+    const ink = "#4F6BA5", pale = "rgba(79,107,165,.45)", coral = "#EF453D";
+    const on = n => step >= n;
+    const methodLabel = s.method === "self"
+      ? "איסוף עצמי — " + (s.point === "hod" ? "הוד השרון" : "גבעת שמואל")
+      : s.method === "ship" ? "משלוח — " + s.street + " " + s.houseNo + ", " + s.city : "—";
+    const ok = this.valid(step);
+    return {
+      fillY: 21 - 21 * pct,
+      bar1: on(1) ? coral : "rgba(79,107,165,.2)",
+      bar2: on(2) ? coral : "rgba(79,107,165,.2)",
+      bar3: on(3) ? coral : "rgba(79,107,165,.2)",
+      lbl1: on(1) ? ink : pale,
+      lbl2: on(2) ? ink : pale,
+      lbl3: on(3) ? ink : pale,
+      isStep1: step === 1, isStep2: step === 2, isStep3: step === 3,
+      name: s.name, phone: s.phone, notes: s.notes,
+      cities: this.cities, city: s.city, street: s.street, houseNo: s.houseNo,
+      setName: e => this.setState({ name: e.target.value }),
+      setPhone: e => this.setState({ phone: e.target.value }),
+      setCity: e => this.setState({ city: e.target.value }),
+      setStreet: e => this.setState({ street: e.target.value }),
+      setHouseNo: e => this.setState({ houseNo: e.target.value }),
+      setNotes: e => this.setState({ notes: e.target.value }),
+      isSelf: s.method === "self", isShip: s.method === "ship",
+      selfBorder: s.method === "self" ? coral : "rgba(79,107,165,.3)",
+      shipBorder: s.method === "ship" ? coral : "rgba(79,107,165,.3)",
+      selfBg: s.method === "self" ? "rgba(239,69,61,.05)" : "#fff",
+      shipBg: s.method === "ship" ? "rgba(239,69,61,.05)" : "#fff",
+      hodBorder: s.point === "hod" ? coral : "rgba(79,107,165,.3)",
+      givatBorder: s.point === "givat" ? coral : "rgba(79,107,165,.3)",
+      pickSelf: () => this.setState({ method: "self" }),
+      pickShip: () => this.setState({ method: "ship", point: null }),
+      pickHod: () => this.setState({ point: "hod" }),
+      pickGivat: () => this.setState({ point: "givat" }),
+      methodLabel,
+      canGoBack: step > 1,
+      showNext: step < 3,
+      next: () => { if (ok && step < 3) this.go(step + 1); },
+      back: () => this.go(Math.max(1, step - 1)),
+      nextDisabled: !ok,
+      nextBg: ok ? coral : "rgba(79,107,165,.35)",
+      nextCursor: ok ? "pointer" : "not-allowed",
+      nextOpacity: ok ? 1 : 0.8,
+      nextLabel: step === 1 ? "ממשיכים" : "לתשלום",
+      hint: step === 1 ? "שלב 1 מתוך 3" : step === 2 ? "שלב 2 מתוך 3" : "שלב 3 מתוך 3",
+      payUrl: this.props.payUrl ?? "#",
+      shipLabel: s.method === "ship" ? "39 ₪" : s.method === "self" ? "איסוף עצמי — ללא עלות" : "—",
+      total: 129 + (s.method === "ship" ? 39 : 0),
+      consentTerms: s.consentTerms,
+      consentMarketing: s.consentMarketing,
+      toggleTerms: e => this.setState({ consentTerms: e.target.checked }),
+      toggleMarketing: e => this.setState({ consentMarketing: e.target.checked }),
+      payBlocked: !s.consentTerms,
+      payBg: s.consentTerms ? "#EF453D" : "rgba(79,107,165,.4)",
+      payOpacity: s.consentTerms ? 1 : 0.85,
+      onPay: e => { if (!this.state.consentTerms) e.preventDefault(); }
+    };
+  }
+}
+</script>
+</body>
+</html>
