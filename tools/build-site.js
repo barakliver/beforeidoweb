@@ -45,6 +45,17 @@ const LINKS = {
   'Before I Do - מדיניות.dc.html': '/privacy',
 };
 
+// Grow payment links, one per delivery method: the link's amount is fixed on
+// Grow's side and no URL parameter overrides it (sum/price/amount are all
+// ignored), so a different total needs a different link.
+//   self = 129 ₪ (pickup)   ship = 168 ₪ (129 + 39 delivery)
+// Until a 168 ₪ link exists, shipping falls back to the 129 ₪ one and every
+// shipped order is charged 39 ₪ short.
+const PAY = {
+  self: 'https://pay.grow.link/OTU0ODQ~bf83dbe62447b9a2c28b0611db86e909-NDAxNjIzMw',
+  ship: null,
+};
+
 const PAGES = [
   { src: 'Before I Do - Opening Experience.dc.html', out: 'index.html',
     title: `Before I Do — ${TAGLINE}`, desc: BLURB, canonical: '/', og: true },
@@ -237,6 +248,19 @@ for (const p of PAGES) {
   // A link was either bare (…dc.html") or carried a fragment (…dc.html#x").
   s = s.replace(/\u0000"/g, '"').replace(/\/\u0000#/g, '/#').replace(/\u0000#/g, '#');
   fixes.push([linkHits ? 'ok' : 'SKIPPED', `internal links (${linkHits} rewritten)`]);
+
+  // Checkout only: route the pay button to the link matching the chosen
+  // delivery method, and drop the "payment page connects here" placeholder.
+  if (p.out === 'checkout.html') {
+    const self = JSON.stringify(PAY.self);
+    const ship = JSON.stringify(PAY.ship || PAY.self);
+    fix('checkout: pay link', x => x.replace(
+      'payUrl: this.props.payUrl ?? "#",',
+      `payUrl: s.method === "ship" ? ${ship} : ${self},`));
+    fix('checkout: drop placeholder', x =>
+      x.replace(/<p [^>]*>עמוד הסליקה יתחבר כאן\.<\/p>\s*/, ''));
+    if (!PAY.ship) report.push(['WARNING', '    checkout: no 168 ₪ link — shipping charges 129 ₪']);
+  }
 
   // Home only: the English authoring notes render on the public page.
   if (p.out === 'index.html') {
