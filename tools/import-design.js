@@ -89,7 +89,7 @@ fix('lang="he" dir="rtl"', s => s.replace('<html><head>', '<html lang="he" dir="
 // React is fetched from unpkg by the runtime; window.__resources redirects it
 // to our own copies. It also stops the runtime re-fetching the page at boot.
 const SITE = 'https://www.beforeido.co.il';
-const TAGLINE = 'משחק קלפים לתיאום ציפיות לזוגות לקראת החתונה';
+const TAGLINE = 'משחק קלפים לזוגות מאורסים';
 
 // og:image must be absolute — a relative one is not resolved reliably by every
 // scraper, and WhatsApp is one of the strict ones.
