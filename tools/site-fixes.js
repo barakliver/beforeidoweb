@@ -8,7 +8,10 @@
 // for when you edit tools/site-content.js and want the page updated without
 // re-importing a design.
 //
-// Every fix checks for itself first, so running this twice changes nothing.
+// Generated blocks are fenced in <!--bid:name--> … <!--/bid:name--> markers and
+// rewritten in place on every run. Skipping them when they already existed is
+// what an earlier version did, and it meant editing site-content.js changed
+// nothing on the page — the worst kind of no-op, the silent one.
 
 const fs = require('fs');
 const path = require('path');
@@ -19,6 +22,29 @@ const SITE = C.siteUrl.replace(/\/+$/, '');
 const abs = p => SITE + '/' + String(p).replace(/^\/+/, '');
 const esc = s => String(s)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+// Replace the fenced block if it is there, otherwise put it where `insert`
+// says. Either way the page ends up holding exactly one, current copy.
+function upsert(html, name, content, insert) {
+  const fenced = `<!--bid:${name}-->${content}<!--/bid:${name}-->`;
+  const re = new RegExp(`<!--bid:${name}-->[\\s\\S]*?<!--/bid:${name}-->`);
+  return re.test(html) ? html.replace(re, () => fenced) : insert(html, fenced);
+}
+
+// A page the content file does not know about still has to get a sane
+// canonical and stay out of the home page's structured data.
+function pageMeta(file) {
+  const known = (C.pages && C.pages[file]) || null;
+  const slug = file.replace(/\.html$/, '');
+  return Object.assign({
+    path: slug === 'index' ? '/' : '/' + slug,
+    title: C.product.name,
+    description: C.product.description,
+    sections: false,   // FAQ + capture + share belong to the selling page
+    product: false,    // and so does the Product/Offer structured data
+    sitemap: slug !== '404',
+  }, known || {});
+}
 
 // ── the sections we append ──────────────────────────────────────────────────
 const published = () => C.faq.filter(f => f.q && f.a && f.a.trim());
@@ -90,19 +116,23 @@ function closingHtml() {
 // Crawlers render JS, but not always and not quickly, and the whole page is
 // drawn by the design runtime. This is the only copy in the document that is
 // readable with no JavaScript at all.
-function noscriptHtml() {
+function noscriptHtml(meta) {
+  const price = meta.product
+    ? `<p>${esc(C.product.price)} ${C.currencySymbol || '₪'} · ${esc(C.legalName)}</p>`
+    : `<p>${esc(C.legalName)}</p>`;
   return `
 <noscript>
   <div class="bid-noscript">
-    <h1>${esc(C.product.name)}</h1>
-    <p>${esc(C.product.description)}</p>
-    <p>${esc(C.product.price)} ${C.currencySymbol || '₪'} · ${esc(C.legalName)}</p>
+    <h1>${esc(meta.title)}</h1>
+    <p>${esc(meta.description)}</p>
+    ${price}
   </div>
 </noscript>`;
 }
 
-function jsonLd() {
-  const items = published();
+function jsonLd(meta, socialImage) {
+  const items = meta.sections ? published() : [];
+  const url = SITE + meta.path;
   const graph = [
     {
       '@type': 'Organization',
@@ -118,29 +148,32 @@ function jsonLd() {
       inLanguage: 'he-IL',
       publisher: { '@id': SITE + '/#org' },
     },
-    {
+  ];
+
+  if (meta.product) {
+    graph.push({
       '@type': 'Product',
       '@id': SITE + '/#product',
       name: C.product.name,
       description: C.product.description,
-      image: [abs(C.product.image)],
+      image: [socialImage],
       brand: { '@type': 'Brand', name: C.brand },
       // No aggregateRating until there are real reviews to aggregate.
       offers: {
         '@type': 'Offer',
-        url: SITE,
+        url: url,
         price: C.product.price,
         priceCurrency: C.product.currency,
         availability: 'https://schema.org/' + C.product.availability,
         seller: { '@id': SITE + '/#org' },
       },
-    },
-  ];
+    });
+  }
 
   if (items.length) {
     graph.push({
       '@type': 'FAQPage',
-      '@id': SITE + '/#faq',
+      '@id': url + '#faq',
       mainEntity: items.map(f => ({
         '@type': 'Question',
         name: f.q,
@@ -154,12 +187,12 @@ function jsonLd() {
     + '</script>';
 }
 
-const HEAD_ADDITIONS = () => `<link rel="canonical" href="${SITE}/">
-<meta property="og:url" content="${SITE}/">
+const HEAD_ADDITIONS = (meta, socialImage) => `<link rel="canonical" href="${SITE + meta.path}">
+<meta property="og:url" content="${SITE + meta.path}">
 <meta property="og:image:alt" content="קופסת Before I Do עם הכרטיסיות">
 <meta name="robots" content="index,follow,max-image-preview:large">
 <link rel="stylesheet" href="assets/site/marketing.css">
-${jsonLd()}
+${jsonLd(meta, socialImage)}
 <script src="assets/site/config.js"></script>
 <script defer src="assets/site/marketing.js"></script>
 `;
@@ -236,26 +269,69 @@ async function optimizeImages(html, root, report) {
 }
 
 // ── files that live next to the page ────────────────────────────────────────
-function writeSiteFiles(root, report) {
+function writeSiteFiles(root, report, currentPage) {
   const robots = `User-agent: *\nAllow: /\n\nSitemap: ${SITE}/sitemap.xml\n`;
+
+  // Every page on disk, plus the one being written right now (on a first
+  // import it is not saved yet). 404 pages stay out by their own meta.
+  const files = new Set(fs.readdirSync(root).filter(f => f.endsWith('.html')));
+  files.add(currentPage);
+
+  const urls = [...files]
+    .map(pageMeta)
+    .filter(m => m.sitemap)
+    .sort((a, b) => a.path.length - b.path.length || a.path.localeCompare(b.path));
+
+  const today = new Date().toISOString().slice(0, 10);
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>${SITE}/</loc>
-    <lastmod>${new Date().toISOString().slice(0, 10)}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
+${urls.map(m => `  <url>
+    <loc>${SITE + m.path}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>${m.path === '/' ? 'weekly' : 'monthly'}</changefreq>
+    <priority>${m.path === '/' ? '1.0' : '0.5'}</priority>
+  </url>`).join('\n')}
 </urlset>
 `;
   fs.writeFileSync(path.join(root, 'robots.txt'), robots);
   fs.writeFileSync(path.join(root, 'sitemap.xml'), sitemap);
-  report.push(['ok', 'robots.txt + sitemap.xml']);
+  report.push(['ok', `robots.txt + sitemap.xml (${urls.length} page${urls.length > 1 ? 's' : ''})`]);
+}
+
+// Hashed filenames mean an old import's assets simply stop being mentioned.
+// Nothing else will ever remove them, so this does — but only what every page
+// on disk agrees is unused, and never a whole directory at once, because an
+// empty match set means the pages are unreadable, not that the files are dead.
+function sweepAssets(root) {
+  const pages = fs.readdirSync(root).filter(f => f.endsWith('.html'));
+  if (!pages.length) return [];
+  const text = pages.map(f => fs.readFileSync(path.join(root, f), 'utf8')).join('\n');
+
+  const removed = [];
+  for (const d of ['img', 'fonts', 'js']) {
+    const dir = path.join(root, 'assets', d);
+    if (!fs.existsSync(dir)) continue;
+    const files = fs.readdirSync(dir);
+    const used = f => text.includes('assets/' + d + '/' + f);
+    if (!files.some(used)) continue;          // safety net, see above
+
+    for (const f of files) {
+      if (used(f)) continue;
+      // The original of a WebP the page does use is the source it was made
+      // from — the better copy, and the only one if the export is gone.
+      if (used(f.replace(/\.(png|jpe?g)$/i, '.webp'))) continue;
+      fs.unlinkSync(path.join(dir, f));
+      removed.push(d + '/' + f);
+    }
+  }
+  return removed;
 }
 
 // ── the pass ────────────────────────────────────────────────────────────────
 async function apply(html, opts = {}) {
   const root = opts.root || ROOT;
+  const page = opts.page || 'index.html';
+  const meta = pageMeta(page);
   const report = [];
   const fix = (name, fn) => {
     const before = html;
@@ -269,38 +345,61 @@ async function apply(html, opts = {}) {
     s.replace(/(<meta property="og:image" content=")(?!https?:)([^"]+)(")/,
       (m, a, p, b) => a + abs(p) + b));
 
+  // Taken from the page rather than the content file so there is one source
+  // for the preview picture: whatever the import wrote into og:image.
+  const ogMatch = html.match(/<meta property="og:image" content="([^"]+)"/);
+  const socialImage = ogMatch ? ogMatch[1] : abs(C.product.image);
+
   fix('head: canonical, og:url, schema, measurement', s =>
-    s.includes('assets/site/marketing.css') ? s : s.replace('</head>', HEAD_ADDITIONS() + '</head>'));
+    upsert(s, 'head', HEAD_ADDITIONS(meta, socialImage),
+      (h, b) => h.replace('</head>', b + '\n</head>')));
 
   fix('no-JS fallback copy', s =>
-    s.includes('bid-noscript') ? s : s.replace('<body>', '<body>' + noscriptHtml()));
+    upsert(s, 'noscript', noscriptHtml(meta), (h, b) => h.replace('<body>', '<body>' + b)));
 
-  fix('FAQ + capture + share sections', s => {
-    if (s.includes('bid-closing')) return s;
-    return s.replace('</body>', faqHtml() + closingHtml() + '\n</body>');
-  });
+  fix(meta.sections ? 'FAQ + capture + share sections' : 'no appended sections (not the selling page)', s =>
+    upsert(s, 'sections', meta.sections ? faqHtml() + closingHtml() : '',
+      (h, b) => meta.sections ? h.replace('</body>', b + '\n</body>') : h));
 
   html = await optimizeImages(html, root, report);
-  writeSiteFiles(root, report);
+  writeSiteFiles(root, report, page);
 
-  const missing = C.faq.filter(f => f.q && !(f.a && f.a.trim()));
+  const missing = meta.sections ? C.faq.filter(f => f.q && !(f.a && f.a.trim())) : [];
   return { html, report, missing };
 }
 
-module.exports = { apply };
+module.exports = { apply, sweepAssets };
 
 // ── standalone ──────────────────────────────────────────────────────────────
 if (require.main === module) {
   (async () => {
-    const file = path.join(ROOT, 'index.html');
-    const { html, report, missing } = await apply(fs.readFileSync(file, 'utf8'));
-    fs.writeFileSync(file, html);
+    const only = process.argv[2];   // optional: a single page to re-fix
+    const pages = fs.readdirSync(ROOT)
+      .filter(f => f.endsWith('.html'))
+      .filter(f => !only || f === only || f === only + '.html');
 
-    console.log('site fixes → index.html\n');
-    for (const [status, name] of report) console.log(`  ${status.padEnd(8)} ${name}`);
+    if (!pages.length) {
+      console.error(only ? `no such page: ${only}` : 'no .html pages in the project root');
+      process.exit(1);
+    }
+
+    let missing = [];
+    for (const page of pages) {
+      const file = path.join(ROOT, page);
+      const res = await apply(fs.readFileSync(file, 'utf8'), { page });
+      fs.writeFileSync(file, res.html);
+      missing = res.missing.length ? res.missing : missing;
+
+      console.log(`site fixes → ${page}\n`);
+      for (const [status, name] of res.report) console.log(`  ${status.padEnd(8)} ${name}`);
+      console.log('');
+    }
+
+    const swept = sweepAssets(ROOT);
+    if (swept.length) console.log(`swept ${swept.length} unused asset file(s):\n  ${swept.join('\n  ')}\n`);
 
     if (missing.length) {
-      console.log(`\n${missing.length} FAQ answer(s) still empty — not published:`);
+      console.log(`${missing.length} FAQ answer(s) still empty — not published:`);
       for (const f of missing) console.log('  · ' + f.q);
       console.log('  fill them in tools/site-content.js and run this again.');
     }

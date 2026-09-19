@@ -15,6 +15,42 @@ module.exports = {
   brand: 'Before I Do',
   legalName: 'Liver Production',
 
+  // Which picture WhatsApp and Facebook show for a link. Filenames are content
+  // hashes, so a page's images are chosen by a piece of their alt text.
+  // Empty picks the first photo in the design.
+  socialImageAlt: '',
+
+  // One entry per page of the site, keyed by its file. The key is also the
+  // name you pass to the importer:
+  //
+  //   node tools/import-design.js ~/Downloads/Terms.html terms   → terms.html
+  //
+  // A page missing from here still imports — it just gets the default title
+  // and stays out of sitemap.xml, and the importer says so.
+  pages: {
+    'index.html': {
+      path: '/',
+      sections: true,   // שאלות נפוצות, לכידת מיילים ושיתוף — רק בדף המכירה
+      product: true,    // נתוני Product/Offer לגוגל — רק איפה שבאמת מוכרים
+    },
+
+    // עמודים שייווצרו בהמשך. בטלו את ההערה כשהעמוד מיובא:
+    //
+    // 'terms.html': {
+    //   path: '/terms',
+    //   title: 'תקנון ותנאי שימוש — Before I Do',
+    //   description: 'תנאי הרכישה, האחריות והשימוש באתר Before I Do.',
+    // },
+    // 'privacy.html': {
+    //   path: '/privacy',
+    //   title: 'מדיניות פרטיות — Before I Do',
+    //   description: 'איזה מידע נאסף באתר, לשם מה, ואיך מבקשים למחוק אותו.',
+    // },
+    // 'returns.html':     { path: '/returns',     title: 'ביטול עסקה והחזרות — Before I Do' },
+    // 'accessibility.html': { path: '/accessibility', title: 'הצהרת נגישות — Before I Do' },
+    // '404.html':         { path: '/404', sitemap: false },
+  },
+
   product: {
     name: 'Before I Do — קופסת השיחות לזוגות לפני החתונה',
     description:
@@ -24,7 +60,9 @@ module.exports = {
     currency: 'ILS',
     // 'InStock' | 'PreOrder' | 'OutOfStock' — must match reality, it shows in Google.
     availability: 'InStock',
-    image: 'assets/img/img-2.jpg',
+    // Fallback only. The live value is whatever the importer wrote into
+    // og:image, so the preview picture and the structured data cannot drift.
+    image: 'assets/social.jpg',
   },
 
   faq: [

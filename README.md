@@ -14,6 +14,31 @@ python3 -m http.server 8099     # לבדוק שהכל נראה טוב
 git add -A && git commit -m "עדכון עיצוב" && git push
 ```
 
+### כמה עמודים
+
+כל עמוד הוא ייצוא נפרד מ-Claude Design, ומקבל שם בארגומנט השני:
+
+```bash
+node tools/import-design.js ~/Downloads/Before_I_Do.html          # → index.html
+node tools/import-design.js ~/Downloads/Terms.html      terms     # → terms.html
+node tools/import-design.js ~/Downloads/Privacy.html    privacy   # → privacy.html
+node tools/import-design.js ~/Downloads/NotFound.html   404       # → 404.html
+```
+
+אחרי הייבוא הראשון של עמוד חדש, הוסיפו אותו ל-`pages` ב-`tools/site-content.js`
+(יש שם דוגמאות מוכנות בהערה) כדי שיקבל כותרת משלו ויופיע ב-sitemap. הסקריפט
+מזכיר לכם את זה בסוף הריצה.
+
+שמות קבצי התמונות והגופנים הם **גיבוב של התוכן שלהם** (`img-4ec77043.webp`),
+לא מספר רץ. זה מה שמאפשר כמה עמודים: ייבוא של עמוד אחד לא נוגע בקבצים של
+עמוד אחר, גופן זהה בשני עמודים נשמר פעם אחת, וייבוא חוזר של אותו עיצוב מייצר
+בדיוק אותם שמות. קבצים שאף עמוד כבר לא מזכיר נמחקים בסוף הריצה (המקור של
+WebP שבשימוש נשמר תמיד).
+
+`404.html` מוגש אוטומטית על ידי Vercel, ו-`vercel.json` מפעיל כתובות נקיות
+(`/terms` ולא `/terms.html`) וקאשינג ארוך לנכסים — מה שבטוח לעשות דווקא
+בגלל שהשמות הם גיבוב.
+
 Vercel פורסת אוטומטית אחרי ה-push.
 
 הסקריפט מפרק את ה-bundle לקבצים ומחיל מחדש את כל מה ש-Claude Design
@@ -36,8 +61,13 @@ React מקומי, הסתרת הערות העיצוב, כותרות שמתכוו�
 אחרי עריכת תוכן, בלי לייבא עיצוב מחדש:
 
 ```bash
-node tools/site-fixes.js        # אפשר להריץ שוב ושוב, לא מכפיל כלום
+node tools/site-fixes.js            # כל העמודים
+node tools/site-fixes.js terms      # עמוד אחד
 ```
+
+הבלוקים שהסקריפט מייצר עטופים בסימונים `<!--bid:head-->` וכו', והוא **כותב
+אותם מחדש** בכל ריצה — כך שעריכה ב-`site-content.js` באמת מגיעה לדף, והרצה
+חוזרת בלי שינוי משאירה את הקובץ זהה בייט-לבייט.
 
 מה זה מוסיף לדף:
 
@@ -47,7 +77,15 @@ node tools/site-fixes.js        # אפשר להריץ שוב ושוב, לא מכ
 - **נתונים מובנים** (`Product`, `Offer`, `FAQPage`, `Organization`) —
   מה שנותן מחיר ושאלות בתוצאות החיפוש. אין `aggregateRating` ולא יהיה
   עד שיהיו ביקורות אמיתיות.
-- **`robots.txt` ו-`sitemap.xml`** נכתבים אוטומטית מתוך `siteUrl`.
+- **`robots.txt` ו-`sitemap.xml`** נכתבים אוטומטית מתוך `siteUrl` וכוללים
+  את כל העמודים שב-`pages` (חוץ מ-404).
+- **תמונת התצוגה המקדימה** נשמרת ב-`assets/social.jpg` — כתובת שלא משתנה בין
+  ייצואים, כי וואטסאפ ופייסבוק מקאשים את `og:image` לפי URL. בוחרים אותה עם
+  `socialImageAlt` ב-`site-content.js` (חיפוש בטקסט ה-alt), ורק ייבוא של
+  `index` מחליף אותה.
+- **השאלות הנפוצות, הלכידה והשיתוף נוספים רק לדף המכירה** — עמוד תקנון לא
+  מקבל אותם, וגם לא את נתוני ה-Product. זה נקבע ב-`sections` וב-`product`
+  שב-`pages`.
 - **מקטע `<noscript>`** — הדף כולו מצויר ב-JS, וזה הטקסט היחיד שקריא
   בלעדיו.
 - **שאלות נפוצות** — נבנות מ-`tools/site-content.js`. **תשובה ריקה לא
@@ -93,7 +131,9 @@ assets/favicon.svg         אייקון הלב
 assets/site/config.js      מזהי מדידה ויעד טופס — הקובץ היחיד להפעלה
 assets/site/marketing.js   הסכמה לעוגיות, מדידה, טופס, שיתוף
 assets/site/marketing.css  העיצוב של המקטעים שנוספו אחרי העיצוב
+assets/social.jpg          תמונת התצוגה המקדימה — כתובת קבועה
 robots.txt, sitemap.xml    נוצרים על ידי site-fixes.js
+vercel.json                כתובות נקיות וקאשינג לנכסים
 tools/import-design.js     ממיר ייצוא של Claude Design לאתר הזה
 tools/site-fixes.js        כל תיקוני השיווק/חיפוש — גם רץ לבד
 tools/site-content.js      התוכן והעובדות (שאלות נפוצות, מחיר, כתובת)
@@ -130,6 +170,7 @@ python3 -m http.server 8099
   אחרי `</x-dc>`. ה-runtime קובע לעצמו גובה של מסך אחד ונותן לעיצוב
   לגלוש החוצה, ולכן `marketing.css` מאפס את הגובה הזה — בלי זה כל מה
   שמתווסף אחריו נצבע מעל הדף במקום מתחתיו.
-- **שמות קבצי התמונות והגופנים אינם יציבים** בין ייצוא לייצוא
-  (`img-1`, `img-2`…), ולכן אין כותרות cache ארוכות ב-Vercel. אם יהיה
-  צורך בהן, קודם צריך להוסיף hash לשמות הקבצים ב-`import-design.js`.
+- **הרצת ההמרה ל-WebP דורשת ממיר**: `npm i sharp` (או `brew install webp`).
+  בלעדיו הכל עובד, פשוט עם התמונות המקוריות. `node_modules` ב-gitignore.
+- **`index.html` הנוכחי עדיין נושא שמות תמונות מהשיטה הישנה** (`img-1`…).
+  הייבוא הבא יחליף אותם בשמות גיבוב וימחק את הישנים — זה צפוי.
