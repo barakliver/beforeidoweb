@@ -430,6 +430,10 @@ for (const p of PAGES) {
     fix('floating share button', x => x.replace('</body>', SHARE_FLOAT + '\n</body>'));
   }
 
+  // Barak asked for the licence number out of the footer.
+  fix('footer: drop the licence number', x =>
+    x.replace('ברק ליור, עוסק מורשה 207613829', 'ברק ליור'));
+
   // Home only: the English authoring notes render on the public page.
   if (p.out === 'index.html') {
     fix('hide design notes', x => x
