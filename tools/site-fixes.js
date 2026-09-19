@@ -144,17 +144,30 @@ function closingHtml() {
 function shippingHtml() {
   const t = C.shipping || {};
   const bullets = (t.bullets || []).filter(b => b && b.trim());
-  if (!(t.intro || '').trim() && !bullets.length && !(t.note || '').trim()) return '';
+  if (!(t.intro || '').trim() && !bullets.length && !(t.note || '').trim()
+      && t.cost === undefined) return '';
 
   // **בולט** in the content file becomes a lead-in, the way the reference
   // panel bolds "איסוף עצמי" before the sentence that follows it.
   const strong = str => esc(str).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 
+  // Straight into the chat, not down to the footer: someone who has a question
+  // about delivery wants to ask it now, not go looking for where to ask.
   const digits = waDigits(C.contact || {});
-  const ask = t.askText && digits
-    ? `<p class="bid-ship__ask">${esc(t.askText)} <a href="#contact"
-         data-bid-event="shipping_contact">${esc(t.askLabel || 'דברו איתנו')}</a></p>`
+  const chat = digits
+    ? `https://wa.me/${digits}?text=`
+      + encodeURIComponent((C.contact || {}).whatsappMessageGeneral || '')
     : '';
+  const ask = t.askText && chat
+    ? `<p class="bid-ship__ask">${esc(t.askText)} <a href="${esc(chat)}" target="_blank"
+         rel="noopener" data-bid-event="shipping_whatsapp">${svg('whatsapp')}${esc(t.askLabel || 'דברו איתנו')}</a></p>`
+    : '';
+
+  // The price sentence is generated from `cost`, never typed twice, so it
+  // cannot drift from the number reported in the structured data.
+  const costLine = t.cost === 0 ? ' **המשלוח עלינו.**'
+    : t.cost ? ` **עלות המשלוח ${t.cost} ₪.**` : '';
+  const intro = ((t.intro || '') + costLine).trim();
 
   return `
 <section class="bid-section bid-shipping" aria-labelledby="bid-ship-title">
@@ -164,7 +177,7 @@ function shippingHtml() {
         <span class="bid-ship__head">${svg('truck')}<span id="bid-ship-title">${esc(t.heading || 'משלוחים והחזרות')}</span></span>
       </summary>
       <div class="bid-ship__body">
-        ${t.intro ? `<p>${strong(t.intro)}</p>` : ''}
+        ${intro ? `<p>${strong(intro)}</p>` : ''}
         ${bullets.length ? `<ul>\n${bullets.map(b => `          <li>${strong(b)}</li>`).join('\n')}\n        </ul>` : ''}
         ${t.note ? `<p class="bid-ship__note">${strong(t.note)}</p>` : ''}
         ${ask}
@@ -245,6 +258,33 @@ function noscriptHtml(meta) {
 </noscript>`;
 }
 
+// Google shows the delivery cost next to the price when it is declared, and
+// an undeclared one is guessed at by the shopper instead. Built from the same
+// fields the panel prints, and omitted entirely when they are not set.
+function shippingLd() {
+  const t = C.shipping || {};
+  if (t.cost === undefined || t.cost === '') return {};
+  const rate = {
+    '@type': 'OfferShippingDetails',
+    shippingRate: {
+      '@type': 'MonetaryAmount',
+      value: String(t.cost),
+      currency: C.product.currency,
+    },
+    shippingDestination: { '@type': 'DefinedRegion', addressCountry: 'IL' },
+  };
+  if (t.daysMin != null && t.daysMax != null) {
+    rate.deliveryTime = {
+      '@type': 'ShippingDeliveryTime',
+      transitTime: {
+        '@type': 'QuantitativeValue',
+        minValue: t.daysMin, maxValue: t.daysMax, unitCode: 'DAY',
+      },
+    };
+  }
+  return { shippingDetails: rate };
+}
+
 function jsonLd(meta, socialImage) {
   const items = meta.sections ? published() : [];
   const url = SITE + meta.path;
@@ -274,14 +314,14 @@ function jsonLd(meta, socialImage) {
       image: [socialImage],
       brand: { '@type': 'Brand', name: C.brand },
       // No aggregateRating until there are real reviews to aggregate.
-      offers: {
+      offers: Object.assign({
         '@type': 'Offer',
         url: url,
         price: C.product.price,
         priceCurrency: C.product.currency,
         availability: 'https://schema.org/' + C.product.availability,
         seller: { '@id': SITE + '/#org' },
-      },
+      }, shippingLd()),
     });
   }
 

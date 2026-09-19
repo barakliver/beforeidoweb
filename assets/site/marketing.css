@@ -142,7 +142,15 @@
 .bid-ship__body strong { color: var(--bid-ink); font-weight: 700; }
 .bid-ship__note { font-size: 15px; color: rgba(31, 44, 74, 0.66); }
 .bid-ship__ask { margin: 0; font-weight: 600; color: var(--bid-ink); }
-.bid-ship__ask a { color: var(--bid-blue); text-underline-offset: 3px; }
+.bid-ship__ask a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--bid-blue);
+  text-underline-offset: 3px;
+}
+.bid-ship__ask svg { width: 17px; height: 17px; flex: none; }
+.bid-ship__ask a:focus-visible { outline: 2px solid var(--bid-red); outline-offset: 3px; }
 
 /* ── closing band: reminder capture + share ──────────────────────────────── */
 .bid-closing { background: var(--bid-blue); color: #fff; }
