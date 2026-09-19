@@ -253,7 +253,7 @@ const SHARE_FLOAT = `<a id="wa-share" href="https://wa.me/?text=${encodeURICompo
 <style>
   #wa-share {
     position: fixed; z-index: 60;
-    inset-inline-start: clamp(14px, 4vw, 26px);
+    left: clamp(14px, 4vw, 26px);   /* physically left: inset-inline-start is the RIGHT edge in RTL */
     bottom: calc(var(--wa-lift, 0px) + clamp(16px, 3vw, 26px));
     display: inline-flex; align-items: center; justify-content: center; gap: 10px;
     min-height: 48px; padding: 0 22px; border-radius: 999px;
@@ -385,8 +385,11 @@ for (const p of PAGES) {
     if (!PAY.ship) report.push(['WARNING', '    checkout: no 168 ₪ link — shipping charges 129 ₪']);
   }
 
-  if (p.out === 'index.html') {
-    fix('home: floating share button', x => x.replace('</body>', SHARE_FLOAT + '\n</body>'));
+  // Everywhere except the purchase flow — a share button beside a payment
+  // form is a way out of it. The internal boards do not get one either; they
+  // are working documents, not something a visitor shares.
+  if (p.out !== 'checkout.html' && !p.board) {
+    fix('floating share button', x => x.replace('</body>', SHARE_FLOAT + '\n</body>'));
   }
 
   // Home only: the English authoring notes render on the public page.

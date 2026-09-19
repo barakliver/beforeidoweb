@@ -393,7 +393,7 @@ class Component extends DCLogic {
 <style>
   #wa-share {
     position: fixed; z-index: 60;
-    inset-inline-start: clamp(14px, 4vw, 26px);
+    left: clamp(14px, 4vw, 26px);   /* physically left: inset-inline-start is the RIGHT edge in RTL */
     bottom: calc(var(--wa-lift, 0px) + clamp(16px, 3vw, 26px));
     display: inline-flex; align-items: center; justify-content: center; gap: 10px;
     min-height: 48px; padding: 0 22px; border-radius: 999px;

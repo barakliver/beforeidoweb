@@ -81,5 +81,61 @@ a:focus-visible,button:focus-visible{outline:2px solid #EF453D;outline-offset:3p
 </footer>
 </div>
 </x-dc>
+<a id="wa-share" href="https://wa.me/?text=%D7%A9%D7%99%D7%97%D7%94%20%D7%90%D7%97%D7%AA%2C%20%D7%9C%D7%A4%D7%A0%D7%99%20%D7%9B%D7%9C%20%D7%94%D7%A9%D7%90%D7%A8.%0A%D7%9E%D7%A9%D7%97%D7%A7%20%D7%A7%D7%9C%D7%A4%D7%99%D7%9D%20%D7%9C%D7%96%D7%95%D7%92%D7%95%D7%AA%20%D7%9E%D7%90%D7%95%D7%A8%D7%A1%D7%99%D7%9D%0Ahttps%3A%2F%2Fwww.beforeido.co.il"
+   target="_blank" rel="noopener" aria-label="שתפו את האתר בוואטסאפ">
+  <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.8-.9L3 20.5l1.6-4.9A8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4Z"/></svg>
+  <span>שתפו בוואטסאפ</span>
+</a>
+<style>
+  #wa-share {
+    position: fixed; z-index: 60;
+    left: clamp(14px, 4vw, 26px);   /* physically left: inset-inline-start is the RIGHT edge in RTL */
+    bottom: calc(var(--wa-lift, 0px) + clamp(16px, 3vw, 26px));
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    min-height: 48px; padding: 0 22px; border-radius: 999px;
+    background: #25D366; color: #fff; text-decoration: none;
+    font: 600 16px/1 Assistant, sans-serif; white-space: nowrap;
+    box-shadow: 0 6px 20px rgba(31, 44, 74, .28);
+    transition: background 260ms cubic-bezier(.2,.7,.2,1), bottom 260ms cubic-bezier(.2,.7,.2,1);
+  }
+  #wa-share:hover { background: #1FB855; }
+  #wa-share:focus-visible { outline: 3px solid #EF453D; outline-offset: 3px; }
+  @media (max-width: 420px) { #wa-share { padding: 0 18px; font-size: 15px; } }
+  @media (prefers-reduced-motion: reduce) { #wa-share { transition: none; } }
+</style>
+<script>
+(function () {
+  var btn = document.getElementById('wa-share');
+  if (!btn) return;
+  function lift() {
+    var vh = window.innerHeight, clear = 0;
+    var nodes = document.body ? document.body.querySelectorAll('*') : [];
+    for (var i = 0; i < nodes.length; i++) {
+      var el = nodes[i];
+      if (el === btn || btn.contains(el)) continue;
+      var cs = getComputedStyle(el);
+      if (cs.position !== 'fixed' || cs.display === 'none' || cs.visibility === 'hidden') continue;
+      var r = el.getBoundingClientRect();
+      // Anchored to the bottom edge, and actually covering something.
+      if (r.height < 8 || r.width < 40) continue;
+      if (r.bottom < vh - 4 || r.top > vh - 8) continue;
+      clear = Math.max(clear, vh - r.top);
+    }
+    btn.style.setProperty('--wa-lift', clear ? clear + 10 + 'px' : '0px');
+  }
+  var queued = false;
+  function schedule() {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(function () { queued = false; lift(); });
+  }
+  schedule();
+  addEventListener('resize', schedule);
+  addEventListener('scroll', schedule, { passive: true });
+  // The banner is rendered by the page runtime after boot, and removed when
+  // the visitor answers it — both arrive as mutations.
+  new MutationObserver(schedule).observe(document.documentElement, { childList: true, subtree: true });
+})();
+</script>
 </body>
 </html>
