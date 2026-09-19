@@ -244,7 +244,7 @@ const BOARD_CSS = `<style>
 // edge. That is measured, not hardcoded to the banner: any fixed element
 // anchored near the bottom counts, and when it goes away the button drops back
 // down. Nothing here depends on the banner's markup or wording.
-const SHARE_TEXT = `ראיתי את זה וחשבתי עלייך\n${SITE}`;
+const SHARE_TEXT = `ראיתי את זה וחשבתי עליכם\n${SITE}`;
 const SHARE_FLOAT = `<a id="wa-share" href="https://wa.me/?text=${encodeURIComponent(SHARE_TEXT)}"
    target="_blank" rel="noopener" aria-label="שתפו את האתר בוואטסאפ">
   <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.8-.9L3 20.5l1.6-4.9A8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4Z"/></svg>
@@ -301,6 +301,40 @@ const SHARE_FLOAT = `<a id="wa-share" href="https://wa.me/?text=${encodeURICompo
   new MutationObserver(schedule).observe(document.documentElement, { childList: true, subtree: true });
 })();
 </script>`;
+
+// Stronger hover on the flip cards. The design lifts them 12px; Barak wants
+// them to rattle. A wiggle suits cards that already sit at an angle.
+//
+// It animates `rotate` and `scale`, not `transform`, and that is the whole
+// trick: the runtime writes `.scpN:hover { transform: translateY(-12px)
+// !important }`, and !important outranks an animation, so keyframes on
+// transform run and change nothing. rotate and scale are independent
+// properties that compose with transform instead of replacing it, so the lift
+// and the wiggle coexist.
+//
+// Targeted by the card aspect ratio, which the spec fixes at 250/370, so it
+// survives markup moving around. Pointer devices only, off under
+// prefers-reduced-motion.
+const CARD_CSS = `<style>
+  @keyframes bidCardWiggle {
+    0%   { rotate: 0deg;    scale: 1; }
+    15%  { rotate: -3.2deg; scale: 1.035; }
+    32%  { rotate: 2.6deg;  scale: 1.045; }
+    50%  { rotate: -1.8deg; scale: 1.04; }
+    70%  { rotate: 1deg;    scale: 1.03; }
+    85%  { rotate: -.4deg;  scale: 1.025; }
+    100% { rotate: 0deg;    scale: 1.02; }
+  }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    /* Two spellings: the authored one, and the one React writes back after it
+       hydrates the template. */
+    [style*="aspect-ratio:250/370"]:hover,
+    [style*="aspect-ratio: 250 / 370"]:hover {
+      animation: bidCardWiggle 640ms cubic-bezier(.2,.7,.2,1);
+      animation-fill-mode: forwards;
+    }
+  }
+</style>`;
 
 const report = [];
 let built = 0;
@@ -388,6 +422,10 @@ for (const p of PAGES) {
   // Everywhere except the purchase flow — a share button beside a payment
   // form is a way out of it. The internal boards do not get one either; they
   // are working documents, not something a visitor shares.
+  if (p.out === 'index.html') {
+    fix('home: card hover wiggle', x => x.replace('</helmet>', CARD_CSS + '\n</helmet>'));
+  }
+
   if (p.out !== 'checkout.html' && !p.board) {
     fix('floating share button', x => x.replace('</body>', SHARE_FLOAT + '\n</body>'));
   }
