@@ -59,6 +59,7 @@ const ICON = {
       + '<circle cx="12" cy="12" r="4"/>'
       + '<circle cx="17.3" cy="6.7" r="1.15" fill="currentColor" stroke="none"/>',
   },
+  truck: '<path d="M3 5h11c.55 0 1 .45 1 1v1h2.6c.63 0 1.22.3 1.6.8l2.2 2.93c.26.35.4.77.4 1.2V16c0 .55-.45 1-1 1h-1.05a2.75 2.75 0 0 1-5.4 0H9.45a2.75 2.75 0 0 1-5.4 0H3c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1Zm12 4v2.5h5.1l-1.9-2.5H15ZM6.75 15.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5Zm10.5 0a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5Z"/>',
   mail: '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2Zm8 7.2 8-5.2H4l8 5.2ZM4 18h16V8.2l-8 5.2-8-5.2V18Z"/>',
 };
 const svg = name => {
@@ -135,6 +136,43 @@ function closingHtml() {
 </section>`;
 }
 
+
+// A single panel that opens, above the questions. Built from site-content.js
+// and nothing else: with no intro, bullets or note it returns an empty string
+// and the page carries no shipping promise at all. A pickup address and its
+// opening hours are a promise people physically act on.
+function shippingHtml() {
+  const t = C.shipping || {};
+  const bullets = (t.bullets || []).filter(b => b && b.trim());
+  if (!(t.intro || '').trim() && !bullets.length && !(t.note || '').trim()) return '';
+
+  // **בולט** in the content file becomes a lead-in, the way the reference
+  // panel bolds "איסוף עצמי" before the sentence that follows it.
+  const strong = str => esc(str).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+  const digits = waDigits(C.contact || {});
+  const ask = t.askText && digits
+    ? `<p class="bid-ship__ask">${esc(t.askText)} <a href="#contact"
+         data-bid-event="shipping_contact">${esc(t.askLabel || 'דברו איתנו')}</a></p>`
+    : '';
+
+  return `
+<section class="bid-section bid-shipping" aria-labelledby="bid-ship-title">
+  <div class="bid-section__inner">
+    <details class="bid-ship">
+      <summary data-bid-event="shipping_open">
+        <span class="bid-ship__head">${svg('truck')}<span id="bid-ship-title">${esc(t.heading || 'משלוחים והחזרות')}</span></span>
+      </summary>
+      <div class="bid-ship__body">
+        ${t.intro ? `<p>${strong(t.intro)}</p>` : ''}
+        ${bullets.length ? `<ul>\n${bullets.map(b => `          <li>${strong(b)}</li>`).join('\n')}\n        </ul>` : ''}
+        ${t.note ? `<p class="bid-ship__note">${strong(t.note)}</p>` : ''}
+        ${ask}
+      </div>
+    </details>
+  </div>
+</section>`;
+}
 
 // The contact strip closes every page. Nothing here is invented: a field with
 // no value in site-content.js renders no row at all, so the page never shows
@@ -435,7 +473,7 @@ async function apply(html, opts = {}) {
     upsert(s, 'noscript', noscriptHtml(meta), (h, b) => h.replace('<body>', '<body>' + b)));
 
   fix(meta.sections ? 'FAQ + capture + share sections' : 'no appended sections (not the selling page)', s =>
-    upsert(s, 'sections', meta.sections ? faqHtml() + closingHtml() : '',
+    upsert(s, 'sections', meta.sections ? shippingHtml() + faqHtml() + closingHtml() : '',
       (h, b) => meta.sections ? h.replace('</body>', b + '\n</body>') : h));
 
   // Contact closes every page, selling or not.

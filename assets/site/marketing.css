@@ -88,6 +88,62 @@
   color: rgba(31, 44, 74, 0.82);
 }
 
+/* ── shipping & returns: one panel that opens ────────────────────────────── */
+.bid-shipping { background: var(--bid-light); color: var(--bid-ink); padding-bottom: 0; }
+/* It sits directly on top of the questions, on the same background — one
+   information zone, not two bands with a gutter between them. */
+.bid-shipping + .bid-faq { padding-top: clamp(32px, 4vw, 48px); }
+
+.bid-ship {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 6px 22px rgba(31, 44, 74, 0.07);
+}
+.bid-ship > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 44px;
+  padding: clamp(18px, 2.6vw, 24px) clamp(20px, 3vw, 30px);
+  cursor: pointer;
+  list-style: none;
+}
+.bid-ship > summary::-webkit-details-marker { display: none; }
+.bid-ship__head {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font: 700 clamp(17px, 2.2vw, 21px)/1.3 var(--bid-font);
+  letter-spacing: 0.01em;
+}
+.bid-ship__head svg { width: 24px; height: 24px; flex: none; color: var(--bid-blue); }
+.bid-ship > summary::after {
+  content: '+';
+  flex: none;
+  width: 28px;
+  font: 400 26px/1 var(--bid-font);
+  text-align: center;
+  color: var(--bid-blue);
+}
+.bid-ship[open] > summary::after { content: '−'; }
+.bid-ship > summary:focus-visible { outline: 2px solid var(--bid-red); outline-offset: 3px; }
+
+.bid-ship__body {
+  padding: 0 clamp(20px, 3vw, 30px) clamp(22px, 3vw, 28px);
+  font-size: clamp(16px, 2vw, 17px);
+  line-height: 1.75;
+  color: rgba(31, 44, 74, 0.84);
+  max-width: 72ch;
+}
+.bid-ship__body p { margin: 0 0 14px; }
+.bid-ship__body ul { margin: 0 0 14px; padding-inline-start: 20px; }
+.bid-ship__body li { margin: 0 0 10px; }
+.bid-ship__body strong { color: var(--bid-ink); font-weight: 700; }
+.bid-ship__note { font-size: 15px; color: rgba(31, 44, 74, 0.66); }
+.bid-ship__ask { margin: 0; font-weight: 600; color: var(--bid-ink); }
+.bid-ship__ask a { color: var(--bid-blue); text-underline-offset: 3px; }
+
 /* ── closing band: reminder capture + share ──────────────────────────────── */
 .bid-closing { background: var(--bid-blue); color: #fff; }
 .bid-closing__grid {
