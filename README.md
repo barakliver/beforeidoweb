@@ -4,6 +4,24 @@
 המקור הוא עיצוב שנבנה ב-Claude Design ויוצא כקובץ bundle יחיד;
 כאן הוא פרוס לאתר אמיתי שאפשר לארח על דומיין משלנו.
 
+## עדכון האתר אחרי שינוי עיצוב
+
+כשמגיע ייצוא חדש מ-Claude Design (קובץ HTML אחד, "Bundled Page"):
+
+```bash
+node tools/import-design.js ~/Downloads/Before_I_Do.html
+python3 -m http.server 8099     # לבדוק שהכל נראה טוב
+git add -A && git commit -m "עדכון עיצוב" && git push
+```
+
+Vercel פורסת אוטומטית אחרי ה-push.
+
+הסקריפט מפרק את ה-bundle לקבצים ומחיל מחדש את כל מה ש-Claude Design
+לא מייצאת בעצמה: `lang="he" dir="rtl"`, כותרת ותגיות שיתוף, פאביקון,
+React מקומי, הסתרת הערות העיצוב, וכותרות שמתכווצות במסך צר.
+הוא מדפיס `ok` או `SKIPPED` לכל תיקון — **`SKIPPED` אומר שהעיצוב השתנה
+באזור הזה וצריך להסתכל על הדף לפני פרסום.**
+
 ## מבנה
 
 ```
@@ -13,6 +31,7 @@ assets/js/react*.js        React 18 — מוגש מהאתר, לא מ-unpkg
 assets/img/                תמונות (PNG/JPG)
 assets/fonts/              Assistant / Heebo / Caveat (woff2, מוטמעות)
 assets/favicon.svg         אייקון הלב
+tools/import-design.js     ממיר ייצוא של Claude Design לאתר הזה
 ```
 
 אין שלב build ואין תלויות. זה HTML סטטי — כל שרת סטטי יגיש אותו.
@@ -29,9 +48,14 @@ python3 -m http.server 8099
 
 ## הערות תחזוקה
 
+כל התיקונים האלה מוחלים על ידי `tools/import-design.js`, לא ביד —
+לערוך שם, אחרת הם ייעלמו בייצוא הבא.
+
 - **הערות העיצוב הפנימיות** (המקטע "Gift route — three opening lines"
-  וכו') מוסתרות: `showVoiceNotes` הוגדר `false` גם ב-`data-props` וגם
-  בברירת המחדל בקוד הרכיב. כדי להחזיר אותן — להפוך את שניהם ל-`true`.
+  וכו') מוסתרות דרך `showVoiceNotes`, גם ב-`data-props` וגם בברירת
+  המחדל בקוד הרכיב.
+- **כותרות מעל 32px** מקבלות `font-size:clamp(...)` אחרי ה-shorthand,
+  כך שבטלפון הן מתכווצות ובדסקטופ הגודל המקורי נשמר.
 - **React מוגש מקומית** דרך `window.__resources` ב-`<head>`, כדי שלא
   תהיה תלות ב-CDN חיצוני וכדי שה-runtime לא ימשוך מחדש את מקור הדף.
 - **כפתורי ה-CTA** ("אני רוצה את המשחק", "מצאתי מתנה") הם עדיין

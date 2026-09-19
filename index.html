@@ -15,8 +15,6 @@
 <meta property="og:image" content="assets/img/img-2.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <script>
-  // Serve React from this site instead of unpkg: no third-party request,
-  // and it keeps the runtime from re-fetching the page source at boot.
   window.__resources = {
     "https://unpkg.com/react@18.3.1/umd/react.production.min.js": "assets/js/react.production.min.js",
     "https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js": "assets/js/react-dom.production.min.js"
@@ -457,7 +455,7 @@ button:focus-visible,a:focus-visible{outline:2px solid #EF453D;outline-offset:3p
 <sc-if value="{{ isCouple }}" hint-placeholder-val="{{ true }}">
 <div style="max-width:1180px;margin:0 auto;padding:104px 32px 112px;display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:72px;align-items:center">
 <div data-reveal="text">
-<h1 style="margin:0;font:700 46px/1.32 Heebo,sans-serif;color:#fff;max-width:20ch">רגע לפני שהחתונה הופכת לרשימת משימות,<br><span style="font-weight:800">בואו נדבר על החתונה שאתם רוצים.</span></h1>
+<h1 style="margin:0;font:700 46px/1.32 Heebo,sans-serif;font-size:clamp(30px, 6.5vw, 46px);color:#fff;max-width:20ch">רגע לפני שהחתונה הופכת לרשימת משימות,<br><span style="font-weight:800">בואו נדבר על החתונה שאתם רוצים.</span></h1>
 <div style="margin:38px 0 0;max-width:46ch;display:flex;flex-direction:column;gap:18px">
 <p style="margin:0;font:300 19px/1.7 Assistant,sans-serif;color:rgba(255,255,255,.92)">בקופסא תמצאו חמישים כרטיסיות עם שאלות שהן חובה ויעשו לכם סדר.</p>
 <p style="margin:0;font:700 19px/1.7 Assistant,sans-serif;color:#fff">זה המקום לדבר, לשתף, ולפעמים גם לצחוק, בלי שיפוטיות, רק הקשבה וכיף.</p>
@@ -490,7 +488,7 @@ button:focus-visible,a:focus-visible{outline:2px solid #EF453D;outline-offset:3p
 <sc-if value="{{ isGift }}" hint-placeholder-val="{{ false }}">
 <div style="max-width:1180px;margin:0 auto;padding:104px 32px 112px;display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:72px;align-items:center">
 <div data-reveal="text">
-<h1 style="margin:0;white-space:pre-line;font:700 46px/1.32 Heebo,sans-serif;color:#fff;max-width:22ch">{{ giftHead }}</h1>
+<h1 style="margin:0;white-space:pre-line;font:700 46px/1.32 Heebo,sans-serif;font-size:clamp(30px, 6.5vw, 46px);color:#fff;max-width:22ch">{{ giftHead }}</h1>
 <div style="margin:38px 0 0;max-width:44ch;display:flex;flex-direction:column;gap:18px">
 <p style="margin:0;white-space:pre-line;font:300 19px/1.7 Assistant,sans-serif;color:rgba(255,255,255,.92)">{{ giftBody }}</p>
 <p style="margin:0;font:300 19px/1.7 Assistant,sans-serif;color:rgba(255,255,255,.92)">קופסה עם חמישים כרטיסיות. הם פותחים קלף, קוראים, ומדברים על החתונה שהם רוצים.</p>
@@ -514,7 +512,7 @@ button:focus-visible,a:focus-visible{outline:2px solid #EF453D;outline-offset:3p
 <div style="max-width:1180px;margin:0 auto;padding:96px 32px 100px;display:flex;flex-direction:column;gap:60px">
 
 <div data-reveal="text" style="max-width:44ch">
-<h2 style="margin:0;font:700 34px/1.4 Heebo,sans-serif;color:#4F6BA5">יש החלטות שמקבלים מול ספקים.<br>ויש החלטות שכדאי לקבל ביניכם.</h2>
+<h2 style="margin:0;font:700 34px/1.4 Heebo,sans-serif;font-size:clamp(22px, 4.8vw, 34px);color:#4F6BA5">יש החלטות שמקבלים מול ספקים.<br>ויש החלטות שכדאי לקבל ביניכם.</h2>
 <p style="margin:30px 0 0;font:300 21px/1.9 Assistant,sans-serif;color:#2F3F63">מה חשוב לכם.<br>איפה המשפחה נכנסת.<br>ועל מה אתם לא מוותרים.</p>
 <p style="margin:26px 0 0;font:600 19px/1.7 Assistant,sans-serif;color:#4F6BA5">50 קלפים שמכניסים את הדברים האלה לשיחה.</p>
 <div style="margin-top:46px;width:34px;height:1.5px;background:#EF453D"></div>
@@ -554,13 +552,13 @@ button:focus-visible,a:focus-visible{outline:2px solid #EF453D;outline-offset:3p
 <img src="assets/img/img-6.png" alt="קופסת Before I Do עם הכרטיסיות" style="display:block;width:100%;height:auto;border-radius:5px">
 </div>
 <div data-reveal="text">
-<h2 style="margin:0;font:700 38px/1.35 Heebo,sans-serif;color:#fff;max-width:20ch">קופסה אחת, חמישים שאלות, וערב אחד בשבילכם.</h2>
+<h2 style="margin:0;font:700 38px/1.35 Heebo,sans-serif;font-size:clamp(25px, 5.4vw, 38px);color:#fff;max-width:20ch">קופסה אחת, חמישים שאלות, וערב אחד בשבילכם.</h2>
 <div style="margin:30px 0 0;max-width:44ch;display:flex;flex-direction:column;gap:16px">
 <p style="margin:0;font:300 19px/1.7 Assistant,sans-serif;color:rgba(255,255,255,.92)">בקופסה חמישים כרטיסיות.</p>
 <p style="margin:0;font:300 19px/1.7 Assistant,sans-serif;color:rgba(255,255,255,.92)">מומלץ לשחק בחודש הראשון אחרי האירוסין, כשההתרגשות בשיאה. המשחק אורך כשעה.</p>
 </div>
 <div style="margin-top:32px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap">
-<p style="margin:0;font:700 40px/1 Heebo,sans-serif;color:#fff">129 ₪</p>
+<p style="margin:0;font:700 40px/1 Heebo,sans-serif;font-size:clamp(26px, 5.6vw, 40px);color:#fff">129 ₪</p>
 <p style="margin:0;font:300 22px/1 Assistant,sans-serif;color:rgba(255,255,255,.7);text-decoration:line-through">169 ₪</p>
 <p style="margin:0;font:600 13px/1 Assistant,sans-serif;letter-spacing:.1em;color:#fff;background:#EF453D;border-radius:4px;padding:7px 10px">מבצע</p>
 </div>
