@@ -139,11 +139,23 @@ function closingHtml() {
 // The contact strip closes every page. Nothing here is invented: a field with
 // no value in site-content.js renders no row at all, so the page never shows
 // a phone number that does not ring.
+// An Israeli number as people write it ('054-1234567') is not what wa.me
+// wants. One field, two uses: the page shows it as written, WhatsApp gets it
+// in international form.
+function waDigits(t) {
+  if (t.whatsappNumber) return String(t.whatsappNumber).replace(/\D/g, '');
+  if (!t.phone) return '';
+  const d = String(t.phone).replace(/\D/g, '');
+  if (d.startsWith('972')) return d;
+  if (d.startsWith('0')) return '972' + d.slice(1);
+  return d;
+}
+
 function contactHtml() {
   const t = C.contact || {};
-  const wa = t.whatsappNumber
-    ? `https://wa.me/${String(t.whatsappNumber).replace(/\D/g, '')}?text=`
-      + encodeURIComponent(t.whatsappMessageGeneral || '')
+  const digits = waDigits(t);
+  const wa = digits
+    ? `https://wa.me/${digits}?text=` + encodeURIComponent(t.whatsappMessageGeneral || '')
     : '';
 
   const rows = [
@@ -160,9 +172,8 @@ function contactHtml() {
   if (!rows.length) return '';
 
   // The CTA handler reads the number from here, so there is one copy of it.
-  const ctaAttrs = t.whatsappNumber && t.ctaOpensWhatsapp
-    ? ` data-wa-number="${esc(String(t.whatsappNumber).replace(/\D/g, ''))}"`
-      + ` data-wa-message="${esc(t.whatsappMessage || '')}"`
+  const ctaAttrs = digits && t.ctaOpensWhatsapp
+    ? ` data-wa-number="${esc(digits)}" data-wa-message="${esc(t.whatsappMessage || '')}"`
     : '';
 
   return `
