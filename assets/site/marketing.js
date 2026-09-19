@@ -126,11 +126,34 @@
     for (var i = 0; i < CTA.length; i++) {
       if (text === CTA[i].text) {
         track(CTA[i].name, { label: text, position: sectionOf(el) }, CTA[i].meta);
+        if (CTA[i].name === 'purchase_intent') openOrderChat();
         return;
       }
     }
     if (el.closest('#deck')) track('card_flip', {});
   }, true);
+
+  // The buy buttons are drawn by the design tool and have no destination of
+  // their own. Until there is a checkout, they open a WhatsApp chat with the
+  // order already written — but only when a number is configured, so nothing
+  // here can send anyone to a dead chat.
+  function openOrderChat() {
+    var strip = document.getElementById('contact');
+    var number = strip && strip.getAttribute('data-wa-number');
+    if (!number) return;
+
+    var msg = (strip.getAttribute('data-wa-message') || '').replace('{qty}', quantity());
+    window.open('https://wa.me/' + number + '?text=' + encodeURIComponent(msg), '_blank', 'noopener');
+  }
+
+  // Best effort: the number the visitor set with the − / + control. If the
+  // design moves it, we fall back to one rather than guess.
+  function quantity() {
+    var minus = document.querySelector('button[aria-label="פחות"]');
+    var box = minus && minus.parentElement;
+    var m = box && (box.textContent || '').match(/\d+/);
+    return m ? m[0] : '1';
+  }
 
   function sectionOf(el) {
     var y = 0, n = el;

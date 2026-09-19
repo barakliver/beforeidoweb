@@ -46,6 +46,29 @@ function pageMeta(file) {
   }, known || {});
 }
 
+
+// ── icons ───────────────────────────────────────────────────────────────────
+const ICON = {
+  whatsapp: '<path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm5.8 14.06c-.24.68-1.42 1.32-1.95 1.36-.5.04-.98.22-3.3-.69-2.78-1.1-4.55-3.95-4.69-4.14-.14-.19-1.12-1.49-1.12-2.84 0-1.35.71-2.01.96-2.29.25-.28.55-.35.73-.35h.52c.17 0 .4-.06.62.47.24.57.8 1.97.87 2.11.07.14.12.31.02.5-.09.19-.14.31-.28.47-.14.16-.29.36-.42.48-.14.14-.28.29-.12.57.16.28.72 1.19 1.55 1.93 1.07.95 1.97 1.25 2.25 1.39.28.14.44.12.6-.07.17-.19.69-.8.87-1.08.19-.28.37-.23.63-.14.25.09 1.65.78 1.93.92.28.14.47.21.54.33.07.11.07.66-.17 1.34Z"/>',
+  phone: '<path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1C10.29 21 3 13.71 3 4c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2Z"/>',
+  // Drawn with strokes, not one filled outline: a single path would need the
+  // lens cut out of the body, and a wrong winding turns the mark into a blob.
+  instagram: {
+    stroke: true,
+    body: '<rect x="3" y="3" width="18" height="18" rx="5.2"/>'
+      + '<circle cx="12" cy="12" r="4"/>'
+      + '<circle cx="17.3" cy="6.7" r="1.15" fill="currentColor" stroke="none"/>',
+  },
+  mail: '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2Zm8 7.2 8-5.2H4l8 5.2ZM4 18h16V8.2l-8 5.2-8-5.2V18Z"/>',
+};
+const svg = name => {
+  const i = ICON[name];
+  const paint = i.stroke
+    ? 'fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"'
+    : 'fill="currentColor"';
+  return `<svg viewBox="0 0 24 24" ${paint} aria-hidden="true">${i.body || i}</svg>`;
+};
+
 // ── the sections we append ──────────────────────────────────────────────────
 const published = () => C.faq.filter(f => f.q && f.a && f.a.trim());
 
@@ -71,8 +94,7 @@ function closingHtml() {
   const t = C.closing;
   const waText = t.shareText.replace('{url}', SITE);
   const wa = 'https://wa.me/?text=' + encodeURIComponent(waText);
-  const waIcon = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">'
-    + '<path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm5.8 14.06c-.24.68-1.42 1.32-1.95 1.36-.5.04-.98.22-3.3-.69-2.78-1.1-4.55-3.95-4.69-4.14-.14-.19-1.12-1.49-1.12-2.84 0-1.35.71-2.01.96-2.29.25-.28.55-.35.73-.35h.52c.17 0 .4-.06.62.47.24.57.8 1.97.87 2.11.07.14.12.31.02.5-.09.19-.14.31-.28.47-.14.16-.29.36-.42.48-.14.14-.28.29-.12.57.16.28.72 1.19 1.55 1.93 1.07.95 1.97 1.25 2.25 1.39.28.14.44.12.6-.07.17-.19.69-.8.87-1.08.19-.28.37-.23.63-.14.25.09 1.65.78 1.93.92.28.14.47.21.54.33.07.11.07.66-.17 1.34Z"/></svg>';
+  const waIcon = svg('whatsapp');
 
   return `
 <section class="bid-section bid-closing" aria-labelledby="bid-closing-title">
@@ -111,6 +133,50 @@ function closingHtml() {
     </div>
   </div>
 </section>`;
+}
+
+
+// The contact strip closes every page. Nothing here is invented: a field with
+// no value in site-content.js renders no row at all, so the page never shows
+// a phone number that does not ring.
+function contactHtml() {
+  const t = C.contact || {};
+  const wa = t.whatsappNumber
+    ? `https://wa.me/${String(t.whatsappNumber).replace(/\D/g, '')}?text=`
+      + encodeURIComponent(t.whatsappMessageGeneral || '')
+    : '';
+
+  const rows = [
+    wa && `<a class="bid-contact__row" href="${esc(wa)}" target="_blank" rel="noopener"
+       data-bid-event="contact_whatsapp">${svg('whatsapp')}<span>${esc(t.whatsappLabel || 'וואטסאפ')}</span></a>`,
+    t.phone && `<a class="bid-contact__row" href="tel:${esc(String(t.phone).replace(/[^\d+]/g, ''))}"
+       data-bid-event="contact_phone">${svg('phone')}<span dir="ltr">${esc(t.phone)}</span></a>`,
+    t.email && `<a class="bid-contact__row" href="mailto:${esc(t.email)}"
+       data-bid-event="contact_email">${svg('mail')}<span dir="ltr">${esc(t.email)}</span></a>`,
+    t.instagram && `<a class="bid-contact__row" href="${esc(t.instagram)}" target="_blank" rel="noopener"
+       data-bid-event="contact_instagram">${svg('instagram')}<span dir="ltr">${esc(t.instagramLabel || 'Instagram')}</span></a>`,
+  ].filter(Boolean);
+
+  if (!rows.length) return '';
+
+  // The CTA handler reads the number from here, so there is one copy of it.
+  const ctaAttrs = t.whatsappNumber && t.ctaOpensWhatsapp
+    ? ` data-wa-number="${esc(String(t.whatsappNumber).replace(/\D/g, ''))}"`
+      + ` data-wa-message="${esc(t.whatsappMessage || '')}"`
+    : '';
+
+  return `
+<footer class="bid-section bid-contact" id="contact"${ctaAttrs}>
+  <div class="bid-section__inner">
+    <hr class="bid-section__rule">
+    <h2>${esc(t.heading || 'דברו איתנו')}</h2>
+    ${t.body ? `<p class="bid-section__lead">${esc(t.body)}</p>` : ''}
+    <div class="bid-contact__rows">
+${rows.map(r => '      ' + r).join('\n')}
+    </div>
+    <p class="bid-contact__legal">${esc(C.legalName)}</p>
+  </div>
+</footer>`;
 }
 
 // Crawlers render JS, but not always and not quickly, and the whole page is
@@ -360,6 +426,10 @@ async function apply(html, opts = {}) {
   fix(meta.sections ? 'FAQ + capture + share sections' : 'no appended sections (not the selling page)', s =>
     upsert(s, 'sections', meta.sections ? faqHtml() + closingHtml() : '',
       (h, b) => meta.sections ? h.replace('</body>', b + '\n</body>') : h));
+
+  // Contact closes every page, selling or not.
+  fix('contact strip', s =>
+    upsert(s, 'contact', contactHtml(), (h, b) => h.replace('</body>', b + '\n</body>')));
 
   html = await optimizeImages(html, root, report);
   writeSiteFiles(root, report, page);
