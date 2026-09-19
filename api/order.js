@@ -13,8 +13,10 @@
 //   RESEND_API_KEY     email  (resend.com, free tier)
 //   ORDER_EMAIL_TO     where to send        default barakliver@gmail.com
 //   ORDER_EMAIL_FROM   verified sender      default onboarding@resend.dev
-//   WHATSAPP_WEBHOOK   any URL that takes {phone, message} and sends a WhatsApp
-//   WHATSAPP_TO        default 972526604320
+//   GREENAPI_ID        WhatsApp via green-api.com: instance id
+//   GREENAPI_TOKEN     …and its API token
+//   WHATSAPP_WEBHOOK   or any URL of your own taking {phone, message}
+//   WHATSAPP_TO        who to notify, international format, default 972526604320
 
 const EMAIL_TO = process.env.ORDER_EMAIL_TO || 'barakliver@gmail.com';
 const EMAIL_FROM = process.env.ORDER_EMAIL_FROM || 'Before I Do <onboarding@resend.dev>';
@@ -59,16 +61,43 @@ async function sendEmail(o, rows) {
   return r.ok ? 'sent' : `failed ${r.status} ${clip(await r.text(), 200)}`;
 }
 
-async function sendWhatsApp(rows) {
-  if (!process.env.WHATSAPP_WEBHOOK) return 'skipped (no WHATSAPP_WEBHOOK)';
-  const message = ['🎉 הזמנה חדשה — Before I Do', '', ...rows.map(([k, v]) => `${k}: ${v}`),
-    '', '⚠️ התחילה סליקה — לאשר תשלום מול Grow.'].join('\n');
-  const r = await fetch(process.env.WHATSAPP_WEBHOOK, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ phone: WA_TO, message }),
-  });
-  return r.ok ? 'sent' : `failed ${r.status}`;
+async function sendWhatsApp(o, rows) {
+  // A tap-to-call link on the customer's number, so the message is also the
+  // fastest way to reach them.
+  const digits = String(o.phone || '').replace(/\D/g, '').replace(/^0/, '972');
+  const message = [
+    '🎉 הזמנה חדשה — Before I Do', '',
+    ...rows.map(([k, v]) => `${k}: ${v}`),
+    digits.length > 8 ? `\nלחיוג: wa.me/${digits}` : '',
+    '', '⚠️ התחילה סליקה — לאשר תשלום מול Grow לפני משלוח.',
+  ].filter(Boolean).join('\n');
+
+  const { GREENAPI_ID, GREENAPI_TOKEN, WHATSAPP_WEBHOOK } = process.env;
+
+  if (GREENAPI_ID && GREENAPI_TOKEN) {
+    const url = `https://api.green-api.com/waInstance${GREENAPI_ID}/sendMessage/${GREENAPI_TOKEN}`;
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ chatId: `${WA_TO}@c.us`, message }),
+    });
+    // Green API answers 200 with an error body when the instance is not
+    // authorized, so the body decides, not the status.
+    const body = await r.text();
+    if (r.ok && /idMessage/.test(body)) return 'sent';
+    return `failed ${r.status} ${clip(body, 160)}`;
+  }
+
+  if (WHATSAPP_WEBHOOK) {
+    const r = await fetch(WHATSAPP_WEBHOOK, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ phone: WA_TO, message }),
+    });
+    return r.ok ? 'sent' : `failed ${r.status}`;
+  }
+
+  return 'skipped (no GREENAPI_ID/GREENAPI_TOKEN or WHATSAPP_WEBHOOK)';
 }
 
 export default async function handler(req, res) {
@@ -79,7 +108,7 @@ export default async function handler(req, res) {
 
   const { rows } = summarize(order);
   // Settled, not all: one channel failing must not lose the other.
-  const [email, whatsapp] = await Promise.allSettled([sendEmail(order, rows), sendWhatsApp(rows)]);
+  const [email, whatsapp] = await Promise.allSettled([sendEmail(order, rows), sendWhatsApp(order, rows)]);
   const out = {
     email: email.status === 'fulfilled' ? email.value : `error ${email.reason}`,
     whatsapp: whatsapp.status === 'fulfilled' ? whatsapp.value : `error ${whatsapp.reason}`,

@@ -49,8 +49,19 @@ Vercel פורסת אוטומטית אחרי ה-push.
 | `RESEND_API_KEY` | מייל דרך resend.com | בלעדיו אין מייל |
 | `ORDER_EMAIL_TO` | לאן לשלוח | barakliver@gmail.com |
 | `ORDER_EMAIL_FROM` | שולח מאומת | onboarding@resend.dev |
-| `WHATSAPP_WEBHOOK` | כתובת שמקבלת `{phone, message}` | בלעדיה אין וואטסאפ |
-| `WHATSAPP_TO` | מספר היעד | 972526604320 |
+| `GREENAPI_ID` | וואטסאפ דרך green-api.com — מזהה המופע | בלעדיו אין וואטסאפ |
+| `GREENAPI_TOKEN` | הטוקן של אותו מופע | בלעדיו אין וואטסאפ |
+| `WHATSAPP_WEBHOOK` | חלופה: כתובת משלך שמקבלת `{phone, message}` | — |
+| `WHATSAPP_TO` | מספר היעד, בפורמט בינלאומי | 972526604320 |
+
+### חיבור וואטסאפ דרך Green API
+
+1. להירשם ב-green-api.com ליצור Instance
+2. לסרוק את ה-QR מהוואטסאפ בטלפון (הגדרות ← מכשירים מקושרים)
+3. להעתיק `idInstance` ו-`apiTokenInstance` למשתנים למעלה ב-Vercel, ולעשות Redeploy
+
+הטלפון שסרק צריך להישאר מחובר לאינטרנט — זה חיבור של "מכשיר מקושר",
+בדיוק כמו וואטסאפ ווב.
 
 לבדיקה מקומית: `node tools/serve.js` מריץ גם את `/api` ומדפיס כל קריאה.
 
