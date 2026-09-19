@@ -94,9 +94,6 @@ for (const d of ['img', 'fonts', 'js']) {
   fs.mkdirSync(path.join(ROOT, 'assets', d), { recursive: true });
 }
 
-// Runtime.
-fs.copyFileSync(path.join(SRC, 'support.js'), path.join(ROOT, 'assets/js/app.js'));
-
 // Fonts + React come from a bundle's manifest — the sources have neither.
 const bundlePath = path.join(SRC, 'export', 'Before_I_Do.html');
 const bundle = fs.readFileSync(bundlePath, 'utf8');
@@ -123,6 +120,33 @@ for (const [uuid, e] of Object.entries(manifest)) {
     vendor[extByUuid[uuid]] = rel;
   }
 }
+
+// Runtime, with React pointed at our own copies.
+//
+// The obvious way to do that is window.__resources, and it is a trap: the
+// runtime ALSO uses that object as the signal that its template came from a
+// bundler, and skips re-reading the page source when it is set. We need that
+// re-read. Served as raw source, the template is parsed by the browser first,
+// and the browser is entitled to mangle it — <sc-for> inside <select> is not
+// legal HTML, so Safari drops the city loop and the dropdown arrives empty
+// while Chrome keeps it. The runtime's recovery path re-fetches the page and
+// re-parses the template from text, which is immune to that.
+//
+// So we patch the constants instead and leave __resources unset. loadScript
+// only sets integrity when it is truthy, so blanking the CDN hashes is what
+// lets a local file load at all.
+let runtime = fs.readFileSync(path.join(SRC, 'support.js'), 'utf8');
+const pointAt = (constant, url) => {
+  const before = runtime;
+  runtime = runtime.replace(new RegExp(`var ${constant} = "[^"]*";`), `var ${constant} = "${url}";`);
+  if (runtime === before) throw new Error(`runtime patch failed: ${constant} not found in support.js`);
+};
+for (const [url, rel] of Object.entries(vendor)) {
+  const dom = /react-dom/.test(url);
+  pointAt(dom ? 'REACT_DOM_URL' : 'REACT_URL', '/' + rel);
+  pointAt(dom ? 'REACT_DOM_SRI' : 'REACT_SRI', '');
+}
+fs.writeFileSync(path.join(ROOT, 'assets/js/app.js'), runtime);
 
 // The bundle's @font-face blocks carry the unicode-ranges that make the Hebrew
 // and latin subsets load correctly — reuse them verbatim, repointed at us.
@@ -151,12 +175,6 @@ console.log(`assets    ${nFont} fonts, ${Object.keys(vendor).length} vendor js, 
             `${Object.keys(imgByHash).length} images (from ${Object.keys(imgPath).length} files)`);
 
 // ── per-page build ────────────────────────────────────────────────────────
-const RESOURCES = `<script>
-  window.__resources = {
-${Object.entries(vendor).map(([url, rel]) => `    ${JSON.stringify(url)}: ${JSON.stringify(rel)}`).join(',\n')}
-  };
-</script>`;
-
 function head(p) {
   const abs = u => SITE + u;
   const lines = [
@@ -185,7 +203,6 @@ function head(p) {
     `<meta name="twitter:title" content="Before I Do">`,
     `<meta name="twitter:description" content="${TAGLINE}">`,
     `<meta name="twitter:image" content="${abs('/assets/og-card.png')}">`);
-  lines.push(RESOURCES);
   return lines.join('\n') + '\n';
 }
 
