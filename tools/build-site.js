@@ -430,6 +430,19 @@ for (const p of PAGES) {
     fix('floating share button', x => x.replace('</body>', SHARE_FLOAT + '\n</body>'));
   }
 
+  // "יש החלטות שמקבלים מול ספקים" was wrapping to six lines even on a desktop.
+  // Its block is capped at 34ch, and ch resolves against the WRAPPER's font
+  // size (inherited, ~16px) rather than the 42px headline inside it — so the
+  // cap lands around 270px and the headline is squeezed into a column. Give
+  // the block a real width and let the headline run at display size.
+  if (p.out === 'index.html') {
+    fix('headline: give it room', x => x
+      .replace('<div data-reveal="text" style="max-width:34ch">',
+               '<div data-reveal="text" style="max-width:min(900px,100%)">')
+      .replace('font:600 clamp(28px,4.4vw,42px)/1.3 Heebo,sans-serif;color:#4F6BA5;text-indent:0',
+               'font:600 clamp(30px,5.4vw,58px)/1.25 Heebo,sans-serif;color:#4F6BA5;text-indent:0'));
+  }
+
   // Barak asked for the licence number out of the footer.
   fix('footer: drop the licence number', x =>
     x.replace('ברק ליור, עוסק מורשה 207613829', 'ברק ליור'));
