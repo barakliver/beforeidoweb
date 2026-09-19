@@ -232,6 +232,15 @@ const BOARD_CSS = `<style>
   }
 </style>`;
 
+// Share button. wa.me with no number opens WhatsApp on the contact picker
+// with the text ready, which is what a share is — the visitor chooses who.
+// Placed under "unless you know another couple getting married", because that
+// line is already the ask.
+const SHARE_TEXT = `שיחה אחת, לפני כל השאר.\n${TAGLINE}\n${SITE}`;
+const SHARE_BUTTON = `<a href="https://wa.me/?text=${encodeURIComponent(SHARE_TEXT)}" target="_blank" rel="noopener" style="margin:22px 0 0;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 26px;border-radius:999px;background:#25D366;color:#fff;font:600 16px/1 Assistant,sans-serif;text-decoration:none;white-space:nowrap;transition:background 260ms cubic-bezier(.2,.7,.2,1)" style-hover="background:#1FB855">
+<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.8-.9L3 20.5l1.6-4.9A8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4Z"/></svg>
+שתפו בוואטסאפ</a>`;
+
 const report = [];
 let built = 0;
 
@@ -313,6 +322,12 @@ for (const p of PAGES) {
         } catch (err) { /* a lost notification must never block the payment */ }
       }`));
     if (!PAY.ship) report.push(['WARNING', '    checkout: no 168 ₪ link — shipping charges 129 ₪']);
+  }
+
+  if (p.out === 'index.html') {
+    fix('home: whatsapp share button', x => x.replace(
+      /(<p [^>]*>אחד לזוג\. אלא אם כן אתם מכירים עוד זוג שמתחתן\.<\/p>)/,
+      `$1\n${SHARE_BUTTON}`));
   }
 
   // Home only: the English authoring notes render on the public page.
