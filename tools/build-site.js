@@ -68,11 +68,11 @@ const PAGES = [
   { src: 'Before I Do - 404.dc.html', out: '404.html',
     title: `העמוד לא נמצא — Before I Do`, desc: TAGLINE, noindex: true },
   // Internal review boards: reachable by link, never indexed.
-  { src: 'Before I Do - Design Spec.dc.html', out: 'spec.html',
+  { src: 'Before I Do - Design Spec.dc.html', out: 'spec.html', board: true,
     title: `מפרט עיצוב — Before I Do`, desc: 'מסמך פנימי', noindex: true },
-  { src: 'Before I Do - Visual DNA.dc.html', out: 'visual-dna.html',
+  { src: 'Before I Do - Visual DNA.dc.html', out: 'visual-dna.html', board: true,
     title: `Visual DNA — Before I Do`, desc: 'מסמך פנימי', noindex: true },
-  { src: 'Before I Do - מדיניות.dc.html', out: 'policies.html',
+  { src: 'Before I Do - מדיניות.dc.html', out: 'policies.html', board: true,
     title: `מדיניות ומסמכים — Before I Do`, desc: 'מסמך פנימי', noindex: true },
 ];
 
@@ -216,6 +216,22 @@ const SPEC_CSS = `<style>
   nav a, footer a, header a { min-height: 44px; display: inline-flex; align-items: center; }
 </style>`;
 
+// The review boards are written at desk width: a CSS snippet that cannot wrap,
+// and blocks sized at a fixed 300px. Both overflow a phone. They are internal
+// reading material, so readability wins over holding the authored widths —
+// scoped to these pages and to narrow screens only, never the public pages.
+const BOARD_CSS = `<style>
+  @media (max-width: 760px) {
+    /* A CSS snippet with no break opportunity is the one thing genuinely wider
+       than the screen. Everything else only LOOKS wide: the rotated mock-ups
+       sit at a negative offset, which in RTL still counts as page width, so
+       clipping the axis is enough. Constraining widths element-by-element is
+       not — it collapses the text to one word per line. */
+    [style*="monospace"] { overflow-wrap: anywhere; word-break: break-word; }
+    html, body { overflow-x: hidden; }
+  }
+</style>`;
+
 const report = [];
 let built = 0;
 
@@ -241,6 +257,7 @@ for (const p of PAGES) {
     .replace(/<link href="https:\/\/fonts\.googleapis\.com\/css2[^>]*>\s*/g, ''));
 
   fix('spec: focus + touch targets', x => x.replace('</helmet>', SPEC_CSS + '\n</helmet>'));
+  if (p.board) fix('board: narrow-screen readability', x => x.replace('</helmet>', BOARD_CSS + '\n</helmet>'));
 
   // Images.
   // Quote-agnostic: the boards reference images in single quotes too. Longest

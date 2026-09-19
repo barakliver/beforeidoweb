@@ -30,6 +30,17 @@ a:focus-visible,button:focus-visible{outline:3px solid #EF453D;outline-offset:3p
   }
   nav a, footer a, header a { min-height: 44px; display: inline-flex; align-items: center; }
 </style>
+<style>
+  @media (max-width: 760px) {
+    /* A CSS snippet with no break opportunity is the one thing genuinely wider
+       than the screen. Everything else only LOOKS wide: the rotated mock-ups
+       sit at a negative offset, which in RTL still counts as page width, so
+       clipping the axis is enough. Constraining widths element-by-element is
+       not — it collapses the text to one word per line. */
+    [style*="monospace"] { overflow-wrap: anywhere; word-break: break-word; }
+    html, body { overflow-x: hidden; }
+  }
+</style>
 </helmet>
 
 <div dir="rtl" style="background:#4F6BA5;padding:clamp(40px,8vw,88px) clamp(18px,5vw,48px) clamp(64px,10vw,120px);font-family:Assistant,system-ui,sans-serif">
