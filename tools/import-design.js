@@ -88,18 +88,32 @@ fix('lang="he" dir="rtl"', s => s.replace('<html><head>', '<html lang="he" dir="
 
 // React is fetched from unpkg by the runtime; window.__resources redirects it
 // to our own copies. It also stops the runtime re-fetching the page at boot.
-const HEAD = `<title>Before I Do — קופסת השיחות לזוגות לפני החתונה</title>
-<meta name="description" content="חמישים כרטיסיות עם השאלות שכל זוג מאורס צריך לשאול לפני החתונה. ערב אחד, שיחה אמיתית, בלי שיפוטיות. מאת Liver Production.">
+const SITE = 'https://www.beforeido.co.il';
+const TAGLINE = 'משחק קלפים לתיאום ציפיות לזוגות לקראת החתונה';
+
+// og:image must be absolute — a relative one is not resolved reliably by every
+// scraper, and WhatsApp is one of the strict ones.
+const HEAD = `<title>Before I Do — ${TAGLINE}</title>
+<meta name="description" content="${TAGLINE}. חמישים כרטיסיות עם השאלות שכל זוג מאורס צריך לשאול לפני החתונה — ערב אחד, שיחה אמיתית, בלי שיפוטיות. מאת Liver Production.">
 <meta name="theme-color" content="#4F6BA5">
+<link rel="canonical" href="${SITE}/">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/img/img-1.png">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="he_IL">
 <meta property="og:site_name" content="Before I Do">
-<meta property="og:title" content="Before I Do — קופסת השיחות לזוגות לפני החתונה">
-<meta property="og:description" content="חמישים כרטיסיות עם השאלות שכל זוג מאורס צריך לשאול לפני החתונה. ערב אחד, שיחה אמיתית, בלי שיפוטיות.">
-<meta property="og:image" content="assets/img/img-2.jpg">
+<meta property="og:url" content="${SITE}/">
+<meta property="og:title" content="Before I Do">
+<meta property="og:description" content="${TAGLINE}">
+<meta property="og:image" content="${SITE}/assets/og-card.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Before I Do — ${TAGLINE}">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Before I Do">
+<meta name="twitter:description" content="${TAGLINE}">
+<meta name="twitter:image" content="${SITE}/assets/og-card.png">
 <script>
   window.__resources = {
 ${ext.map(r => `    ${JSON.stringify(r.id)}: ${JSON.stringify(paths[r.uuid])}`).join(',\n')}

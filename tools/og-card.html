@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html dir="rtl"><head><meta charset="utf-8">
+<link rel="stylesheet" href="faces.css">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { width:1200px; height:630px; background:#4F6BA5; overflow:hidden;
+         display:flex; align-items:center; justify-content:center; }
+  .card { width:1200px; height:630px; position:relative;
+          display:flex; flex-direction:column; align-items:center; justify-content:center; gap:34px; }
+  /* Faint deck of cards behind, echoing the site hero. */
+  .deck { position:absolute; inset:0; overflow:hidden; }
+  .deck i { position:absolute; width:210px; height:294px; border-radius:14px;
+            background:#fff; opacity:.07; display:block; }
+  .lockup { display:flex; align-items:center; gap:22px; }
+  .wordmark { font-family:'Caveat',cursive; font-weight:500; font-size:104px; line-height:1; color:#fff; }
+  .heart { width:62px; height:54px; display:block; }
+  .rule { width:64px; height:3px; background:#EF453D; border-radius:2px; }
+  .tagline { font-family:'Heebo',sans-serif; font-weight:500; font-size:40px; line-height:1.45;
+             color:rgba(255,255,255,.95); text-align:center; max-width:24ch; }
+  .by { position:absolute; bottom:44px; font-family:'Caveat',cursive; font-weight:500;
+        font-size:28px; color:rgba(255,255,255,.62); }
+</style></head>
+<body><div class="card">
+  <div class="deck">
+    <i style="left:-70px;  top:96px;  transform:rotate(-9deg)"></i>
+    <i style="left:66px;   top:330px; transform:rotate(6deg)"></i>
+    <i style="right:-64px; top:120px; transform:rotate(8deg)"></i>
+    <i style="right:78px;  top:352px; transform:rotate(-5deg)"></i>
+  </div>
+  <div class="lockup">
+    <svg class="heart" viewBox="0 0 24 21" fill="#EF453D"><path d="M12 20.4C12 20.4 1.2 13.3 1.2 7.1 1.2 3.7 3.9 1 7.1 1 9.2 1 11.1 2.1 12 3.8 12.9 2.1 14.8 1 16.9 1 20.1 1 22.8 3.7 22.8 7.1 22.8 13.3 12 20.4 12 20.4Z"/></svg>
+    <span class="wordmark">Before I Do</span>
+  </div>
+  <div class="rule"></div>
+  <p class="tagline">משחק קלפים לתיאום ציפיות<br>לזוגות לקראת החתונה</p>
+  <span class="by">Liver Production</span>
+</div></body></html>

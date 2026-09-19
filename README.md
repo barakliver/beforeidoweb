@@ -31,8 +31,15 @@ assets/js/react*.js        React 18 — מוגש מהאתר, לא מ-unpkg
 assets/img/                תמונות (PNG/JPG)
 assets/fonts/              Assistant / Heebo / Caveat (woff2, מוטמעות)
 assets/favicon.svg         אייקון הלב
+assets/og-card.png         תמונת השיתוף (וואטסאפ/פייסבוק), 1200x630
 tools/import-design.js     ממיר ייצוא של Claude Design לאתר הזה
+tools/og-card.html         המקור של תמונת השיתוף
 ```
+
+### עדכון תמונת השיתוף
+
+`tools/og-card.html` הוא המקור. לערוך אותו, ואז לצלם ב-1200x630 ולשמור
+כ-`assets/og-card.png`. הגופנים נטענים מ-`assets/fonts/`.
 
 אין שלב build ואין תלויות. זה HTML סטטי — כל שרת סטטי יגיש אותו.
 
