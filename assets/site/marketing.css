@@ -79,6 +79,19 @@
 }
 .bid-faq details[open] summary::after { content: '−'; }
 .bid-faq summary:hover { color: var(--bid-blue); }
+.bid-faq__cta { padding-bottom: 24px !important; }
+.bid-faq__cta a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  font-weight: 600;
+  color: var(--bid-blue);
+  text-underline-offset: 3px;
+}
+.bid-faq__cta svg { width: 18px; height: 18px; flex: none; }
+.bid-faq__cta a:focus-visible { outline: 2px solid var(--bid-red); outline-offset: 3px; }
+
 .bid-faq p {
   margin: 0;
   padding: 0 0 22px;

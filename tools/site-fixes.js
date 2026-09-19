@@ -73,9 +73,29 @@ const svg = name => {
 // ── the sections we append ──────────────────────────────────────────────────
 const published = () => C.faq.filter(f => f.q && f.a && f.a.trim());
 
+// The WhatsApp chat, written once and reused by every block that offers it.
+function chatLink() {
+  const digits = waDigits(C.contact || {});
+  if (!digits) return '';
+  return `https://wa.me/${digits}?text=`
+    + encodeURIComponent((C.contact || {}).whatsappMessageGeneral || '');
+}
+
+// Prices in an answer are written as {price} and {shipping} rather than typed,
+// so the questions cannot quietly disagree with the product and the shipping
+// panel after someone changes a number in one place.
+function fill(str) {
+  const ship = C.shipping || {};
+  return String(str)
+    .replace(/{price}/g, C.product.price)
+    .replace(/{shipping}/g, ship.cost === 0 ? 'חינם' : (ship.cost != null ? ship.cost + ' ₪' : ''));
+}
+
 function faqHtml() {
   const items = published();
   if (!items.length) return '';
+  const chat = chatLink();
+
   return `
 <section class="bid-section bid-faq" id="faq" aria-labelledby="bid-faq-title">
   <div class="bid-section__inner">
@@ -84,7 +104,9 @@ function faqHtml() {
     <div class="bid-faq__list">
 ${items.map(f => `      <details>
         <summary data-bid-event="faq_open">${esc(f.q)}</summary>
-        <p>${esc(f.a)}</p>
+        <p>${esc(fill(f.a))}</p>${f.whatsapp && chat ? `
+        <p class="bid-faq__cta"><a href="${esc(chat)}" target="_blank" rel="noopener"
+           data-bid-event="faq_whatsapp">${svg('whatsapp')}${esc(f.whatsapp)}</a></p>` : ''}
       </details>`).join('\n')}
     </div>
   </div>
@@ -153,11 +175,7 @@ function shippingHtml() {
 
   // Straight into the chat, not down to the footer: someone who has a question
   // about delivery wants to ask it now, not go looking for where to ask.
-  const digits = waDigits(C.contact || {});
-  const chat = digits
-    ? `https://wa.me/${digits}?text=`
-      + encodeURIComponent((C.contact || {}).whatsappMessageGeneral || '')
-    : '';
+  const chat = chatLink();
   const ask = t.askText && chat
     ? `<p class="bid-ship__ask">${esc(t.askText)} <a href="${esc(chat)}" target="_blank"
          rel="noopener" data-bid-event="shipping_whatsapp">${svg('whatsapp')}${esc(t.askLabel || 'דברו איתנו')}</a></p>`
@@ -332,7 +350,8 @@ function jsonLd(meta, socialImage) {
       mainEntity: items.map(f => ({
         '@type': 'Question',
         name: f.q,
-        acceptedAnswer: { '@type': 'Answer', text: f.a },
+        // fill() here too — Google was being handed the raw {price} token.
+        acceptedAnswer: { '@type': 'Answer', text: fill(f.a) },
       })),
     });
   }
