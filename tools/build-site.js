@@ -244,7 +244,7 @@ const BOARD_CSS = `<style>
 // edge. That is measured, not hardcoded to the banner: any fixed element
 // anchored near the bottom counts, and when it goes away the button drops back
 // down. Nothing here depends on the banner's markup or wording.
-const SHARE_TEXT = `שיחה אחת, לפני כל השאר.\n${TAGLINE}\n${SITE}`;
+const SHARE_TEXT = `ראיתי את זה וחשבתי עלייך\n${SITE}`;
 const SHARE_FLOAT = `<a id="wa-share" href="https://wa.me/?text=${encodeURIComponent(SHARE_TEXT)}"
    target="_blank" rel="noopener" aria-label="שתפו את האתר בוואטסאפ">
   <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.8-.9L3 20.5l1.6-4.9A8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4Z"/></svg>
