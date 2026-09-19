@@ -232,14 +232,75 @@ const BOARD_CSS = `<style>
   }
 </style>`;
 
-// Share button. wa.me with no number opens WhatsApp on the contact picker
-// with the text ready, which is what a share is — the visitor chooses who.
-// Placed under "unless you know another couple getting married", because that
-// line is already the ask.
+// Floating share button. wa.me with no number opens WhatsApp on the contact
+// picker with the text ready — a share, not a message to us, so the visitor
+// chooses who gets it.
+//
+// It lives OUTSIDE <x-dc>, so the runtime never re-renders it and a redesign
+// cannot displace it.
+//
+// The cookie banner is fixed to the bottom of the viewport and would sit under
+// the button, so the button lifts itself above whatever occupies the bottom
+// edge. That is measured, not hardcoded to the banner: any fixed element
+// anchored near the bottom counts, and when it goes away the button drops back
+// down. Nothing here depends on the banner's markup or wording.
 const SHARE_TEXT = `שיחה אחת, לפני כל השאר.\n${TAGLINE}\n${SITE}`;
-const SHARE_BUTTON = `<a href="https://wa.me/?text=${encodeURIComponent(SHARE_TEXT)}" target="_blank" rel="noopener" style="margin:22px 0 0;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 26px;border-radius:999px;background:#25D366;color:#fff;font:600 16px/1 Assistant,sans-serif;text-decoration:none;white-space:nowrap;transition:background 260ms cubic-bezier(.2,.7,.2,1)" style-hover="background:#1FB855">
-<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.8-.9L3 20.5l1.6-4.9A8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4Z"/></svg>
-שתפו בוואטסאפ</a>`;
+const SHARE_FLOAT = `<a id="wa-share" href="https://wa.me/?text=${encodeURIComponent(SHARE_TEXT)}"
+   target="_blank" rel="noopener" aria-label="שתפו את האתר בוואטסאפ">
+  <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.8-.9L3 20.5l1.6-4.9A8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4Z"/></svg>
+  <span>שתפו בוואטסאפ</span>
+</a>
+<style>
+  #wa-share {
+    position: fixed; z-index: 60;
+    inset-inline-start: clamp(14px, 4vw, 26px);
+    bottom: calc(var(--wa-lift, 0px) + clamp(16px, 3vw, 26px));
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    min-height: 48px; padding: 0 22px; border-radius: 999px;
+    background: #25D366; color: #fff; text-decoration: none;
+    font: 600 16px/1 Assistant, sans-serif; white-space: nowrap;
+    box-shadow: 0 6px 20px rgba(31, 44, 74, .28);
+    transition: background 260ms cubic-bezier(.2,.7,.2,1), bottom 260ms cubic-bezier(.2,.7,.2,1);
+  }
+  #wa-share:hover { background: #1FB855; }
+  #wa-share:focus-visible { outline: 3px solid #EF453D; outline-offset: 3px; }
+  @media (max-width: 420px) { #wa-share { padding: 0 18px; font-size: 15px; } }
+  @media (prefers-reduced-motion: reduce) { #wa-share { transition: none; } }
+</style>
+<script>
+(function () {
+  var btn = document.getElementById('wa-share');
+  if (!btn) return;
+  function lift() {
+    var vh = window.innerHeight, clear = 0;
+    var nodes = document.body ? document.body.querySelectorAll('*') : [];
+    for (var i = 0; i < nodes.length; i++) {
+      var el = nodes[i];
+      if (el === btn || btn.contains(el)) continue;
+      var cs = getComputedStyle(el);
+      if (cs.position !== 'fixed' || cs.display === 'none' || cs.visibility === 'hidden') continue;
+      var r = el.getBoundingClientRect();
+      // Anchored to the bottom edge, and actually covering something.
+      if (r.height < 8 || r.width < 40) continue;
+      if (r.bottom < vh - 4 || r.top > vh - 8) continue;
+      clear = Math.max(clear, vh - r.top);
+    }
+    btn.style.setProperty('--wa-lift', clear ? clear + 10 + 'px' : '0px');
+  }
+  var queued = false;
+  function schedule() {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(function () { queued = false; lift(); });
+  }
+  schedule();
+  addEventListener('resize', schedule);
+  addEventListener('scroll', schedule, { passive: true });
+  // The banner is rendered by the page runtime after boot, and removed when
+  // the visitor answers it — both arrive as mutations.
+  new MutationObserver(schedule).observe(document.documentElement, { childList: true, subtree: true });
+})();
+</script>`;
 
 const report = [];
 let built = 0;
@@ -325,9 +386,7 @@ for (const p of PAGES) {
   }
 
   if (p.out === 'index.html') {
-    fix('home: whatsapp share button', x => x.replace(
-      /(<p [^>]*>אחד לזוג\. אלא אם כן אתם מכירים עוד זוג שמתחתן\.<\/p>)/,
-      `$1\n${SHARE_BUTTON}`));
+    fix('home: floating share button', x => x.replace('</body>', SHARE_FLOAT + '\n</body>'));
   }
 
   // Home only: the English authoring notes render on the public page.
