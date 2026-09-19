@@ -1,0 +1,216 @@
+/* Sections appended after the designed page: FAQ, capture, share, consent.
+ *
+ * Same palette and same font as the design, written by hand so a re-export
+ * from the design tool cannot take them with it. Type sizes use clamp() for
+ * the same reason the import script rescales the design's headings: these
+ * sections are read on a phone first.
+ */
+:root {
+  --bid-blue: #4f6ba5;
+  --bid-blue-dark: #3e568a;
+  --bid-red: #ef453d;
+  --bid-ink: #1f2c4a;
+  --bid-light: #eef2fa;
+  --bid-font: 'Assistant', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+/* The runtime pins its host to the viewport height and lets the design
+ * overflow out of it. Left alone, anything appended after it would be painted
+ * on top of the page instead of below it. */
+#dc-root,
+#dc-root > .sc-host { height: auto !important; }
+
+.bid-section {
+  font-family: var(--bid-font);
+  direction: rtl;
+  text-align: right;
+  padding: clamp(56px, 9vw, 104px) clamp(20px, 5vw, 64px);
+}
+.bid-section__inner { max-width: 1120px; margin: 0 auto; }
+
+.bid-section h2 {
+  margin: 0 0 8px;
+  font-weight: 700;
+  font-size: clamp(26px, 4.6vw, 40px);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+.bid-section__lead {
+  margin: 0 0 clamp(28px, 4vw, 44px);
+  font-size: clamp(16px, 2vw, 18px);
+  line-height: 1.6;
+}
+.bid-section__rule {
+  width: 54px; height: 2px; border: 0;
+  margin: 0 0 22px; background: var(--bid-red);
+}
+
+/* ── FAQ ─────────────────────────────────────────────────────────────────── */
+.bid-faq { background: var(--bid-light); color: var(--bid-ink); }
+.bid-faq__list { border-top: 1px solid rgba(31, 44, 74, 0.14); }
+
+.bid-faq details {
+  border-bottom: 1px solid rgba(31, 44, 74, 0.14);
+}
+.bid-faq summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 44px;
+  padding: 18px 0;
+  cursor: pointer;
+  list-style: none;
+  font-weight: 600;
+  font-size: clamp(17px, 2.2vw, 20px);
+  line-height: 1.4;
+}
+.bid-faq summary::-webkit-details-marker { display: none; }
+.bid-faq summary::after {
+  content: '+';
+  flex: none;
+  width: 28px;
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1;
+  text-align: center;
+  color: var(--bid-blue);
+  transition: transform 180ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.bid-faq details[open] summary::after { content: '−'; }
+.bid-faq summary:hover { color: var(--bid-blue); }
+.bid-faq p {
+  margin: 0;
+  padding: 0 0 22px;
+  max-width: 68ch;
+  font-size: clamp(16px, 2vw, 17px);
+  line-height: 1.7;
+  color: rgba(31, 44, 74, 0.82);
+}
+
+/* ── closing band: reminder capture + share ──────────────────────────────── */
+.bid-closing { background: var(--bid-blue); color: #fff; }
+.bid-closing__grid {
+  display: grid;
+  gap: clamp(40px, 6vw, 72px);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 860px) {
+  .bid-closing__grid { grid-template-columns: 1fr 1fr; }
+}
+.bid-closing__grid--single { grid-template-columns: 1fr !important; }
+.bid-closing p { color: rgba(255, 255, 255, 0.86); }
+
+.bid-form { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 14px; }
+.bid-form input[type='email'] {
+  flex: 1 1 220px;
+  min-width: 0;
+  height: 44px;
+  padding: 0 14px;
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font: 400 16px/1 var(--bid-font);
+}
+.bid-form input::placeholder { color: rgba(255, 255, 255, 0.6); }
+.bid-form input:focus-visible,
+.bid-btn:focus-visible,
+.bid-faq summary:focus-visible {
+  outline: 2px solid var(--bid-red);
+  outline-offset: 3px;
+}
+.bid-form__consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.74);
+}
+.bid-form__consent input { margin: 2px 0 0; width: 17px; height: 17px; flex: none; accent-color: #fff; }
+.bid-status { margin: 10px 0 0; font-size: 16px; font-weight: 600; }
+.bid-visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0; border: 0;
+  clip: rect(0 0 0 0); clip-path: inset(50%);
+  overflow: hidden; white-space: nowrap;
+}
+
+.bid-btn {
+  height: 44px;
+  padding: 0 26px;
+  border: 1.5px solid #fff;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--bid-blue);
+  font: 600 16px/1 var(--bid-font);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.bid-btn:hover { background: rgba(255, 255, 255, 0.86); }
+.bid-btn[disabled] { opacity: 0.6; cursor: default; }
+.bid-btn--ghost { background: transparent; color: #fff; }
+.bid-closing .bid-btn--ghost:hover { background: rgba(255, 255, 255, 0.14); }
+
+.bid-share { display: flex; flex-wrap: wrap; gap: 10px; }
+.bid-share .bid-btn { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
+.bid-share svg { width: 18px; height: 18px; flex: none; }
+
+/* ── consent banner ──────────────────────────────────────────────────────── */
+.bid-consent {
+  position: fixed;
+  inset: auto 16px 16px;
+  z-index: 9999;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px 18px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 12px 34px rgba(31, 44, 74, 0.26);
+  font-family: var(--bid-font);
+  direction: rtl;
+  text-align: right;
+}
+.bid-consent__text {
+  flex: 1 1 260px;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--bid-ink);
+}
+.bid-consent__text a { color: var(--bid-blue); }
+.bid-consent__actions { display: flex; gap: 8px; }
+.bid-consent .bid-btn {
+  border-color: var(--bid-blue);
+  background: var(--bid-blue);
+  color: #fff;
+  padding: 0 20px;
+}
+.bid-consent .bid-btn:hover { background: var(--bid-blue-dark); }
+.bid-consent .bid-btn--ghost { background: transparent; color: var(--bid-blue); }
+.bid-consent .bid-btn--ghost:hover { background: rgba(79, 107, 165, 0.09); }
+
+/* ── no-JS fallback ──────────────────────────────────────────────────────── */
+.bid-noscript {
+  background: var(--bid-blue);
+  color: #fff;
+  padding: 40px 20px;
+  font-family: var(--bid-font);
+  direction: rtl;
+  text-align: center;
+}
+.bid-noscript h1 { font-size: 26px; margin: 0 0 10px; }
+.bid-noscript p { margin: 0 auto; max-width: 60ch; line-height: 1.6; }
+
+@media (prefers-reduced-motion: reduce) {
+  .bid-faq summary::after,
+  .bid-btn { transition: none; }
+}

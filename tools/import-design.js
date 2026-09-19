@@ -15,6 +15,7 @@
 const fs = require('fs');
 const path = require('path');
 const zlib = require('zlib');
+const siteFixes = require('./site-fixes');
 
 const ROOT = path.resolve(__dirname, '..');
 const SRC = process.argv[2];
@@ -132,13 +133,25 @@ html = html.replace(/font:(\d+) (\d+)px\/([\d.]+) ([^;"]+);/g, (m, weight, px, l
 });
 report.push([scaled ? 'ok' : 'SKIPPED', `responsive headings (${scaled} rules ≥ ${BIG_PX}px)`]);
 
-fs.writeFileSync(path.join(ROOT, 'index.html'), html);
+// Search, measurement, FAQ, capture and sharing — everything the design tool
+// has no concept of. Kept in its own module so it can also be re-run on its
+// own after a content edit: node tools/site-fixes.js
+(async () => {
+  const site = await siteFixes.apply(html, { root: ROOT });
+  report.push(...site.report);
 
-console.log('index.html written\n');
-for (const [status, name] of report) console.log(`  ${status.padEnd(8)} ${name}`);
+  fs.writeFileSync(path.join(ROOT, 'index.html'), site.html);
 
-const skipped = report.filter(r => r[0] === 'SKIPPED');
-if (skipped.length) {
-  console.log(`\n${skipped.length} fix(es) did not match — the design changed there. Check the page before deploying.`);
-}
-console.log('\nnext: python3 -m http.server 8099   then open http://127.0.0.1:8099');
+  console.log('index.html written\n');
+  for (const [status, name] of report) console.log(`  ${status.padEnd(8)} ${name}`);
+
+  const skipped = report.filter(r => r[0] === 'SKIPPED');
+  if (skipped.length) {
+    console.log(`\n${skipped.length} fix(es) did not match — the design changed there. Check the page before deploying.`);
+  }
+  if (site.missing.length) {
+    console.log(`\n${site.missing.length} FAQ answer(s) still empty in tools/site-content.js — not published:`);
+    for (const f of site.missing) console.log('  · ' + f.q);
+  }
+  console.log('\nnext: python3 -m http.server 8099   then open http://127.0.0.1:8099');
+})();
