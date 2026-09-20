@@ -355,6 +355,155 @@ const POLISH_CSS = `<style>
   }
 </style>`;
 
+// ── The long-form sales page ──────────────────────────────────────────────
+// Everything below is built from facts the project already states: 60 cards,
+// 6 categories, a hard box, about an hour, the first month after the
+// engagement, 129₪ (was 169₪), 39₪ delivery in 1–5 business days, free pickup
+// in Hod Hasharon and Givat Shmuel by phone, 14 days to cancel while sealed,
+// and the four sample questions printed on the cards themselves.
+//
+// Nothing is invented. No reviews, ratings, testimonials or numbers that were
+// not given — the design spec's voice section rules those out, and they would
+// be false. The six category names are not written down anywhere in the
+// project, so there is no section naming them.
+const SEC = {
+  wrap: (bg, inner, extra) =>
+    `<section dir="rtl" style="background:${bg};${extra || ''}">
+       <div style="max-width:1180px;margin:0 auto;padding:clamp(64px,10vw,120px) clamp(20px,5vw,32px)">${inner}</div>
+     </section>`,
+  // One coral mark per section, as the spec's accent budget allows.
+  rule: (color) => `<div style="width:34px;height:1.5px;background:${color || '#EF453D'};margin:28px auto 0"></div>`,
+  h2: (text, color, align) =>
+    `<h2 style="margin:0;font:700 clamp(28px,4.6vw,44px)/1.25 Heebo,sans-serif;color:${color};text-align:${align || 'center'};max-width:22ch;margin-inline:${align === 'right' ? '0' : 'auto'}">${text}</h2>`,
+  p: (text, color, size) =>
+    `<p style="margin:22px auto 0;max-width:46ch;font:300 clamp(17px,2.2vw,${size || 21}px)/1.8 Assistant,sans-serif;color:${color};text-align:center">${text}</p>`,
+};
+
+const STEPS = [
+  ['01', 'פותחים את הקופסה', 'בלי הכנה, בלי לקרוא הוראות. מוציאים את החפיסה ומניחים אותה על השולחן.'],
+  ['02', 'שולפים קלף', 'לא בוחרים. מה שיוצא, יוצא. חלק מהשאלות קלות, חלק פחות.'],
+  ['03', 'מדברים', 'עונים שניכם, בלי למהר. אם נתקעתם על אחת — זו בדיוק השאלה ששווה לדבר עליה.'],
+];
+
+const BOX = [
+  ['60', 'כרטיסיות', 'שאלה אחת בכל אחת'],
+  ['6', 'קטגוריות', 'מחולקות לפי נושא'],
+  ['1', 'קופסה קשיחה', 'נשמרת, לא נקרעת'],
+  ['60', 'דקות', 'זמן משחק ממוצע'],   // no tilde: it flips to the wrong side in RTL
+];
+
+const SAMPLES = [
+  'מוזיקה חיה בחופה או פלייליסט',
+  'דיג׳יי או להקה חיה',
+  'הגשה לשולחן או בופה',
+  'להביא את הכלב או להשאיר אותו בבית',
+];
+
+const FAQ = [
+  ['כמה זמן זה לוקח?', 'כשעה. אפשר גם לעצור באמצע ולהמשיך בערב אחר — הקלפים לא בורחים.'],
+  ['מתי הכי כדאי לשחק?', 'בחודש הראשון אחרי האירוסין, כשההתרגשות בשיאה ועוד לא סגרתם כלום. זה גם השלב שבו התשובות משפיעות הכי הרבה.'],
+  ['איך מקבלים את הקופסה?', 'משלוח עד הבית ב-39 ₪, אספקה תוך 1–5 ימי עסקים. או איסוף עצמי ללא עלות בהוד השרון או בגבעת שמואל, בתיאום טלפוני.'],
+  ['ואם נגלה שאנחנו לא מסכימים?', 'אז גיליתם את זה עכשיו, בסלון, ולא בשיחה עם ספק בעוד חודשיים. זה בדיוק מה שהקלפים אמורים לעשות.'],
+  ['אפשר לבטל?', 'כן. תוך 14 יום, כל עוד הקופסה סגורה. הפרטים המלאים בעמוד המשלוחים והביטולים.'],
+  ['זה מתאים כמתנה?', 'זו אחת הדרכים הנפוצות לקנות את זה. הקופסה מגיעה סגורה ומוכנה למסירה.'],
+];
+
+const buyButton = (label, bg, color, border) =>
+  `<a href="/checkout" style="display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 34px;border-radius:8px;background:${bg};color:${color};border:1.5px solid ${border || bg};font:600 17px/1 Assistant,sans-serif;text-decoration:none;white-space:nowrap">${label}</a>`;
+
+const LONG_SECTIONS = [
+  // ── how it works ───────────────────────────────────────────────────────
+  SEC.wrap('#fff', `
+    ${SEC.h2('שלושה צעדים, בלי הוראות.', '#4F6BA5')}
+    ${SEC.p('אין ניקוד, אין מנצח, ואף אחד לא צריך להתכונן.', '#2F3F63')}
+    ${SEC.rule()}
+    <div style="margin-top:clamp(40px,6vw,64px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:clamp(24px,4vw,40px)">
+      ${STEPS.map(([n, t, b]) => `
+        <div style="text-align:center">
+          <p style="margin:0;font:700 clamp(34px,5vw,46px)/1 Heebo,sans-serif;color:rgba(79,107,165,.3)">${n}</p>
+          <h3 style="margin:14px 0 0;font:700 clamp(19px,2.6vw,23px)/1.3 Heebo,sans-serif;color:#4F6BA5">${t}</h3>
+          <p style="margin:12px auto 0;max-width:30ch;font:300 clamp(16px,2.1vw,18px)/1.8 Assistant,sans-serif;color:#2F3F63">${b}</p>
+        </div>`).join('')}
+    </div>`),
+
+  // ── what is in the box ─────────────────────────────────────────────────
+  SEC.wrap('#DDE7F5', `
+    ${SEC.h2('מה יש בפנים.', '#4F6BA5')}
+    ${SEC.rule()}
+    <div style="margin-top:clamp(40px,6vw,60px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:clamp(18px,3vw,28px)">
+      ${BOX.map(([n, t, s]) => `
+        <div style="background:#fff;border-radius:12px;padding:clamp(24px,4vw,34px) 18px;text-align:center">
+          <p style="margin:0;font:800 clamp(30px,4.4vw,40px)/1 Heebo,sans-serif;color:#4F6BA5">${n}</p>
+          <p style="margin:8px 0 0;font:700 clamp(16px,2.1vw,18px)/1.3 Heebo,sans-serif;color:#4F6BA5">${t}</p>
+          <p style="margin:8px 0 0;font:300 15px/1.6 Assistant,sans-serif;color:#2F3F63">${s}</p>
+        </div>`).join('')}
+    </div>`),
+
+  // ── sample questions ───────────────────────────────────────────────────
+  SEC.wrap('#4F6BA5', `
+    ${SEC.h2('ארבע מתוך שישים.', '#fff')}
+    ${SEC.p('אלה שאלות אמיתיות מהחפיסה. תחשבו רגע מה הייתם עונים — ומה היה עונה מי שיושב מולכם.', 'rgba(255,255,255,.92)')}
+    ${SEC.rule()}
+    <div style="margin-top:clamp(40px,6vw,60px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:clamp(16px,2.6vw,24px)">
+      ${SAMPLES.map((q, i) => `
+        <div style="background:#fff;border-radius:14px;padding:clamp(28px,4vw,38px) 20px;min-height:180px;display:flex;align-items:center;justify-content:center;box-shadow:0 14px 30px rgba(31,44,74,.22);rotate:${[-2, 1.4, -1.2, 2][i]}deg">
+          <p style="margin:0;font:400 clamp(18px,2.4vw,21px)/1.45 Heebo,sans-serif;color:#4F6BA5;text-align:center">${q}</p>
+        </div>`).join('')}
+    </div>`),
+
+  // ── when ───────────────────────────────────────────────────────────────
+  SEC.wrap('#fff', `
+    ${SEC.h2('הזמן הנכון הוא עכשיו, לא אחר כך.', '#4F6BA5')}
+    ${SEC.p('בחודש הראשון אחרי האירוסין עוד לא סגרתם אולם, לא בחרתם תפריט ולא הבטחתם לאף אחד כלום. זה השלב היחיד שבו התשובות שלכם עוד יכולות לשנות משהו.', '#2F3F63')}
+    ${SEC.p('חודש אחרי זה, רוב ההחלטות כבר יתקבלו מול ספקים — ולא ביניכם.', '#2F3F63')}
+    ${SEC.rule()}`),
+
+  // ── faq ────────────────────────────────────────────────────────────────
+  SEC.wrap('#F1F4F9', `
+    ${SEC.h2('שאלות שנשאלנו.', '#4F6BA5')}
+    ${SEC.rule()}
+    <div style="margin-top:clamp(36px,5vw,54px);max-width:760px;margin-inline:auto;display:flex;flex-direction:column;gap:2px">
+      ${FAQ.map(([q, a]) => `
+        <div style="background:#fff;border-radius:10px;padding:clamp(20px,3vw,26px) clamp(18px,3vw,28px)">
+          <h3 style="margin:0;font:700 clamp(17px,2.3vw,20px)/1.4 Heebo,sans-serif;color:#4F6BA5">${q}</h3>
+          <p style="margin:10px 0 0;font:300 clamp(16px,2.1vw,18px)/1.8 Assistant,sans-serif;color:#2F3F63">${a}</p>
+        </div>`).join('')}
+    </div>`),
+].join('\n');
+
+// ── the extra purchase point, just above the footer ───────────────────────
+const PREFOOTER_CTA = `<section dir="rtl" style="background:#4F6BA5">
+  <div style="max-width:1180px;margin:0 auto;padding:clamp(56px,9vw,104px) clamp(20px,5vw,32px);text-align:center">
+    <h2 style="margin:0;font:700 clamp(28px,4.6vw,44px)/1.25 Heebo,sans-serif;color:#fff;max-width:20ch;margin-inline:auto">ערב אחד. שישים שאלות. החתונה שלכם.</h2>
+    <p style="margin:20px auto 0;max-width:42ch;font:300 clamp(17px,2.2vw,20px)/1.8 Assistant,sans-serif;color:rgba(255,255,255,.92)">קופסה קשיחה עם 60 כרטיסיות, בשישה נושאים. משלוח עד הבית או איסוף עצמי ללא עלות.</p>
+    <div style="margin-top:26px;display:flex;align-items:baseline;justify-content:center;gap:12px">
+      <span style="font:800 clamp(34px,5vw,46px)/1 Heebo,sans-serif;color:#fff">129 ₪</span>
+      <span style="font:400 clamp(18px,2.4vw,22px)/1 Heebo,sans-serif;color:rgba(255,255,255,.65);text-decoration:line-through">169 ₪</span>
+    </div>
+    <div style="margin-top:28px;display:flex;justify-content:center">
+      ${buyButton('אני רוצה את המשחק', '#fff', '#4F6BA5')}
+    </div>
+    <p style="margin:18px auto 0;font:300 15px/1.7 Assistant,sans-serif;color:rgba(255,255,255,.8)">אפשר לבטל תוך 14 יום, כל עוד הקופסה סגורה.</p>
+  </div>
+</section>`;
+
+
+// The footer stacks ten 44px rows on a phone, which is most of a screen for
+// three lines of information. Laid out along the width instead, the same
+// content fits in a few rows. The 44px touch target stays — it is the height
+// that shrinks, not the tap area.
+const FOOTER_CSS = `<style>
+  @media (max-width: 720px) {
+    #bid-footer > div { gap: 26px !important; text-align: center; }
+    #bid-footer a[href="/"] { justify-content: center; }
+    #bid-footer ul {
+      flex-direction: row !important; flex-wrap: wrap;
+      justify-content: center; gap: 0 22px !important;
+    }
+    #bid-footer h2 { margin-bottom: 4px !important; }
+  }
+</style>`;
+
 const report = [];
 let built = 0;
 
@@ -449,6 +598,12 @@ for (const p of PAGES) {
     fix('header: id', x => x.replace(
       '<div style="max-width:1180px;margin:0 auto;padding:14px clamp(16px,5vw,32px);display:flex;align-items:center;justify-content:space-between;',
       '<div id="bid-header" style="max-width:1180px;margin:0 auto;padding:14px clamp(16px,5vw,32px);display:flex;align-items:center;justify-content:space-between;'));
+
+    // The long-form page, and one more place to buy, before the footer.
+    fix('long page: sections', x => x.replace('<footer', LONG_SECTIONS + '\n' + PREFOOTER_CTA + '\n<footer'));
+    fix('footer: compact on phones', x => x
+      .replace('<footer dir="rtl"', '<footer id="bid-footer" dir="rtl"')
+      .replace('</helmet>', FOOTER_CSS + '\n</helmet>'));
 
     // Only the header's CTA turns red. The other two sit ON the blue, where
     // white-on-blue is the contrast that works and red would not.
