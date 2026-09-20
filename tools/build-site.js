@@ -396,11 +396,50 @@ const SEC = {
      </section>`,
   // One coral mark per section, as the spec's accent budget allows.
   rule: (color) => `<div style="width:34px;height:1.5px;background:${color || '#EF453D'};margin:28px auto 0"></div>`,
+  // The pill label from Barak's sales artifact — it tells the reader which
+  // part of the argument they are standing in.
+  eyebrow: (text, onBlue) =>
+    `<p style="margin:0 0 18px;text-align:center"><span style="display:inline-block;font:600 13px/1 Assistant,sans-serif;letter-spacing:2px;color:${onBlue ? '#fff' : '#4F6BA5'};background:${onBlue ? 'rgba(255,255,255,.14)' : '#E7EDF8'};padding:9px 16px;border-radius:999px">${text}</span></p>`,
+  quote: (text) =>
+    `<p style="margin:clamp(30px,4vw,42px) auto 0;max-width:40ch;border-inline-start:4px solid #EF453D;background:#fff;border-radius:0 14px 14px 0;padding:20px 24px;font:600 clamp(18px,2.4vw,22px)/1.6 Heebo,sans-serif;color:#4F6BA5;text-align:right">${text}</p>`,
   h2: (text, color, align) =>
     `<h2 style="margin:0;font:700 clamp(28px,4.6vw,44px)/1.25 Heebo,sans-serif;color:${color};text-align:${align || 'center'};max-width:22ch;margin-inline:${align === 'right' ? '0' : 'auto'}">${text}</h2>`,
   p: (text, color, size) =>
     `<p style="margin:22px auto 0;max-width:46ch;font:300 clamp(17px,2.2vw,${size || 21}px)/1.8 Assistant,sans-serif;color:${color};text-align:center">${text}</p>`,
 };
+
+// The six categories, the audiences, the outcomes and the objections all come
+// from Barak's own sales artifact — his words, not mine.
+const CATEGORIES = [
+  ['הבסיס', 'אולם או גן אירועים, חתונה קטנה או המונית, חורף או קיץ, תקציב מדויק או חתונה בלי פשרות.'],
+  ['בחופה', 'נדרים אישיים, מי מברך, רק ההורים או כל המשפחה, ואיך זוכרים את מי שחסר.'],
+  ['אחרי החופה ובאפטר', 'חיבוקים בחופה או ישר לרחבה, אוכל של המקום או חיצוני, ועד מתי נשארים.'],
+  ['שאלות פתוחות', 'מה הדבר שהכי מלחיץ אותי ועוד לא סיפרתי לך? איזה רגע הייתי רוצה שכל האורחים יכירו?'],
+  ['חס וחלילה', 'ספק מבריז, יורד גשם באוגוסט — מי מטפל, ואיך מחליטים כשאין זמן לחשוב.'],
+  ['קלפים מיוחדים', 'החלפת תפקידים, וטו, ומה ההורים היו בוחרים — הקלפים שהופכים את הערב למשחק אמיתי.'],
+];
+
+const OUTCOMES = [
+  ['מסיים ויכוחים לפני שהם מתחילים', 'כל נושא שעלול להתפוצץ בעוד חודשיים עולה הערב, בלי לחץ של דדליין וספק שמחכה לתשובה.'],
+  ['הופך רצונות לבריף', 'בסוף הערב יש לכם רשימת החלטות מוסכמות שאפשר להעביר למפיק, לאולם או לצלם, במקום "נראה לנו משהו כזה".'],
+  ['חוסך כסף', 'זוג שיודע מה חשוב לו לא משלם על שדרוגים שהוא לא צריך, ולא משנה הזמנות באמצע הדרך.'],
+  ['מגדיר גבולות מול המשפחה', 'שאלות כמו מי מברך ומי מוזמן נסגרות בין שניכם, לפני שההורים מכריעים במקומכם.'],
+  ['מחזיר את הרגש', 'בין כל הלוגיסטיקה יש קלפים שמזכירים למה בכלל התחלתם את זה.'],
+];
+
+const AUDIENCES = [
+  ['זוגות שהתארסו ממש עכשיו', 'עוד לא סגרתם תאריך ואולם. זה הרגע המושלם, כי כל החלטה עוד פתוחה ואפשר לתכנן לפי מה שבאמת רוצים.'],
+  ['זוגות שכבר בתוך התכנון', 'יש תאריך, יש ספקים, ויש כבר ויכוח אחד או שניים. המשחק מסדר את מה שנשאר פתוח לפני שזה מתפוצץ.'],
+  ['מי שמחפש מתנת אירוסין', 'הורים, אחים וחברים: זו מתנה שנותנת לזוג ערב משלהם, במקום עוד פריט לרשימת המתנות.'],
+  ['אנשי מקצוע בתחום', 'מפיקים, אולמות וצלמים: המשחק הוא מתנת פתיחה שמגיעה אליכם עם בריף מוכן מהלקוח.'],
+];
+
+const OBJECTIONS = [
+  ['"אנחנו כבר דיברנו על הכול"', 'דיברתם על מקום, תאריך ותקציב. הנה שלוש שאלות שרוב הזוגות לא נגעו בהן: מי מברך מתחת לחופה, האם מזמינים את כל העבודה, ומה קורה אם ספק מבריז שבוע לפני. אם יש לכם תשובה מוסכמת לשלושתן, אתם באמת מסודרים.'],
+  ['"אין לנו זמן לשחק משחקים"', 'שעה עכשיו חוסכת סדרה של שיחות טלפון, התלבטויות ושינויים בהמשך. זה לא זמן שיוצא מהתכנון, זה החלק הראשון שלו.'],
+  ['"זה עוד גימיק לחתונות"', 'גימיק נזרק אחרי הערב. כאן התוצר הוא רשימת החלטות שתלווה אתכם בכל פגישה עם ספק, ואת הקלפים אפשר להעביר הלאה לזוג הבא שמתארס.'],
+  ['"אנחנו זוג רגוע, אין לנו ויכוחים"', 'מצוין, אז זה יהיה ערב כיפי. ובכל זאת, רוב הוויכוחים בתכנון לא מתחילים מכעס אלא מהנחה שהשני חושב בדיוק כמוכם.'],
+];
 
 const STEPS = [
   ['01', 'פותחים את הקופסה', 'בלי הכנה, בלי לקרוא הוראות. מוציאים את החפיסה ומניחים אותה על השולחן.'],
@@ -435,17 +474,56 @@ const buyButton = (label, bg, color, border) =>
   `<a href="/checkout" style="display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 34px;border-radius:8px;background:${bg};color:${color};border:1.5px solid ${border || bg};font:600 17px/1 Assistant,sans-serif;text-decoration:none;white-space:nowrap">${label}</a>`;
 
 const LONG_SECTIONS = [
-  // ── how it works ───────────────────────────────────────────────────────
+  // ── the problem, before anything is offered ────────────────────────────
+  SEC.wrap('#DDE7F5', `
+    ${SEC.eyebrow('הבעיה')}
+    ${SEC.h2('רוב הזוגות לא רבים על החתונה. הם פשוט אף פעם לא דיברו עליה.', '#4F6BA5')}
+    ${SEC.p('אתם מגיעים לפגישה ראשונה עם אולם, והשאלה הראשונה היא "כמה אורחים?". אתם עונים שני מספרים שונים. אחר כך מגיעה שאלת התקציב, ואז מי מוזמן מהעבודה, ואז מי בכלל מחליט.', '#2F3F63')}
+    ${SEC.p('מכאן זה מתגלגל: כל החלטה הופכת למשא ומתן, ההורים נכנסים לתמונה, והזוג מגלה שהוא מתכנן חתונה שלמה בלי שאף פעם ישב לדבר על מה הוא באמת רוצה ממנה.', '#2F3F63')}
+    ${SEC.quote('התכנון לא נכשל בגלל ספקים. הוא נכשל בגלל שיחה שלא קרתה בזמן.')}`),
+
+  // ── the six categories ─────────────────────────────────────────────────
   SEC.wrap('#fff', `
-    ${SEC.h2('שלושה צעדים, בלי הוראות.', '#4F6BA5')}
-    ${SEC.p('אין ניקוד, אין מנצח, ואף אחד לא צריך להתכונן.', '#2F3F63')}
+    ${SEC.eyebrow('מה יש בחפיסה')}
+    ${SEC.h2('שישה נושאים. אף אחד מהם לא נעים לגלות מול ספק.', '#4F6BA5')}
+    ${SEC.rule()}
+    <div style="margin-top:clamp(40px,6vw,60px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:clamp(18px,3vw,26px)">
+      ${CATEGORIES.map(([t, d], i) => `
+        <div style="background:#F1F4F9;border-radius:14px;padding:clamp(24px,4vw,32px)">
+          <p style="margin:0;font:700 13px/1 Assistant,sans-serif;letter-spacing:2px;color:rgba(79,107,165,.55)">0${i + 1}</p>
+          <h3 style="margin:12px 0 0;font:700 clamp(20px,2.8vw,25px)/1.3 Heebo,sans-serif;color:#4F6BA5">${t}</h3>
+          <p style="margin:12px 0 0;font:300 clamp(16px,2.1vw,18px)/1.75 Assistant,sans-serif;color:#2F3F63">${d}</p>
+        </div>`).join('')}
+    </div>`),
+
+  // ── how it works ───────────────────────────────────────────────────────
+  SEC.wrap('#4F6BA5', `
+    ${SEC.eyebrow('איך משחקים', true)}
+    ${SEC.h2('ערב אחד. בלי הכנות.', '#fff')}
+    ${SEC.p('אין ניקוד, אין מנצח, ואף אחד לא צריך להתכונן.', 'rgba(255,255,255,.92)')}
     ${SEC.rule()}
     <div style="margin-top:clamp(40px,6vw,64px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:clamp(24px,4vw,40px)">
       ${STEPS.map(([n, t, b]) => `
         <div style="text-align:center">
-          <p style="margin:0;font:700 clamp(34px,5vw,46px)/1 Heebo,sans-serif;color:rgba(79,107,165,.3)">${n}</p>
-          <h3 style="margin:14px 0 0;font:700 clamp(19px,2.6vw,23px)/1.3 Heebo,sans-serif;color:#4F6BA5">${t}</h3>
-          <p style="margin:12px auto 0;max-width:30ch;font:300 clamp(16px,2.1vw,18px)/1.8 Assistant,sans-serif;color:#2F3F63">${b}</p>
+          <p style="margin:0;font:700 clamp(34px,5vw,46px)/1 Heebo,sans-serif;color:rgba(255,255,255,.35)">${n}</p>
+          <h3 style="margin:14px 0 0;font:700 clamp(19px,2.6vw,23px)/1.3 Heebo,sans-serif;color:#fff">${t}</h3>
+          <p style="margin:12px auto 0;max-width:30ch;font:300 clamp(16px,2.1vw,18px)/1.8 Assistant,sans-serif;color:rgba(255,255,255,.9)">${b}</p>
+        </div>`).join('')}
+    </div>`),
+
+  // ── what it actually does ──────────────────────────────────────────────
+  SEC.wrap('#fff', `
+    ${SEC.eyebrow('מה זה עושה בפועל')}
+    ${SEC.h2('זה לא עוד משחק זוגי. זה כלי עבודה לתכנון.', '#4F6BA5')}
+    ${SEC.rule()}
+    <div style="margin-top:clamp(36px,5vw,54px);max-width:780px;margin-inline:auto;display:flex;flex-direction:column;gap:clamp(18px,3vw,26px)">
+      ${OUTCOMES.map(([t, d]) => `
+        <div style="display:flex;gap:16px;align-items:flex-start;text-align:right">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#EF453D" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:5px"><path d="M4 12.5l5.2 5.2L20 7"/></svg>
+          <div>
+            <h3 style="margin:0;font:700 clamp(18px,2.4vw,21px)/1.35 Heebo,sans-serif;color:#4F6BA5">${t}</h3>
+            <p style="margin:7px 0 0;font:300 clamp(16px,2.1vw,18px)/1.75 Assistant,sans-serif;color:#2F3F63">${d}</p>
+          </div>
         </div>`).join('')}
     </div>`),
 
@@ -454,16 +532,17 @@ const LONG_SECTIONS = [
     ${SEC.h2('מה יש בפנים.', '#4F6BA5')}
     ${SEC.rule()}
     <div style="margin-top:clamp(40px,6vw,60px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:clamp(18px,3vw,28px)">
-      ${BOX.map(([n, t, s]) => `
+      ${BOX.map(([n, t, s2]) => `
         <div style="background:#fff;border-radius:12px;padding:clamp(24px,4vw,34px) 18px;text-align:center">
           <p style="margin:0;font:800 clamp(30px,4.4vw,40px)/1 Heebo,sans-serif;color:#4F6BA5">${n}</p>
           <p style="margin:8px 0 0;font:700 clamp(16px,2.1vw,18px)/1.3 Heebo,sans-serif;color:#4F6BA5">${t}</p>
-          <p style="margin:8px 0 0;font:300 15px/1.6 Assistant,sans-serif;color:#2F3F63">${s}</p>
+          <p style="margin:8px 0 0;font:300 15px/1.6 Assistant,sans-serif;color:#2F3F63">${s2}</p>
         </div>`).join('')}
     </div>`),
 
   // ── sample questions ───────────────────────────────────────────────────
   SEC.wrap('#4F6BA5', `
+    ${SEC.eyebrow('טעימה', true)}
     ${SEC.h2(`ארבע מתוך ${OFFER.cards}.`, '#fff')}
     ${SEC.p('אלה שאלות אמיתיות מהחפיסה. תחשבו רגע מה הייתם עונים — ומה היה עונה מי שיושב מולכם.', 'rgba(255,255,255,.92)')}
     ${SEC.rule()}
@@ -474,12 +553,39 @@ const LONG_SECTIONS = [
         </div>`).join('')}
     </div>`),
 
-  // ── when ───────────────────────────────────────────────────────────────
+  // ── who it is for ──────────────────────────────────────────────────────
   SEC.wrap('#fff', `
+    ${SEC.eyebrow('למי זה מתאים')}
+    ${SEC.h2('אם אתם באחד המצבים האלה, המשחק הזה נכתב בשבילכם.', '#4F6BA5')}
+    ${SEC.rule()}
+    <div style="margin-top:clamp(40px,6vw,60px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(270px,100%),1fr));gap:clamp(18px,3vw,26px)">
+      ${AUDIENCES.map(([t, d]) => `
+        <div style="border:1.5px solid rgba(79,107,165,.25);border-radius:14px;padding:clamp(24px,4vw,32px)">
+          <h3 style="margin:0;font:700 clamp(18px,2.4vw,21px)/1.35 Heebo,sans-serif;color:#4F6BA5">${t}</h3>
+          <p style="margin:12px 0 0;font:300 clamp(16px,2.1vw,18px)/1.75 Assistant,sans-serif;color:#2F3F63">${d}</p>
+        </div>`).join('')}
+    </div>`),
+
+  // ── when ───────────────────────────────────────────────────────────────
+  SEC.wrap('#F1F4F9', `
+    ${SEC.eyebrow('מתי')}
     ${SEC.h2('הזמן הנכון הוא עכשיו, לא אחר כך.', '#4F6BA5')}
     ${SEC.p('בחודש הראשון אחרי האירוסין עוד לא סגרתם אולם, לא בחרתם תפריט ולא הבטחתם לאף אחד כלום. זה השלב היחיד שבו התשובות שלכם עוד יכולות לשנות משהו.', '#2F3F63')}
     ${SEC.p('חודש אחרי זה, רוב ההחלטות כבר יתקבלו מול ספקים — ולא ביניכם.', '#2F3F63')}
     ${SEC.rule()}`),
+
+  // ── objections ─────────────────────────────────────────────────────────
+  SEC.wrap('#fff', `
+    ${SEC.eyebrow('התנגדויות, בכנות')}
+    ${SEC.h2('מה שאתם חושבים עכשיו, ולמה זה בכל זאת שווה.', '#4F6BA5')}
+    ${SEC.rule()}
+    <div style="margin-top:clamp(36px,5vw,54px);max-width:780px;margin-inline:auto;display:flex;flex-direction:column;gap:clamp(20px,3vw,28px)">
+      ${OBJECTIONS.map(([q, a]) => `
+        <div style="border-inline-start:3px solid rgba(79,107,165,.3);padding-inline-start:clamp(18px,3vw,24px);text-align:right">
+          <h3 style="margin:0;font:700 clamp(18px,2.4vw,21px)/1.4 Heebo,sans-serif;color:#4F6BA5">${q}</h3>
+          <p style="margin:10px 0 0;font:300 clamp(16px,2.1vw,18px)/1.8 Assistant,sans-serif;color:#2F3F63">${a}</p>
+        </div>`).join('')}
+    </div>`),
 
   // ── faq ────────────────────────────────────────────────────────────────
   SEC.wrap('#F1F4F9', `
@@ -492,6 +598,14 @@ const LONG_SECTIONS = [
           <p>${a}</p>
         </details>`).join('')}
     </div>`),
+
+  // ── the close ──────────────────────────────────────────────────────────
+  SEC.wrap('#DDE7F5', `
+    ${SEC.eyebrow('ניצוח')}
+    ${SEC.h2('החתונה שלכם תיראה כמו ההחלטות שתקבלו בחודש הקרוב.', '#4F6BA5')}
+    ${SEC.p('אפשר לקבל אותן תוך כדי תנועה: בין פגישה לפגישה, מול הצעת מחיר שפג תוקפה מחר, כשההורים על הקו והספק מחכה לתשובה. ככה מגיעים לחתונה יפה שהיא לא בדיוק שלכם.', '#2F3F63')}
+    ${SEC.p('ואפשר לקבל אותן בערב אחד, על הספה, כששניכם רגועים ואף אחד לא מחכה על הקו. אותן החלטות בדיוק, רק שהפעם אתם אלה שבוחרים, ולא לוח הזמנים.', '#2F3F63')}
+    ${SEC.quote('שעה אחת שקובעת איך ייראה כל שאר התהליך. ומי שעובר אותה מגיע לחופה ביחד, לא רק באותו יום.')}`),
 ].join('\n');
 
 // ── the extra purchase point, just above the footer ───────────────────────
