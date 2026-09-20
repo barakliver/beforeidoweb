@@ -302,6 +302,24 @@ const SHARE_FLOAT = `<a id="wa-share" href="https://wa.me/?text=${encodeURICompo
 })();
 </script>`;
 
+// The flip cards render in Chrome and collapse to nothing in Safari.
+//
+// Their wrapper holds only absolutely positioned images, so it has no content
+// height; the height is meant to come from aspect-ratio: 250/370. But the grid
+// sets align-items: stretch, which makes the item take the ROW's height, and
+// the row — sized from content that is all out of flow — is zero. Chrome
+// resolves the row from the aspect ratio anyway. Safari takes the stretch at
+// its word and gives the card a height of 0, which is the empty white band
+// Barak sees under "נסו אותי".
+//
+// align-self: start opts the card out of stretching, so its own aspect ratio
+// decides its height and the row grows to fit. Applied to the card rather than
+// to the grid, so it holds if the grid markup moves.
+const CARD_HEIGHT_CSS = `<style>
+  [style*="aspect-ratio:250/370"],
+  [style*="aspect-ratio: 250 / 370"] { align-self: start; }
+</style>`;
+
 const report = [];
 let built = 0;
 
@@ -388,6 +406,10 @@ for (const p of PAGES) {
   // Everywhere except the purchase flow — a share button beside a payment
   // form is a way out of it. The internal boards do not get one either; they
   // are working documents, not something a visitor shares.
+  if (p.out === 'index.html') {
+    fix('cards: height in Safari', x => x.replace('</helmet>', CARD_HEIGHT_CSS + '\n</helmet>'));
+  }
+
   if (p.out !== 'checkout.html' && !p.board) {
     fix('floating share button', x => x.replace('</body>', SHARE_FLOAT + '\n</body>'));
   }
