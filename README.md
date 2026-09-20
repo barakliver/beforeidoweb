@@ -51,6 +51,7 @@ Vercel פורסת אוטומטית אחרי ה-push.
 | `ORDER_EMAIL_FROM` | שולח מאומת | onboarding@resend.dev |
 | `GREENAPI_ID` | וואטסאפ דרך green-api.com — מזהה המופע | בלעדיו אין וואטסאפ |
 | `GREENAPI_TOKEN` | הטוקן של אותו מופע | בלעדיו אין וואטסאפ |
+| `GREENAPI_URL` | ה-apiUrl של המופע, כפי שמופיע בקונסולה | https://api.green-api.com |
 | `WHATSAPP_WEBHOOK` | חלופה: כתובת משלך שמקבלת `{phone, message}` | — |
 | `WHATSAPP_TO` | מספר היעד, בפורמט בינלאומי | 972526604320 |
 

@@ -15,6 +15,9 @@
 //   ORDER_EMAIL_FROM   verified sender      default onboarding@resend.dev
 //   GREENAPI_ID        WhatsApp via green-api.com: instance id
 //   GREENAPI_TOKEN     …and its API token
+//   GREENAPI_URL       …and its apiUrl, which is per-instance (the console
+//                      shows e.g. https://7107.api.greenapi.com). Defaults to
+//                      the shared host, which does not serve every instance.
 //   WHATSAPP_WEBHOOK   or any URL of your own taking {phone, message}
 //   WHATSAPP_TO        who to notify, international format, default 972526604320
 
@@ -75,7 +78,8 @@ async function sendWhatsApp(o, rows) {
   const { GREENAPI_ID, GREENAPI_TOKEN, WHATSAPP_WEBHOOK } = process.env;
 
   if (GREENAPI_ID && GREENAPI_TOKEN) {
-    const url = `https://api.green-api.com/waInstance${GREENAPI_ID}/sendMessage/${GREENAPI_TOKEN}`;
+    const base = (process.env.GREENAPI_URL || 'https://api.green-api.com').replace(/\/+$/, '');
+    const url = `${base}/waInstance${GREENAPI_ID}/sendMessage/${GREENAPI_TOKEN}`;
     const r = await fetch(url, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
