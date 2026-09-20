@@ -20,10 +20,15 @@
 //                      the shared host, which does not serve every instance.
 //   WHATSAPP_WEBHOOK   or any URL of your own taking {phone, message}
 //   WHATSAPP_TO        who to notify, international format, default 972526604320
+//   WHATSAPP_CHAT_ID   …or a chat id verbatim, which overrides WHATSAPP_TO.
+//                      Use a group (…@g.us) to avoid WhatsApp's "message
+//                      yourself" chat, which arrives without a notification.
 
 const EMAIL_TO = process.env.ORDER_EMAIL_TO || 'barakliver@gmail.com';
 const EMAIL_FROM = process.env.ORDER_EMAIL_FROM || 'Before I Do <onboarding@resend.dev>';
 const WA_TO = process.env.WHATSAPP_TO || '972526604320';
+// A number needs the @c.us suffix; a group id already carries @g.us.
+const WA_CHAT = process.env.WHATSAPP_CHAT_ID || `${WA_TO}@c.us`;
 
 const esc = v => String(v == null ? '' : v)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -83,7 +88,7 @@ async function sendWhatsApp(o, rows) {
     const r = await fetch(url, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ chatId: `${WA_TO}@c.us`, message }),
+      body: JSON.stringify({ chatId: WA_CHAT, message }),
     });
     // Green API answers 200 with an error body when the instance is not
     // authorized, so the body decides, not the status.

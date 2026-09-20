@@ -54,6 +54,7 @@ Vercel פורסת אוטומטית אחרי ה-push.
 | `GREENAPI_URL` | ה-apiUrl של המופע, כפי שמופיע בקונסולה | https://api.green-api.com |
 | `WHATSAPP_WEBHOOK` | חלופה: כתובת משלך שמקבלת `{phone, message}` | — |
 | `WHATSAPP_TO` | מספר היעד, בפורמט בינלאומי | 972526604320 |
+| `WHATSAPP_CHAT_ID` | או מזהה צ'אט מלא, גובר על `WHATSAPP_TO`. קבוצה (`…@g.us`) נותנת התראה רגילה, בניגוד לצ'אט "הודעה לעצמי" | — |
 
 ### חיבור וואטסאפ דרך Green API
 
