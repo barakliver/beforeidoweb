@@ -404,7 +404,7 @@ const FAQ = [
   ['מתי הכי כדאי לשחק?', 'בחודש הראשון אחרי האירוסין, כשההתרגשות בשיאה ועוד לא סגרתם כלום. זה גם השלב שבו התשובות משפיעות הכי הרבה.'],
   ['איך מקבלים את הקופסה?', 'משלוח עד הבית ב-39 ₪, אספקה תוך 1–5 ימי עסקים. או איסוף עצמי ללא עלות בהוד השרון או בגבעת שמואל, בתיאום טלפוני.'],
   ['ואם נגלה שאנחנו לא מסכימים?', 'אז גיליתם את זה עכשיו, בסלון, ולא בשיחה עם ספק בעוד חודשיים. זה בדיוק מה שהקלפים אמורים לעשות.'],
-  ['אפשר לבטל?', 'כן. תוך 14 יום, כל עוד הקופסה סגורה. הפרטים המלאים בעמוד המשלוחים והביטולים.'],
+  ['אפשר לבטל?', 'כן. אפשר לבטל תוך 14 יום ולהחזיר, כל עוד המוצר באריזה המקורית. הפרטים המלאים בעמוד המשלוחים והביטולים.'],
   ['זה מתאים כמתנה?', 'זו אחת הדרכים הנפוצות לקנות את זה. הקופסה מגיעה סגורה ומוכנה למסירה.'],
 ];
 
@@ -464,10 +464,10 @@ const LONG_SECTIONS = [
     ${SEC.rule()}
     <div style="margin-top:clamp(36px,5vw,54px);max-width:760px;margin-inline:auto;display:flex;flex-direction:column;gap:2px">
       ${FAQ.map(([q, a]) => `
-        <div style="background:#fff;border-radius:10px;padding:clamp(20px,3vw,26px) clamp(18px,3vw,28px)">
-          <h3 style="margin:0;font:700 clamp(17px,2.3vw,20px)/1.4 Heebo,sans-serif;color:#4F6BA5">${q}</h3>
-          <p style="margin:10px 0 0;font:300 clamp(16px,2.1vw,18px)/1.8 Assistant,sans-serif;color:#2F3F63">${a}</p>
-        </div>`).join('')}
+        <details class="bid-faq" style="background:#fff;border-radius:10px">
+          <summary><span>${q}</span><i aria-hidden="true"></i></summary>
+          <p>${a}</p>
+        </details>`).join('')}
     </div>`),
 ].join('\n');
 
@@ -483,7 +483,7 @@ const PREFOOTER_CTA = `<section dir="rtl" style="background:#4F6BA5">
     <div style="margin-top:28px;display:flex;justify-content:center">
       ${buyButton('אני רוצה את המשחק', '#fff', '#4F6BA5')}
     </div>
-    <p style="margin:18px auto 0;font:300 15px/1.7 Assistant,sans-serif;color:rgba(255,255,255,.8)">אפשר לבטל תוך 14 יום, כל עוד הקופסה סגורה.</p>
+    <p style="margin:18px auto 0;font:300 15px/1.7 Assistant,sans-serif;color:rgba(255,255,255,.8)">אפשר לבטל תוך 14 יום ולהחזיר, כל עוד המוצר באריזה המקורית.</p>
   </div>
 </section>`;
 
@@ -492,6 +492,36 @@ const PREFOOTER_CTA = `<section dir="rtl" style="background:#4F6BA5">
 // three lines of information. Laid out along the width instead, the same
 // content fits in a few rows. The 44px touch target stays — it is the height
 // that shrinks, not the tap area.
+const FAQ_CSS = `<style>
+  .bid-faq > summary {
+    list-style: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    min-height: 44px; padding: clamp(18px,3vw,24px) clamp(18px,3vw,28px);
+    font: 700 clamp(17px,2.3vw,20px)/1.4 Heebo, sans-serif; color: #4F6BA5;
+  }
+  .bid-faq > summary::-webkit-details-marker { display: none; }
+  .bid-faq > summary::marker { content: ""; }
+  .bid-faq > summary:focus-visible { outline: 3px solid #EF453D; outline-offset: 3px; border-radius: 10px; }
+  /* A plus that becomes a minus — the only coral in the section. */
+  .bid-faq > summary > i {
+    position: relative; flex: none; width: 18px; height: 18px;
+    transition: rotate 260ms cubic-bezier(.2,.7,.2,1);
+  }
+  .bid-faq > summary > i::before, .bid-faq > summary > i::after {
+    content: ""; position: absolute; inset: 0; margin: auto;
+    background: #EF453D; border-radius: 2px;
+  }
+  .bid-faq > summary > i::before { width: 18px; height: 2px; }
+  .bid-faq > summary > i::after  { width: 2px; height: 18px; transition: opacity 200ms; }
+  .bid-faq[open] > summary > i { rotate: 180deg; }
+  .bid-faq[open] > summary > i::after { opacity: 0; }
+  .bid-faq > p {
+    margin: 0; padding: 0 clamp(18px,3vw,28px) clamp(20px,3vw,26px);
+    font: 300 clamp(16px,2.1vw,18px)/1.8 Assistant, sans-serif; color: #2F3F63;
+  }
+  @media (prefers-reduced-motion: reduce) { .bid-faq > summary > i { transition: none; } }
+</style>`;
+
 const FOOTER_CSS = `<style>
   @media (max-width: 720px) {
     #bid-footer > div { gap: 26px !important; text-align: center; }
@@ -562,6 +592,13 @@ for (const p of PAGES) {
     // place in the project that disagreed, and the customer sees both.
     fix('card count: 50 → 60', x => x.replace('Before I Do — 50 כרטיסיות', 'Before I Do — 60 כרטיסיות'));
 
+    // Barak's stated policy: 14 days, returnable in the original packaging.
+    // One wording everywhere — a cancellation term that reads differently on
+    // two pages of the same shop is a problem, not a nuance.
+    fix('cancellation wording', x => x.replace(
+      'אפשר לבטל תוך 14 יום, כל עוד הקופסה סגורה.',
+      'אפשר לבטל תוך 14 יום ולהחזיר, כל עוד המוצר באריזה המקורית.'));
+
     const self = JSON.stringify(PAY.self);
     const ship = JSON.stringify(PAY.ship || PAY.self);
     fix('checkout: pay link', x => x.replace(
@@ -605,6 +642,7 @@ for (const p of PAGES) {
 
     // The long-form page, and one more place to buy, before the footer.
     fix('long page: sections', x => x.replace('<footer', LONG_SECTIONS + '\n' + PREFOOTER_CTA + '\n<footer'));
+    fix('faq: accordion styles', x => x.replace('</helmet>', FAQ_CSS + '\n</helmet>'));
     fix('footer: compact on phones', x => x
       .replace('<footer dir="rtl"', '<footer id="bid-footer" dir="rtl"')
       .replace('</helmet>', FOOTER_CSS + '\n</helmet>'));
