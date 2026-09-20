@@ -48,6 +48,9 @@ const OFFER = {
   shipDate: '26.10.26',
 };
 
+// The CTA red. Not the brand coral #EF453D: white on that is 3.76:1, under
+// AA for a 15px label. This is 4.83:1 and reads as the same red.
+const RED = '#D63229', RED_DARK = '#BC241C';
 const SITE = 'https://www.beforeido.co.il';
 const TAGLINE = 'משחק קלפים לזוגות מאורסים';
 const BLURB = `${TAGLINE}. חמישים כרטיסיות עם השאלות שכל זוג מאורס צריך לשאול לפני החתונה — ערב אחד, שיחה אמיתית, בלי שיפוטיות. מאת Liver Production.`;
@@ -268,38 +271,50 @@ const BOARD_CSS = `<style>
 // anchored near the bottom counts, and when it goes away the button drops back
 // down. Nothing here depends on the banner's markup or wording.
 const SHARE_TEXT = `ראיתי את זה וחשבתי עליכם\n${SITE}`;
-const SHARE_FLOAT = `<a id="wa-share" href="https://wa.me/?text=${encodeURIComponent(SHARE_TEXT)}"
+const SHARE_FLOAT = `<a id="wa-share" class="bid-float" href="https://wa.me/?text=${encodeURIComponent(SHARE_TEXT)}"
    target="_blank" rel="noopener" aria-label="שתפו את האתר בוואטסאפ">
   <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.8-.9L3 20.5l1.6-4.9A8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4Z"/></svg>
   <span>שתפו בוואטסאפ</span>
 </a>
+<a id="bid-buy" class="bid-float" href="/checkout">
+  <svg width="20" height="18" viewBox="0 0 24 21" fill="#fff" aria-hidden="true"><path d="M12 20.4C12 20.4 1.2 13.3 1.2 7.1 1.2 3.7 3.9 1 7.1 1 9.2 1 11.1 2.1 12 3.8 12.9 2.1 14.8 1 16.9 1 20.1 1 22.8 3.7 22.8 7.1 22.8 13.3 12 20.4 12 20.4Z"/></svg>
+  <span>אני רוצה לשחק!</span>
+</a>
 <style>
-  #wa-share {
+  .bid-float {
     position: fixed; z-index: 60;
-    left: clamp(14px, 4vw, 26px);   /* physically left: inset-inline-start is the RIGHT edge in RTL */
     bottom: calc(var(--wa-lift, 0px) + clamp(16px, 3vw, 26px));
     display: inline-flex; align-items: center; justify-content: center; gap: 10px;
     min-height: 48px; padding: 0 22px; border-radius: 999px;
-    background: #25D366; color: #fff; text-decoration: none;
+    color: #fff; text-decoration: none;
     font: 600 16px/1 Assistant, sans-serif; white-space: nowrap;
     box-shadow: 0 6px 20px rgba(31, 44, 74, .28);
     transition: background 260ms cubic-bezier(.2,.7,.2,1), bottom 260ms cubic-bezier(.2,.7,.2,1);
   }
+  /* left and right, physically: the logical properties resolve the other way in RTL */
+  #wa-share { left: clamp(14px, 4vw, 26px); background: #25D366; }
   #wa-share:hover { background: #1FB855; }
   #wa-share:focus-visible { outline: 3px solid #EF453D; outline-offset: 3px; }
-  @media (max-width: 420px) { #wa-share { padding: 0 18px; font-size: 15px; } }
-  @media (prefers-reduced-motion: reduce) { #wa-share { transition: none; } }
+  #bid-buy { right: clamp(14px, 4vw, 26px); background: ${RED}; }
+  #bid-buy:hover { background: ${RED_DARK}; }
+  #bid-buy:focus-visible { outline: 3px solid #4F6BA5; outline-offset: 3px; }
+  /* Below 400px the pair is wider than the screen, so both shrink. */
+  @media (max-width: 400px) {
+    .bid-float { padding: 0 13px; gap: 7px; font-size: 13.5px; }
+    .bid-float svg { width: 17px; height: 17px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .bid-float { transition: none; } }
 </style>
 <script>
 (function () {
-  var btn = document.getElementById('wa-share');
-  if (!btn) return;
+  var floats = Array.prototype.slice.call(document.querySelectorAll('.bid-float'));
+  if (!floats.length) return;
   function lift() {
     var vh = window.innerHeight, clear = 0;
     var nodes = document.body ? document.body.querySelectorAll('*') : [];
     for (var i = 0; i < nodes.length; i++) {
       var el = nodes[i];
-      if (el === btn || btn.contains(el)) continue;
+      if (floats.some(function (f) { return f === el || f.contains(el); })) continue;
       var cs = getComputedStyle(el);
       if (cs.position !== 'fixed' || cs.display === 'none' || cs.visibility === 'hidden') continue;
       var r = el.getBoundingClientRect();
@@ -308,7 +323,8 @@ const SHARE_FLOAT = `<a id="wa-share" href="https://wa.me/?text=${encodeURICompo
       if (r.bottom < vh - 4 || r.top > vh - 8) continue;
       clear = Math.max(clear, vh - r.top);
     }
-    btn.style.setProperty('--wa-lift', clear ? clear + 10 + 'px' : '0px');
+    var v = clear ? clear + 10 + 'px' : '0px';
+    floats.forEach(function (f) { f.style.setProperty('--wa-lift', v); });
   }
   var queued = false;
   function schedule() {
@@ -354,7 +370,6 @@ const CARD_HEIGHT_CSS = `<style>
 // `.scpN:hover { transform: translateY(-12px) !important }`, and !important
 // outranks an animation, so keyframes on transform would run and change
 // nothing. rotate and scale compose with transform instead of replacing it.
-const RED = '#D63229', RED_DARK = '#BC241C';
 const POLISH_CSS = `<style>
   @media (max-width: 720px) {
     #bid-header, #bid-header > div { justify-content: center; }
@@ -851,7 +866,7 @@ for (const p of PAGES) {
   }
 
   if (p.out !== 'checkout.html' && !p.board) {
-    fix('floating share button', x => x.replace('</body>', SHARE_FLOAT + '\n</body>'));
+    fix('floating share + buy buttons', x => x.replace('</body>', SHARE_FLOAT + '\n</body>'));
   }
 
   // "יש החלטות שמקבלים מול ספקים" was wrapping to six lines even on a desktop.
