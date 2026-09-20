@@ -43,26 +43,6 @@ button:focus-visible,a:focus-visible,[role="button"]:focus-visible,[tabindex]:fo
   }
   nav a, footer a, header a { min-height: 44px; display: inline-flex; align-items: center; }
 </style>
-<style>
-  @keyframes bidCardWiggle {
-    0%   { rotate: 0deg;    scale: 1; }
-    15%  { rotate: -3.2deg; scale: 1.035; }
-    32%  { rotate: 2.6deg;  scale: 1.045; }
-    50%  { rotate: -1.8deg; scale: 1.04; }
-    70%  { rotate: 1deg;    scale: 1.03; }
-    85%  { rotate: -.4deg;  scale: 1.025; }
-    100% { rotate: 0deg;    scale: 1.02; }
-  }
-  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-    /* Two spellings: the authored one, and the one React writes back after it
-       hydrates the template. */
-    [style*="aspect-ratio:250/370"]:hover,
-    [style*="aspect-ratio: 250 / 370"]:hover {
-      animation: bidCardWiggle 640ms cubic-bezier(.2,.7,.2,1);
-      animation-fill-mode: forwards;
-    }
-  }
-</style>
 </helmet>
 
 <div dir="rtl" style="background:#4F6BA5;min-height:100vh;font-family:Assistant,system-ui,sans-serif">
