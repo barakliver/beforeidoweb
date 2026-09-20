@@ -320,6 +320,41 @@ const CARD_HEIGHT_CSS = `<style>
   [style*="aspect-ratio: 250 / 370"] { align-self: start; }
 </style>`;
 
+// The header CTA in red, the header centred on a phone, and the flip cards
+// livelier on hover.
+//
+// The red is #D63229, not the brand coral #EF453D. White on the coral is
+// 3.76:1, and the button's label is 15px/600 — under the size that would let
+// 3:1 pass, so it fails AA. #D63229 is 4.83:1 and reads as the same red.
+//
+// The wiggle animates `rotate` and `scale`, not `transform`: the runtime emits
+// `.scpN:hover { transform: translateY(-12px) !important }`, and !important
+// outranks an animation, so keyframes on transform would run and change
+// nothing. rotate and scale compose with transform instead of replacing it.
+const RED = '#D63229', RED_DARK = '#BC241C';
+const POLISH_CSS = `<style>
+  @media (max-width: 720px) {
+    #bid-header, #bid-header > div { justify-content: center; }
+    #bid-header > div { width: 100%; }
+  }
+  @keyframes bidCardWiggle {
+    0%   { rotate: 0deg;    scale: 1; }
+    15%  { rotate: -3.2deg; scale: 1.035; }
+    32%  { rotate: 2.6deg;  scale: 1.045; }
+    50%  { rotate: -1.8deg; scale: 1.04; }
+    70%  { rotate: 1deg;    scale: 1.03; }
+    85%  { rotate: -.4deg;  scale: 1.025; }
+    100% { rotate: 0deg;    scale: 1.02; }
+  }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    [style*="aspect-ratio:250/370"]:hover,
+    [style*="aspect-ratio: 250 / 370"]:hover {
+      animation: bidCardWiggle 640ms cubic-bezier(.2,.7,.2,1);
+      animation-fill-mode: forwards;
+    }
+  }
+</style>`;
+
 const report = [];
 let built = 0;
 
@@ -408,6 +443,20 @@ for (const p of PAGES) {
   // are working documents, not something a visitor shares.
   if (p.out === 'index.html') {
     fix('cards: height in Safari', x => x.replace('</helmet>', CARD_HEIGHT_CSS + '\n</helmet>'));
+    fix('header centring + card wiggle', x => x.replace('</helmet>', POLISH_CSS + '\n</helmet>'));
+
+    // The header bar needs a handle for the centring rule above.
+    fix('header: id', x => x.replace(
+      '<div style="max-width:1180px;margin:0 auto;padding:14px clamp(16px,5vw,32px);display:flex;align-items:center;justify-content:space-between;',
+      '<div id="bid-header" style="max-width:1180px;margin:0 auto;padding:14px clamp(16px,5vw,32px);display:flex;align-items:center;justify-content:space-between;'));
+
+    // Only the header's CTA turns red. The other two sit ON the blue, where
+    // white-on-blue is the contrast that works and red would not.
+    fix('header CTA: red', x => x.replace(
+      'color:#fff;background:#4F6BA5;border:1.5px solid #4F6BA5;border-radius:8px;padding:0 22px;height:44px',
+      `color:#fff;background:${RED};border:1.5px solid ${RED};border-radius:8px;padding:0 22px;height:44px`)
+      .replace('style-hover="background:#3E568A">אני רוצה את המשחק</a>',
+               `style-hover="background:${RED_DARK}">אני רוצה את המשחק</a>`));
   }
 
   if (p.out !== 'checkout.html' && !p.board) {

@@ -47,12 +47,34 @@ button:focus-visible,a:focus-visible,[role="button"]:focus-visible,[tabindex]:fo
   [style*="aspect-ratio:250/370"],
   [style*="aspect-ratio: 250 / 370"] { align-self: start; }
 </style>
+<style>
+  @media (max-width: 720px) {
+    #bid-header, #bid-header > div { justify-content: center; }
+    #bid-header > div { width: 100%; }
+  }
+  @keyframes bidCardWiggle {
+    0%   { rotate: 0deg;    scale: 1; }
+    15%  { rotate: -3.2deg; scale: 1.035; }
+    32%  { rotate: 2.6deg;  scale: 1.045; }
+    50%  { rotate: -1.8deg; scale: 1.04; }
+    70%  { rotate: 1deg;    scale: 1.03; }
+    85%  { rotate: -.4deg;  scale: 1.025; }
+    100% { rotate: 0deg;    scale: 1.02; }
+  }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    [style*="aspect-ratio:250/370"]:hover,
+    [style*="aspect-ratio: 250 / 370"]:hover {
+      animation: bidCardWiggle 640ms cubic-bezier(.2,.7,.2,1);
+      animation-fill-mode: forwards;
+    }
+  }
+</style>
 </helmet>
 
 <div dir="rtl" style="background:#4F6BA5;min-height:100vh;font-family:Assistant,system-ui,sans-serif">
 
 <div style="background:#fff;border-bottom:1.5px solid rgba(79,107,165,.25)">
-<div style="max-width:1180px;margin:0 auto;padding:14px clamp(16px,5vw,32px);display:flex;align-items:center;justify-content:space-between;gap:12px clamp(14px,3vw,26px);flex-wrap:wrap">
+<div id="bid-header" style="max-width:1180px;margin:0 auto;padding:14px clamp(16px,5vw,32px);display:flex;align-items:center;justify-content:space-between;gap:12px clamp(14px,3vw,26px);flex-wrap:wrap">
 <div style="display:flex;align-items:center;gap:11px">
 <svg width="20" height="17" viewBox="0 0 24 21" fill="#EF453D" style="display:block"><path d="M12 20.4C12 20.4 1.2 13.3 1.2 7.1 1.2 3.7 3.9 1 7.1 1 9.2 1 11.1 2.1 12 3.8 12.9 2.1 14.8 1 16.9 1 20.1 1 22.8 3.7 22.8 7.1 22.8 13.3 12 20.4 12 20.4Z"></path></svg>
 <p style="margin:0;font:500 26px/1 Caveat,cursive;font-size:clamp(17px, 2.94vw, 26px);color:#4F6BA5">Before I Do</p>
@@ -63,7 +85,7 @@ button:focus-visible,a:focus-visible,[role="button"]:focus-visible,[tabindex]:fo
 <button type="button" onClick="{{ setGift }}" aria-pressed="{{ isGift }}" style="font:600 15px/1 Assistant,sans-serif;background:{{ giftBg }};color:{{ giftFg }};border:0;padding:0 18px;min-height:44px;cursor:pointer;white-space:nowrap;flex:none;transition:background 140ms cubic-bezier(.2,.7,.2,1)">למתנה</button>
 </div>
 <a href="#deck" style="display:inline-flex;align-items:center;min-height:44px;font:400 16px/1 Assistant,sans-serif;text-decoration:underline;text-underline-offset:4px">איך משחקים</a>
-<a href="/checkout" style="display:inline-flex;align-items:center;font:600 15px/1 Assistant,sans-serif;color:#fff;background:#4F6BA5;border:1.5px solid #4F6BA5;border-radius:8px;padding:0 22px;height:44px;cursor:pointer;white-space:nowrap;flex:none;text-decoration:none;transition:background 260ms cubic-bezier(.2,.7,.2,1)" style-hover="background:#3E568A">אני רוצה את המשחק</a>
+<a href="/checkout" style="display:inline-flex;align-items:center;font:600 15px/1 Assistant,sans-serif;color:#fff;background:#D63229;border:1.5px solid #D63229;border-radius:8px;padding:0 22px;height:44px;cursor:pointer;white-space:nowrap;flex:none;text-decoration:none;transition:background 260ms cubic-bezier(.2,.7,.2,1)" style-hover="background:#BC241C">אני רוצה את המשחק</a>
 </div>
 </div>
 </div>
