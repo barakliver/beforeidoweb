@@ -29,6 +29,25 @@ if (!SRC) {
   process.exit(1);
 }
 
+// ── the launch offer ──────────────────────────────────────────────────────
+// Barak's terms: 70 cards, 129₪ WITH home delivery included, early orders ship
+// on 26.10.26, and the offer closes at the end of that same day. After it
+// closes the price is 189₪ and delivery is charged again.
+//
+// Israel leaves daylight saving on 25.10.2026, so 26.10 runs on UTC+2 and the
+// end of that day is 21:59:59Z. Written as an absolute instant so the clock
+// reads the same from every timezone a visitor might be in.
+const OFFER = {
+  cards: 70,
+  price: 129,
+  wasPrice: 169,
+  afterPrice: 189,
+  shipping: 39,
+  endsISO: '2026-10-26T21:59:59Z',
+  endLabel: '26.10.26',
+  shipDate: '26.10.26',
+};
+
 const SITE = 'https://www.beforeido.co.il';
 const TAGLINE = 'משחק קלפים לזוגות מאורסים';
 const BLURB = `${TAGLINE}. חמישים כרטיסיות עם השאלות שכל זוג מאורס צריך לשאול לפני החתונה — ערב אחד, שיחה אמיתית, בלי שיפוטיות. מאת Liver Production.`;
@@ -51,9 +70,13 @@ const LINKS = {
 //   self = 129 ₪ (pickup)   ship = 168 ₪ (129 + 39 delivery)
 // Until a 168 ₪ link exists, shipping falls back to the 129 ₪ one and every
 // shipped order is charged 39 ₪ short.
+// One link is now correct for both delivery choices: while the launch offer
+// runs, delivery is included and the total is 129₪ either way — which is what
+// this link charges. A second link becomes necessary the moment the offer ends
+// and 189₪ + delivery applies.
 const PAY = {
   self: 'https://pay.grow.link/OTU0ODQ~bf83dbe62447b9a2c28b0611db86e909-NDAxNjIzMw',
-  ship: null,
+  ship: 'https://pay.grow.link/OTU0ODQ~bf83dbe62447b9a2c28b0611db86e909-NDAxNjIzMw',
 };
 
 const PAGES = [
@@ -386,7 +409,7 @@ const STEPS = [
 ];
 
 const BOX = [
-  ['60', 'כרטיסיות', 'שאלה אחת בכל אחת'],
+  [String(OFFER.cards), 'כרטיסיות', 'שאלה אחת בכל אחת'],
   ['6', 'קטגוריות', 'מחולקות לפי נושא'],
   ['1', 'קופסה קשיחה', 'נשמרת, לא נקרעת'],
   ['60', 'דקות', 'זמן משחק ממוצע'],   // no tilde: it flips to the wrong side in RTL
@@ -402,7 +425,7 @@ const SAMPLES = [
 const FAQ = [
   ['כמה זמן זה לוקח?', 'כשעה. אפשר גם לעצור באמצע ולהמשיך בערב אחר — הקלפים לא בורחים.'],
   ['מתי הכי כדאי לשחק?', 'בחודש הראשון אחרי האירוסין, כשההתרגשות בשיאה ועוד לא סגרתם כלום. זה גם השלב שבו התשובות משפיעות הכי הרבה.'],
-  ['איך מקבלים את הקופסה?', 'משלוח עד הבית ב-39 ₪, אספקה תוך 1–5 ימי עסקים. או איסוף עצמי ללא עלות בהוד השרון או בגבעת שמואל, בתיאום טלפוני.'],
+  ['איך מקבלים את הקופסה?', `משלוח עד הבית כלול במבצע ההשקה — ההזמנות המוקדמות יוצאות ב-${OFFER.shipDate}. או איסוף עצמי ללא עלות בהוד השרון או בגבעת שמואל, בתיאום טלפוני.`],
   ['ואם נגלה שאנחנו לא מסכימים?', 'אז גיליתם את זה עכשיו, בסלון, ולא בשיחה עם ספק בעוד חודשיים. זה בדיוק מה שהקלפים אמורים לעשות.'],
   ['אפשר לבטל?', 'כן. אפשר לבטל תוך 14 יום ולהחזיר, כל עוד המוצר באריזה המקורית. הפרטים המלאים בעמוד המשלוחים והביטולים.'],
   ['זה מתאים כמתנה?', 'זו אחת הדרכים הנפוצות לקנות את זה. הקופסה מגיעה סגורה ומוכנה למסירה.'],
@@ -441,7 +464,7 @@ const LONG_SECTIONS = [
 
   // ── sample questions ───────────────────────────────────────────────────
   SEC.wrap('#4F6BA5', `
-    ${SEC.h2('ארבע מתוך שישים.', '#fff')}
+    ${SEC.h2(`ארבע מתוך ${OFFER.cards}.`, '#fff')}
     ${SEC.p('אלה שאלות אמיתיות מהחפיסה. תחשבו רגע מה הייתם עונים — ומה היה עונה מי שיושב מולכם.', 'rgba(255,255,255,.92)')}
     ${SEC.rule()}
     <div style="margin-top:clamp(40px,6vw,60px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:clamp(16px,2.6vw,24px)">
@@ -474,8 +497,8 @@ const LONG_SECTIONS = [
 // ── the extra purchase point, just above the footer ───────────────────────
 const PREFOOTER_CTA = `<section dir="rtl" style="background:#4F6BA5">
   <div style="max-width:1180px;margin:0 auto;padding:clamp(56px,9vw,104px) clamp(20px,5vw,32px);text-align:center">
-    <h2 style="margin:0;font:700 clamp(28px,4.6vw,44px)/1.25 Heebo,sans-serif;color:#fff;max-width:20ch;margin-inline:auto">ערב אחד. שישים שאלות. החתונה שלכם.</h2>
-    <p style="margin:20px auto 0;max-width:42ch;font:300 clamp(17px,2.2vw,20px)/1.8 Assistant,sans-serif;color:rgba(255,255,255,.92)">קופסה קשיחה עם 60 כרטיסיות, בשישה נושאים. משלוח עד הבית או איסוף עצמי ללא עלות.</p>
+    <h2 style="margin:0;font:700 clamp(28px,4.6vw,44px)/1.25 Heebo,sans-serif;color:#fff;max-width:20ch;margin-inline:auto">ערב אחד. ${OFFER.cards} שאלות. החתונה שלכם.</h2>
+    <p style="margin:20px auto 0;max-width:42ch;font:300 clamp(17px,2.2vw,20px)/1.8 Assistant,sans-serif;color:rgba(255,255,255,.92)">קופסה קשיחה עם ${OFFER.cards} כרטיסיות, בשישה נושאים. משלוח עד הבית כלול במבצע ההשקה. יוצא ב-${OFFER.shipDate}.</p>
     <div style="margin-top:26px;display:flex;align-items:baseline;justify-content:center;gap:12px">
       <span style="font:800 clamp(34px,5vw,46px)/1 Heebo,sans-serif;color:#fff">129 ₪</span>
       <span style="font:400 clamp(18px,2.4vw,22px)/1 Heebo,sans-serif;color:rgba(255,255,255,.65);text-decoration:line-through">169 ₪</span>
@@ -545,6 +568,20 @@ for (const p of PAGES) {
   const fix = (name, fn) => { const b = s; s = fn(s); fixes.push([s === b ? 'SKIPPED' : 'ok', name]); };
 
   fix('lang/dir', x => x.replace('<html>', '<html lang="he" dir="rtl">'));
+  // The deck is 70 cards. The design was written for 60, in digits and in
+  // words, and the number appears in both forms across the pages.
+  fix('card count → 70', x => x
+    .split('שישים כרטיסיות').join('שבעים כרטיסיות')
+    .split('שישים שאלות').join('שבעים שאלות')
+    .split('60 כרטיסיות').join('70 כרטיסיות')
+    .split('60 קלפים').join('70 קלפים')
+    .split('60 שאלות').join('70 שאלות')
+    .split('50 כרטיסיות').join('70 כרטיסיות'));
+
+  // "מבצע" alone says nothing about why. This is a launch.
+  fix('offer label → launch', x => x.replace(/>מבצע</g, '>מבצע השקה<'));
+
+
 
   // The head must land BEFORE the runtime script: the runtime reads
   // window.__resources as it boots, and a head appended at </head> would set
@@ -591,6 +628,22 @@ for (const p of PAGES) {
     // The deck is 60 cards. The checkout's order summary said 50 — the only
     // place in the project that disagreed, and the customer sees both.
     fix('card count: 50 → 60', x => x.replace('Before I Do — 50 כרטיסיות', 'Before I Do — 60 כרטיסיות'));
+
+    // Delivery is included for the launch, so the total is 129₪ on both paths.
+    // That is also what makes the single 129₪ Grow link correct: the 39₪ gap
+    // that used to be charged short does not exist while the offer runs.
+    fix('shipping included in the offer', x => x
+      .replace('shipLabel: s.method === "ship" ? "39 ₪"',
+               'shipLabel: s.method === "ship" ? "כלול במבצע ההשקה"')
+      .replace('total: 129 + (s.method === "ship" ? 39 : 0)',
+               `total: ${OFFER.price}`)
+      .replace('total: 129 + (s2.method === "ship" ? 39 : 0)',
+               `total: ${OFFER.price}`)
+      .replace('משלוח עד הבית', 'משלוח עד הבית')
+      .replace('39 ₪. אספקה תוך 1–5 ימי עסקים.',
+               `כלול במבצע ההשקה. ההזמנות המוקדמות יוצאות ב-${OFFER.shipDate}.`)
+      .replace('משלוח 39 ₪, אספקה תוך 1–5 ימי עסקים. איסוף עצמי ללא עלות.',
+               `משלוח עד הבית כלול במבצע ההשקה. ההזמנות המוקדמות יוצאות ב-${OFFER.shipDate}. איסוף עצמי ללא עלות.`));
 
     // Autofill. iOS offers to fill a checkout, but only for fields that say
     // what they hold — none of these carried type, name or autocomplete, so
@@ -647,12 +700,12 @@ for (const p of PAGES) {
             name: s2.name, phone: s2.phone, method: s2.method, point: s2.point,
             city: s2.city, street: s2.street, houseNo: s2.houseNo, notes: s2.notes,
             marketing: s2.consentMarketing,
-            total: 129 + (s2.method === "ship" ? 39 : 0)
+            total: ${OFFER.price}
           });
           navigator.sendBeacon("/api/order", new Blob([body], { type: "application/json" }));
         } catch (err) { /* a lost notification must never block the payment */ }
       }`));
-    if (!PAY.ship) report.push(['WARNING', '    checkout: no 168 ₪ link — shipping charges 129 ₪']);
+    report.push(['note', `    checkout: one ${OFFER.price} ₪ link covers both paths while delivery is included`]);
   }
 
   // Everywhere except the purchase flow — a share button beside a payment
