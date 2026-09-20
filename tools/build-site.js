@@ -558,6 +558,10 @@ for (const p of PAGES) {
   // Checkout only: route the pay button to the link matching the chosen
   // delivery method, and drop the "payment page connects here" placeholder.
   if (p.out === 'checkout.html') {
+    // The deck is 60 cards. The checkout's order summary said 50 — the only
+    // place in the project that disagreed, and the customer sees both.
+    fix('card count: 50 → 60', x => x.replace('Before I Do — 50 כרטיסיות', 'Before I Do — 60 כרטיסיות'));
+
     const self = JSON.stringify(PAY.self);
     const ship = JSON.stringify(PAY.ship || PAY.self);
     fix('checkout: pay link', x => x.replace(
