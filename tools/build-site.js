@@ -592,6 +592,33 @@ for (const p of PAGES) {
     // place in the project that disagreed, and the customer sees both.
     fix('card count: 50 → 60', x => x.replace('Before I Do — 50 כרטיסיות', 'Before I Do — 60 כרטיסיות'));
 
+    // Autofill. iOS offers to fill a checkout, but only for fields that say
+    // what they hold — none of these carried type, name or autocomplete, so
+    // Safari had nothing to map and the offer did nothing.
+    //
+    // No inputmode on the house number: Israeli addresses include ones like
+    // "5ב", and a numeric keypad would lock those out.
+    const AUTOFILL = [
+      ['placeholder="ישראל ישראלי"',
+       'placeholder="ישראל ישראלי" type="text" name="name" autocomplete="name" autocapitalize="words"'],
+      ['placeholder="050-0000000"',
+       'placeholder="050-0000000" type="tel" name="tel" autocomplete="tel" inputmode="tel"'],
+      ['<select value="{{ city }}"',
+       '<select name="city" autocomplete="address-level2" value="{{ city }}"'],
+      ['placeholder="רחוב"',
+       'placeholder="רחוב" type="text" name="address-line1" autocomplete="address-line1"'],
+      // inputMode="numeric" opens a keypad with no letters on iOS, so an
+      // address like "הרצל 5א" cannot be typed at all and the order cannot be
+      // completed. One extra tap for everyone beats locking those addresses out.
+      ['inputMode="numeric" placeholder="מספר"',
+       'inputMode="text" placeholder="מספר" type="text" name="address-line2" autocomplete="address-line2"'],
+      ['placeholder="הערות לשליח (לא חובה)"',
+       'placeholder="הערות לשליח (לא חובה)" type="text" name="notes" autocomplete="off"'],
+    ];
+    for (const [from, to] of AUTOFILL) {
+      fix(`autofill: ${from.slice(0, 34)}…`, x => x.replace(from, to));
+    }
+
     // Barak's stated policy: 14 days, returnable in the original packaging.
     // One wording everywhere — a cancellation term that reads differently on
     // two pages of the same shop is a problem, not a nuance.

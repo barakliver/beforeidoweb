@@ -76,11 +76,11 @@ a:hover{color:#EF453D}
 <div style="margin-top:28px;display:flex;flex-direction:column;gap:18px;max-width:420px">
 <div>
 <label style="display:block;margin-bottom:7px;font:600 14px/1 Assistant,sans-serif;color:#4F6BA5">שם מלא</label>
-<input value="{{ name }}" onChange="{{ setName }}" placeholder="ישראל ישראלי" style="width:100%;box-sizing:border-box;height:48px;padding:0 14px;font:300 17px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
+<input value="{{ name }}" onChange="{{ setName }}" placeholder="ישראל ישראלי" type="text" name="name" autocomplete="name" autocapitalize="words" style="width:100%;box-sizing:border-box;height:48px;padding:0 14px;font:300 17px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
 </div>
 <div>
 <label style="display:block;margin-bottom:7px;font:600 14px/1 Assistant,sans-serif;color:#4F6BA5">טלפון</label>
-<input value="{{ phone }}" onChange="{{ setPhone }}" inputMode="tel" placeholder="050-0000000" style="width:100%;box-sizing:border-box;height:48px;padding:0 14px;font:300 17px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
+<input value="{{ phone }}" onChange="{{ setPhone }}" inputMode="tel" placeholder="050-0000000" type="tel" name="tel" autocomplete="tel" inputmode="tel" style="width:100%;box-sizing:border-box;height:48px;padding:0 14px;font:300 17px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
 </div>
 <p style="margin:0;font:300 14px/1.6 Assistant,sans-serif;color:rgba(47,63,99,.75)">הטלפון משמש רק לעדכון על ההזמנה.</p>
 </div>
@@ -115,17 +115,17 @@ a:hover{color:#EF453D}
 <sc-if value="{{ isShip }}" hint-placeholder-val="{{ false }}">
 <div style="display:flex;flex-direction:column;gap:14px;padding:2px 14px 6px">
 <p style="margin:0;font:600 14px/1 Assistant,sans-serif;color:#4F6BA5">כתובת למשלוח</p>
-<select value="{{ city }}" onChange="{{ setCity }}" style="width:100%;box-sizing:border-box;height:46px;padding:0 12px;font:300 16px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
+<select name="city" autocomplete="address-level2" value="{{ city }}" onChange="{{ setCity }}" style="width:100%;box-sizing:border-box;height:46px;padding:0 12px;font:300 16px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
 <option value="">בחרו עיר</option>
 <sc-for list="{{ cities }}" as="c" hint-placeholder-count="6">
 <option value="{{ c }}">{{ c }}</option>
 </sc-for>
 </select>
 <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:12px">
-<input value="{{ street }}" onChange="{{ setStreet }}" placeholder="רחוב" style="width:100%;box-sizing:border-box;height:46px;padding:0 14px;font:300 16px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
-<input value="{{ houseNo }}" onChange="{{ setHouseNo }}" inputMode="numeric" placeholder="מספר" style="width:100%;box-sizing:border-box;height:46px;padding:0 14px;font:300 16px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
+<input value="{{ street }}" onChange="{{ setStreet }}" placeholder="רחוב" type="text" name="address-line1" autocomplete="address-line1" style="width:100%;box-sizing:border-box;height:46px;padding:0 14px;font:300 16px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
+<input value="{{ houseNo }}" onChange="{{ setHouseNo }}" inputMode="text" placeholder="מספר" type="text" name="address-line2" autocomplete="address-line2" style="width:100%;box-sizing:border-box;height:46px;padding:0 14px;font:300 16px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
 </div>
-<input value="{{ notes }}" onChange="{{ setNotes }}" placeholder="הערות לשליח (לא חובה)" style="width:100%;box-sizing:border-box;height:46px;padding:0 14px;font:300 16px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
+<input value="{{ notes }}" onChange="{{ setNotes }}" placeholder="הערות לשליח (לא חובה)" type="text" name="notes" autocomplete="off" style="width:100%;box-sizing:border-box;height:46px;padding:0 14px;font:300 16px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
 </div>
 </sc-if>
 </div>
