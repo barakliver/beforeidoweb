@@ -89,7 +89,7 @@ const PAY = {
 
 const PAGES = [
   { src: 'Before I Do - Opening Experience.dc.html', out: 'index.html',
-    title: `Before I Do — ${TAGLINE}`, desc: BLURB, canonical: '/', og: true },
+    title: `Before I Do ${TAGLINE}`, desc: BLURB, canonical: '/', og: true },
   { src: 'Before I Do - Checkout.dc.html', out: 'checkout.html',
     title: `הזמנה — Before I Do`, desc: TAGLINE, noindex: true },
   { src: 'Before I Do - Terms.dc.html', out: 'terms.html',
@@ -296,7 +296,7 @@ function head(p) {
     `<meta property="og:image:type" content="image/png">`,
     `<meta property="og:image:width" content="1200">`,
     `<meta property="og:image:height" content="630">`,
-    `<meta property="og:image:alt" content="Before I Do — ${TAGLINE}">`,
+    `<meta property="og:image:alt" content="Before I Do ${TAGLINE}">`,
     `<meta name="twitter:card" content="summary_large_image">`,
     `<meta name="twitter:title" content="Before I Do">`,
     `<meta name="twitter:description" content="${TAGLINE}">`,
@@ -349,10 +349,6 @@ const SHARE_FLOAT = `<a id="wa-share" class="bid-float" href="https://wa.me/?tex
   <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.8-.9L3 20.5l1.6-4.9A8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4Z"/></svg>
   <span>שתפו בוואטסאפ</span>
 </a>
-<a id="bid-buy" class="bid-float" href="/checkout">
-  <svg width="20" height="18" viewBox="0 0 24 21" fill="#fff" aria-hidden="true"><path d="M12 20.4C12 20.4 1.2 13.3 1.2 7.1 1.2 3.7 3.9 1 7.1 1 9.2 1 11.1 2.1 12 3.8 12.9 2.1 14.8 1 16.9 1 20.1 1 22.8 3.7 22.8 7.1 22.8 13.3 12 20.4 12 20.4Z"/></svg>
-  <span>אני רוצה לשחק!</span>
-</a>
 <style>
   .bid-float {
     position: fixed; z-index: 60;
@@ -362,21 +358,47 @@ const SHARE_FLOAT = `<a id="wa-share" class="bid-float" href="https://wa.me/?tex
     color: #fff; text-decoration: none;
     font: 600 16px/1 Assistant, sans-serif; white-space: nowrap;
     box-shadow: 0 6px 20px rgba(31, 44, 74, .28);
-    transition: background 260ms cubic-bezier(.2,.7,.2,1), bottom 260ms cubic-bezier(.2,.7,.2,1);
+    transition: background 260ms cubic-bezier(.2,.7,.2,1),
+                bottom 260ms cubic-bezier(.2,.7,.2,1),
+                transform 220ms cubic-bezier(.2,.7,.2,1),
+                box-shadow 220ms cubic-bezier(.2,.7,.2,1);
   }
-  /* left and right, physically: the logical properties resolve the other way in RTL */
+  /* left, physically: the logical properties resolve the other way in RTL */
   #wa-share { left: clamp(14px, 4vw, 26px); background: #25D366; }
   #wa-share:hover { background: #1FB855; }
-  #wa-share:focus-visible { outline: 3px solid #EF453D; outline-offset: 3px; }
-  #bid-buy { right: clamp(14px, 4vw, 26px); background: ${RED}; }
-  #bid-buy:hover { background: ${RED_DARK}; }
-  #bid-buy:focus-visible { outline: 3px solid #4F6BA5; outline-offset: 3px; }
-  /* Below 400px the pair is wider than the screen, so both shrink. */
-  @media (max-width: 400px) {
-    .bid-float { padding: 0 13px; gap: 7px; font-size: 13.5px; }
-    .bid-float svg { width: 17px; height: 17px; }
+  /* Green button, so a red ring reads as an error rather than as focus. */
+  #wa-share:focus-visible { outline: 3px solid #1F2C4A; outline-offset: 3px; }
+
+  /* A slow breath, so the eye catches it once without the page nagging.
+     Shadow and scale only — nothing that moves the button out from under a
+     finger already on its way to it. */
+  @keyframes bid-wa-breathe {
+    0%, 88%, 100% { transform: scale(1);     box-shadow: 0 6px 20px rgba(31,44,74,.28), 0 0 0 0 rgba(37,211,102,.45); }
+    92%           { transform: scale(1.045); box-shadow: 0 8px 24px rgba(31,44,74,.32), 0 0 0 10px rgba(37,211,102,0); }
+    96%           { transform: scale(1);     box-shadow: 0 6px 20px rgba(31,44,74,.28), 0 0 0 16px rgba(37,211,102,0); }
   }
-  @media (prefers-reduced-motion: reduce) { .bid-float { transition: none; } }
+  #wa-share { animation: bid-wa-breathe 6s ease-in-out 3s infinite; }
+
+  /* Pointer nearby or on it: the breathing stops and it simply leans in. */
+  #wa-share:hover, #wa-share:focus-visible {
+    animation: none;
+    transform: translateY(-3px) scale(1.04);
+    box-shadow: 0 12px 28px rgba(31, 44, 74, .34);
+  }
+  #wa-share svg { transition: transform 220ms cubic-bezier(.2,.7,.2,1); }
+  #wa-share:hover svg { transform: rotate(-9deg) scale(1.1); }
+  #wa-share:active { transform: translateY(-1px) scale(.99); }
+
+  /* Below 400px it shrinks rather than crowding the screen. */
+  @media (max-width: 400px) {
+    .bid-float { padding: 0 15px; gap: 8px; font-size: 14px; }
+    .bid-float svg { width: 18px; height: 18px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bid-float { transition: none; }
+    #wa-share, #wa-share:hover, #wa-share:focus-visible { animation: none; transform: none; }
+    #wa-share svg, #wa-share:hover svg { transition: none; transform: none; }
+  }
 </style>
 <script>
 (function () {
@@ -391,7 +413,7 @@ const SHARE_FLOAT = `<a id="wa-share" class="bid-float" href="https://wa.me/?tex
       var cs = getComputedStyle(el);
       if (cs.position !== 'fixed' || cs.display === 'none' || cs.visibility === 'hidden') continue;
       // Decorative overlays are not obstructions. The fireworks canvas covers
-      // the whole viewport, so without this the buttons would be lifted a full
+      // the whole viewport, so without this the button would be lifted a full
       // screen height and fly off the top the moment the offer ends.
       if (cs.pointerEvents === 'none') continue;
       var r = el.getBoundingClientRect();
@@ -590,36 +612,42 @@ function countdownParts(fromMs) {
 
 const COUNTDOWN = (() => {
   const p0 = countdownParts(Date.now());
+  // A quiet clock: light digits, hairline separators, no boxes and no badge.
+  // The urgency is in the number, and a number does not need decoration to
+  // be read as one.
   const cell = (v, label, key) => `
-    <div style="min-width:clamp(62px,17vw,92px)">
-      <p data-cd="${key}" style="margin:0;font:800 clamp(32px,8vw,52px)/1 Heebo,sans-serif;color:#fff;font-variant-numeric:tabular-nums">${String(v).padStart(2, '0')}</p>
-      <p style="margin:6px 0 0;font:400 clamp(12px,3vw,14px)/1 Assistant,sans-serif;color:rgba(255,255,255,.72);letter-spacing:1px">${label}</p>
+    <div style="min-width:clamp(52px,15vw,78px)">
+      <p data-cd="${key}" style="margin:0;font:300 clamp(36px,10vw,58px)/1 Heebo,sans-serif;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:-1px">${String(v).padStart(2, '0')}</p>
+      <p style="margin:10px 0 0;font:400 clamp(10px,2.6vw,11px)/1 Assistant,sans-serif;color:rgba(255,255,255,.5);letter-spacing:2px">${label}</p>
     </div>`;
+  const gap = `<div aria-hidden="true" style="align-self:start;margin-top:clamp(4px,1.2vw,8px);font:300 clamp(28px,8vw,44px)/1 Heebo,sans-serif;color:rgba(255,255,255,.22)">:</div>`;
+  const rule = `<div aria-hidden="true" style="width:min(340px,70%);height:1px;margin:clamp(28px,5vw,40px) auto 0;background:rgba(255,255,255,.16)"></div>`;
   return `<section id="bid-countdown" dir="rtl" style="background:#3E568A">
-    <div style="max-width:1180px;margin:0 auto;padding:clamp(52px,8vw,88px) clamp(20px,5vw,32px);text-align:center">
+    <div style="max-width:1180px;margin:0 auto;padding:clamp(60px,9vw,104px) clamp(20px,5vw,32px);text-align:center">
       <div data-cd-live>
-        ${SEC.eyebrow('מבצע השקה', true)}
-        <h2 style="margin:0 auto;max-width:20ch;font:700 clamp(26px,4.4vw,40px)/1.25 Heebo,sans-serif;color:#fff">המחיר הזה נגמר בעוד</h2>
-        <div style="margin-top:clamp(26px,4vw,38px);display:flex;justify-content:center;gap:clamp(10px,3vw,26px);flex-wrap:wrap">
-          ${cell(p0.d, 'ימים', 'd')}${cell(p0.h, 'שעות', 'h')}${cell(p0.m, 'דקות', 'm')}${cell(p0.s, 'שניות', 's')}
+        <p style="margin:0;font:400 clamp(12px,2.8vw,13px)/1 Assistant,sans-serif;color:rgba(255,255,255,.55);letter-spacing:3px">מבצע ההשקה נגמר בעוד</p>
+        <div style="margin-top:clamp(26px,4vw,36px);display:flex;justify-content:center;align-items:flex-start;gap:clamp(6px,2vw,16px)">
+          ${cell(p0.d, 'ימים', 'd')}${gap}${cell(p0.h, 'שעות', 'h')}${gap}${cell(p0.m, 'דקות', 'm')}${gap}${cell(p0.s, 'שניות', 's')}
         </div>
-        <p style="margin:clamp(24px,4vw,32px) auto 0;max-width:40ch;font:300 clamp(16px,2.2vw,19px)/1.75 Assistant,sans-serif;color:rgba(255,255,255,.9)">
-          עד ${OFFER.endLabel}: ${OFFER.price} ₪ כולל משלוח עד הבית. אחרי זה ${OFFER.afterPrice} ₪, והמשלוח נגבה בנפרד.
+        ${rule}
+        <p style="margin:clamp(26px,4vw,34px) auto 0;max-width:36ch;font:300 clamp(15px,2vw,17px)/1.8 Assistant,sans-serif;color:rgba(255,255,255,.82)">
+          ${OFFER.price} ₪ כולל משלוח עד הבית, עד ${OFFER.endLabel}.<br>אחרי זה ${OFFER.afterPrice} ₪, והמשלוח נגבה בנפרד.
         </p>
-        <div style="margin-top:26px;display:flex;justify-content:center">
-          <a href="/checkout" style="display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 34px;border-radius:8px;background:${RED};color:#fff;border:1.5px solid ${RED};font:600 17px/1 Assistant,sans-serif;text-decoration:none;white-space:nowrap">אני רוצה לשחק!</a>
+        <div style="margin-top:clamp(26px,4vw,32px);display:flex;justify-content:center">
+          <a href="/checkout" style="display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 36px;border-radius:8px;background:${RED};color:#fff;border:1.5px solid ${RED};font:600 17px/1 Assistant,sans-serif;text-decoration:none;white-space:nowrap">אני רוצה לשחק!</a>
         </div>
-        <p style="margin:16px auto 0;font:300 15px/1.7 Assistant,sans-serif;color:rgba(255,255,255,.75)">ההזמנות המוקדמות יוצאות ב-${OFFER.shipDate}.</p>
+        <p style="margin:18px auto 0;font:300 14px/1.7 Assistant,sans-serif;color:rgba(255,255,255,.5)">ההזמנות המוקדמות יוצאות ב-${OFFER.shipDate}.</p>
       </div>
 
       <div data-cd-done style="display:none">
-        ${SEC.eyebrow('מבצע ההשקה הסתיים', true)}
-        <h2 style="margin:0 auto;max-width:22ch;font:700 clamp(26px,4.4vw,40px)/1.25 Heebo,sans-serif;color:#fff">תודה לכל מי שהצטרף להשקה.</h2>
-        <p style="margin:20px auto 0;max-width:40ch;font:300 clamp(16px,2.2vw,19px)/1.75 Assistant,sans-serif;color:rgba(255,255,255,.9)">
+        <p style="margin:0;font:400 clamp(12px,2.8vw,13px)/1 Assistant,sans-serif;color:rgba(255,255,255,.55);letter-spacing:3px">מבצע ההשקה הסתיים</p>
+        <h2 style="margin:clamp(20px,3vw,28px) auto 0;max-width:22ch;font:600 clamp(26px,4.4vw,40px)/1.25 Heebo,sans-serif;color:#fff">תודה לכל מי שהצטרף להשקה.</h2>
+        ${rule}
+        <p style="margin:clamp(26px,4vw,34px) auto 0;max-width:36ch;font:300 clamp(15px,2vw,17px)/1.8 Assistant,sans-serif;color:rgba(255,255,255,.82)">
           המחיר עכשיו ${OFFER.afterPrice} ₪, והמשלוח נגבה בנפרד.
         </p>
-        <div style="margin-top:26px;display:flex;justify-content:center">
-          <a href="/checkout" style="display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 34px;border-radius:8px;background:#fff;color:#4F6BA5;border:1.5px solid #fff;font:600 17px/1 Assistant,sans-serif;text-decoration:none;white-space:nowrap">אני רוצה לשחק!</a>
+        <div style="margin-top:clamp(26px,4vw,32px);display:flex;justify-content:center">
+          <a href="/checkout" style="display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 36px;border-radius:8px;background:#fff;color:#4F6BA5;border:1.5px solid #fff;font:600 17px/1 Assistant,sans-serif;text-decoration:none;white-space:nowrap">אני רוצה לשחק!</a>
         </div>
       </div>
     </div>
@@ -975,43 +1003,50 @@ const COUNTDOWN_JS = `<script>
 // padded by the same height it occupies so nothing hides underneath.
 const TICKER = `<div id="bid-ticker" dir="rtl" role="status">
   <span data-tk-live>
-    <b>מבצע השקה</b>
-    <span class="bid-tk-sep">·</span>
-    <span>נגמר בעוד</span>
+    <span class="bid-tk-lead"><span class="bid-tk-long">מבצע השקה </span>נגמר בעוד</span>
     <span class="bid-tk-nums">
-      <span data-cd="d">--</span><i>י׳</i><span data-cd="h">--</span><i>ש׳</i><span data-cd="m">--</span><i>ד׳</i><span data-cd="s">--</span><i>שנ׳</i>
+      <span data-cd="d">--</span><i>:</i><span data-cd="h">--</span><i>:</i><span data-cd="m">--</span><i>:</i><span data-cd="s">--</span>
     </span>
     <a href="/checkout" class="bid-tk-cta">לרכישה</a>
   </span>
-  <span data-tk-done style="display:none"><b>Before I Do</b><span class="bid-tk-sep">·</span><span>${OFFER.afterPrice} ₪ + משלוח</span><a href="/checkout" class="bid-tk-cta">לרכישה</a></span>
+  <span data-tk-done style="display:none"><span class="bid-tk-lead">Before I Do</span><span class="bid-tk-nums">${OFFER.afterPrice} ₪</span><a href="/checkout" class="bid-tk-cta">לרכישה</a></span>
 </div>
 <style>
+  /* A hairline of urgency, not a banner. Flat, one weight, no borders. */
   #bid-ticker {
     position: fixed; inset-block-start: 0; inset-inline: 0; z-index: 55;
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    height: 46px; padding: 0 12px;
+    display: flex; align-items: center; justify-content: center; gap: 14px;
+    height: 44px; padding: 0 14px;
     background: ${RED}; color: #fff;
-    font: 600 14px/1 Assistant, sans-serif; white-space: nowrap; overflow: hidden;
+    font: 400 13.5px/1 Assistant, sans-serif; white-space: nowrap; overflow: hidden;
   }
-  #bid-ticker b { font-weight: 700; }
-  #bid-ticker .bid-tk-sep { opacity: .55; }
-  #bid-ticker [data-tk-live], #bid-ticker [data-tk-done] { display: flex; align-items: center; gap: 10px; }
-  .bid-tk-nums { display: inline-flex; align-items: baseline; gap: 2px; font-variant-numeric: tabular-nums; }
-  .bid-tk-nums span { font-weight: 800; font-size: 15px; }
-  .bid-tk-nums i { font-style: normal; opacity: .7; font-size: 11px; margin-inline-end: 5px; }
+  #bid-ticker [data-tk-live], #bid-ticker [data-tk-done] { display: flex; align-items: center; gap: 14px; }
+  .bid-tk-lead { color: rgba(255,255,255,.82); letter-spacing: .3px; }
+  .bid-tk-nums {
+    display: inline-flex; align-items: baseline; gap: 1px;
+    font: 500 15px/1 Heebo, sans-serif; font-variant-numeric: tabular-nums; letter-spacing: .5px;
+    /* A colon clock is read left to right, days first, the way every digital
+       clock is. Left in the page's RTL flow it comes out back to front. */
+    direction: ltr; unicode-bidi: isolate;
+  }
+  .bid-tk-nums i { font-style: normal; color: rgba(255,255,255,.45); padding: 0 1px; }
   .bid-tk-cta {
-    display: inline-flex; align-items: center; height: 30px; padding: 0 12px;
-    border-radius: 999px; background: #fff; color: ${RED};
-    font: 700 13px/1 Assistant, sans-serif; text-decoration: none;
+    display: inline-flex; align-items: center; height: 26px; padding: 0 13px;
+    border-radius: 999px; background: rgba(255,255,255,.14);
+    color: #fff; font: 500 12.5px/1 Assistant, sans-serif; text-decoration: none;
+    transition: background 180ms ease;
   }
-  #bid-ticker a:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
-  body { padding-block-start: 46px; }
+  .bid-tk-cta:hover { background: rgba(255,255,255,.24); }
+  #bid-ticker a:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  body { padding-block-start: 44px; }
   @media (max-width: 430px) {
-    #bid-ticker { height: 42px; gap: 7px; font-size: 12.5px; }
-    #bid-ticker .bid-tk-sep, #bid-ticker [data-tk-live] > span:not(.bid-tk-nums) { display: none; }
-    .bid-tk-nums span { font-size: 14px; }
-    .bid-tk-cta { height: 27px; padding: 0 10px; font-size: 12px; }
-    body { padding-block-start: 42px; }
+    #bid-ticker { height: 40px; gap: 10px; }
+    /* Room for "נגמר בעוד" but not for the whole sentence — and without some
+       words a bare 35:08:45:27 says nothing. */
+    .bid-tk-long { display: none; }
+    .bid-tk-nums { font-size: 14.5px; }
+    .bid-tk-cta { height: 25px; padding: 0 12px; font-size: 12px; }
+    body { padding-block-start: 40px; }
   }
 </style>`;
 
@@ -1062,6 +1097,12 @@ const CHECKOUT_SWITCH_JS = `<script>
   if (document.body) check();
   addEventListener('DOMContentLoaded', check);
   setInterval(check, 1000);
+
+  // The fields live in a form so iOS will fill them, and a form submits on
+  // Enter. There is nothing to submit to \u2014 the steps are handled in the
+  // page \u2014 so a submit would reload and throw the order away. Captured at
+  // the document, so it survives every re-render of the form itself.
+  document.addEventListener('submit', function (e) { e.preventDefault(); }, true);
 })();
 <\/script>`;
 
@@ -1529,6 +1570,55 @@ for (const p of PAGES) {
       fix(`autofill: ${from.slice(0, 34)}…`, x => x.replace(from, to));
     }
 
+    // iOS AutoFill needs a form. Barak asked for it twice and the fields
+    // already carried the right autocomplete tokens — but Safari offers to
+    // fill an address only when the fields sit inside a <form>, and this page
+    // had none. The wrapper that holds all three steps becomes one.
+    //
+    // Both buttons get type="button" first: inside a form an untyped button
+    // is a submit button, and the first tap would reload the page and lose
+    // everything typed.
+    fix('checkout: buttons are buttons, not submits', x => x
+      .replace('<button onClick="{{ back }}"', '<button type="button" onClick="{{ back }}"')
+      .replace('<button onClick="{{ next }}"', '<button type="button" onClick="{{ next }}"'));
+
+    fix('checkout: wrap the fields in a form', x => {
+      const open = '<div style="padding:36px 34px 40px;min-width:0">';
+      const i = x.indexOf(open);
+      if (i < 0) return x;
+      // Walk the div nesting to find this one's own closing tag.
+      let depth = 0, end = -1;
+      const re = /<(\/?)div\b[^>]*>/g;
+      re.lastIndex = i;
+      for (let m; (m = re.exec(x));) {
+        depth += m[1] ? -1 : 1;
+        if (depth === 0) { end = m.index; break; }
+      }
+      if (end < 0) return x;
+      return x.slice(0, i)
+        + '<form autocomplete="on" style="padding:36px 34px 40px;min-width:0">'
+        + x.slice(i + open.length, end)
+        + '</form>'
+        + x.slice(end + '</div>'.length);
+    });
+
+    // The address fields belong to one shipping address, and saying so is what
+    // turns three separate suggestions into a single "fill address" offer.
+    fix('checkout: group the address for autofill', x => x
+      .replace('autocomplete="name"', 'autocomplete="shipping name"')
+      .replace('autocomplete="tel"', 'autocomplete="shipping tel"')
+      .replace('autocomplete="address-level2"', 'autocomplete="shipping address-level2"')
+      .replace('autocomplete="address-line1"', 'autocomplete="shipping address-line1"')
+      .replace('autocomplete="address-line2"', 'autocomplete="shipping address-line2"'));
+
+    // The checkout's own footer repeated the name, the address and the email
+    // in one line. Same request as the site footer: the phone is enough.
+    fix('checkout footer: phone only', x => x.replace(
+      'ברק ליור<br>החומש 2, הוד השרון<br>052-6604320 · barakliver@gmail.com', '052-6604320'));
+
+    fix('checkout: drop the step-1 sub-line', x => x.replace(
+      '<p style="margin:12px 0 0;font:300 17px/1.6 Assistant,sans-serif;color:#2F3F63">שני שדות, ואפשר להתקדם.</p>\n', ''));
+
     // Barak's stated policy: 14 days, returnable in the original packaging.
     // One wording everywhere — a cancellation term that reads differently on
     // two pages of the same shop is a problem, not a nuance.
@@ -1624,9 +1714,16 @@ for (const p of PAGES) {
                'font:600 clamp(30px,5.4vw,58px)/1.25 Heebo,sans-serif;color:#4F6BA5;text-indent:0'));
   }
 
-  // Barak asked for the licence number out of the footer.
+  // Barak asked for the licence number out of the footer, and then for the
+  // name, the address and the email as well. All four still appear in the
+  // terms and the privacy policy, where the law wants the seller identified;
+  // the footer keeps the phone.
   fix('footer: drop the licence number', x =>
     x.replace('ברק ליור, עוסק מורשה 207613829', 'ברק ליור'));
+  fix('footer: drop the name and address', x =>
+    x.replace('<p style="margin:14px 0 0;font:400 15px/1.85 Assistant,sans-serif;color:#fff">ברק ליור<br>החומש 2, הוד השרון</p>', ''));
+  fix('footer: drop the email', x =>
+    x.replace(/<li><a href="mailto:barakliver@gmail\.com"[^>]*>barakliver@gmail\.com<\/a><\/li>\s*/, ''));
 
   // Home only: the English authoring notes render on the public page.
   if (p.out === 'index.html') {

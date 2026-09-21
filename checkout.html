@@ -47,6 +47,12 @@
   if (document.body) check();
   addEventListener('DOMContentLoaded', check);
   setInterval(check, 1000);
+
+  // The fields live in a form so iOS will fill them, and a form submits on
+  // Enter. There is nothing to submit to — the steps are handled in the
+  // page — so a submit would reload and throw the order away. Captured at
+  // the document, so it survives every re-render of the form itself.
+  document.addEventListener('submit', function (e) { e.preventDefault(); }, true);
 })();
 </script>
 <script src="/assets/js/app.js"></script>
@@ -107,20 +113,19 @@ a:hover{color:#EF453D}
 
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr))">
 
-<div style="padding:36px 34px 40px;min-width:0">
+<form autocomplete="on" style="padding:36px 34px 40px;min-width:0">
 
 <sc-if value="{{ isStep1 }}" hint-placeholder-val="{{ true }}">
 <div>
 <h1 style="margin:0;font:700 30px/1.3 Heebo,sans-serif;font-size:clamp(20px, 3.39vw, 30px);color:#4F6BA5">נעים להכיר. איך קוראים לכם?</h1>
-<p style="margin:12px 0 0;font:300 17px/1.6 Assistant,sans-serif;color:#2F3F63">שני שדות, ואפשר להתקדם.</p>
 <div style="margin-top:28px;display:flex;flex-direction:column;gap:18px;max-width:420px">
 <div>
 <label style="display:block;margin-bottom:7px;font:600 14px/1 Assistant,sans-serif;color:#4F6BA5">שם מלא</label>
-<input value="{{ name }}" onChange="{{ setName }}" placeholder="ישראל ישראלי" type="text" name="name" autocomplete="name" autocapitalize="words" style="width:100%;box-sizing:border-box;height:48px;padding:0 14px;font:300 17px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
+<input value="{{ name }}" onChange="{{ setName }}" placeholder="ישראל ישראלי" type="text" name="name" autocomplete="shipping name" autocapitalize="words" style="width:100%;box-sizing:border-box;height:48px;padding:0 14px;font:300 17px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
 </div>
 <div>
 <label style="display:block;margin-bottom:7px;font:600 14px/1 Assistant,sans-serif;color:#4F6BA5">טלפון</label>
-<input value="{{ phone }}" onChange="{{ setPhone }}" inputMode="tel" placeholder="050-0000000" type="tel" name="tel" autocomplete="tel" inputmode="tel" style="width:100%;box-sizing:border-box;height:48px;padding:0 14px;font:300 17px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
+<input value="{{ phone }}" onChange="{{ setPhone }}" inputMode="tel" placeholder="050-0000000" type="tel" name="tel" autocomplete="shipping tel" inputmode="tel" style="width:100%;box-sizing:border-box;height:48px;padding:0 14px;font:300 17px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
 </div>
 <p style="margin:0;font:300 14px/1.6 Assistant,sans-serif;color:rgba(47,63,99,.75)">הטלפון משמש רק לעדכון על ההזמנה.</p>
 </div>
@@ -155,15 +160,15 @@ a:hover{color:#EF453D}
 <sc-if value="{{ isShip }}" hint-placeholder-val="{{ false }}">
 <div style="display:flex;flex-direction:column;gap:14px;padding:2px 14px 6px">
 <p style="margin:0;font:600 14px/1 Assistant,sans-serif;color:#4F6BA5">כתובת למשלוח</p>
-<select name="city" autocomplete="address-level2" value="{{ city }}" onChange="{{ setCity }}" style="width:100%;box-sizing:border-box;height:46px;padding:0 12px;font:300 16px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
+<select name="city" autocomplete="shipping address-level2" value="{{ city }}" onChange="{{ setCity }}" style="width:100%;box-sizing:border-box;height:46px;padding:0 12px;font:300 16px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
 <option value="">בחרו עיר</option>
 <sc-for list="{{ cities }}" as="c" hint-placeholder-count="6">
 <option value="{{ c }}">{{ c }}</option>
 </sc-for>
 </select>
 <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:12px">
-<input value="{{ street }}" onChange="{{ setStreet }}" placeholder="רחוב" type="text" name="address-line1" autocomplete="address-line1" style="width:100%;box-sizing:border-box;height:46px;padding:0 14px;font:300 16px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
-<input value="{{ houseNo }}" onChange="{{ setHouseNo }}" inputMode="text" placeholder="מספר" type="text" name="address-line2" autocomplete="address-line2" style="width:100%;box-sizing:border-box;height:46px;padding:0 14px;font:300 16px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
+<input value="{{ street }}" onChange="{{ setStreet }}" placeholder="רחוב" type="text" name="address-line1" autocomplete="shipping address-line1" style="width:100%;box-sizing:border-box;height:46px;padding:0 14px;font:300 16px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
+<input value="{{ houseNo }}" onChange="{{ setHouseNo }}" inputMode="text" placeholder="מספר" type="text" name="address-line2" autocomplete="shipping address-line2" style="width:100%;box-sizing:border-box;height:46px;padding:0 14px;font:300 16px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
 </div>
 <input value="{{ notes }}" onChange="{{ setNotes }}" placeholder="הערות לשליח (לא חובה)" type="text" name="notes" autocomplete="off" style="width:100%;box-sizing:border-box;height:46px;padding:0 14px;font:300 16px/1 Assistant,sans-serif;color:#2F3F63;background:#fff;border:1.5px solid rgba(79,107,165,.35);border-radius:8px">
 </div>
@@ -203,15 +208,15 @@ a:hover{color:#EF453D}
 
 <div style="margin-top:34px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
 <sc-if value="{{ canGoBack }}" hint-placeholder-val="{{ false }}">
-<button onClick="{{ back }}" style="height:48px;padding:0 22px;border-radius:9px;border:1.5px solid rgba(79,107,165,.35);background:#fff;color:#4F6BA5;font:600 16px/1 Assistant,sans-serif;cursor:pointer;transition:background 260ms cubic-bezier(.2,.7,.2,1)" style-hover="background:rgba(79,107,165,.08)">חזרה</button>
+<button type="button" onClick="{{ back }}" style="height:48px;padding:0 22px;border-radius:9px;border:1.5px solid rgba(79,107,165,.35);background:#fff;color:#4F6BA5;font:600 16px/1 Assistant,sans-serif;cursor:pointer;transition:background 260ms cubic-bezier(.2,.7,.2,1)" style-hover="background:rgba(79,107,165,.08)">חזרה</button>
 </sc-if>
 <sc-if value="{{ showNext }}" hint-placeholder-val="{{ true }}">
-<button onClick="{{ next }}" disabled="{{ nextDisabled }}" style="height:48px;padding:0 clamp(20px,5vw,32px);border-radius:9px;border:0;background:{{ nextBg }};color:#fff;font:700 17px/1 Assistant,sans-serif;cursor:{{ nextCursor }};opacity:{{ nextOpacity }};transition:background 260ms cubic-bezier(.2,.7,.2,1),opacity 260ms cubic-bezier(.2,.7,.2,1)">{{ nextLabel }}</button>
+<button type="button" onClick="{{ next }}" disabled="{{ nextDisabled }}" style="height:48px;padding:0 clamp(20px,5vw,32px);border-radius:9px;border:0;background:{{ nextBg }};color:#fff;font:700 17px/1 Assistant,sans-serif;cursor:{{ nextCursor }};opacity:{{ nextOpacity }};transition:background 260ms cubic-bezier(.2,.7,.2,1),opacity 260ms cubic-bezier(.2,.7,.2,1)">{{ nextLabel }}</button>
 </sc-if>
 <p style="margin:0;font:300 14px/1.5 Assistant,sans-serif;color:rgba(47,63,99,.7)">{{ hint }}</p>
 </div>
 
-</div>
+</form>
 
 <div style="background:#F1F4F9;padding:36px clamp(20px,5vw,32px);min-width:0;display:flex;flex-direction:column;gap:22px">
 <div>
@@ -257,7 +262,7 @@ a:hover{color:#EF453D}
 <div style="max-width:980px;margin:0 auto;display:flex;flex-wrap:wrap;gap:28px 48px;justify-content:space-between">
 <div style="max-width:34ch">
 <p style="margin:0;font:500 22px/1 Caveat,cursive;font-size:clamp(14px, 2.49vw, 22px);color:#fff">Before I Do</p>
-<p style="margin:12px 0 0;font:300 14px/1.8 Assistant,sans-serif;color:rgba(255,255,255,.85)">ברק ליור<br>החומש 2, הוד השרון<br>052-6604320 · barakliver@gmail.com</p>
+<p style="margin:12px 0 0;font:300 14px/1.8 Assistant,sans-serif;color:rgba(255,255,255,.85)">052-6604320</p>
 </div>
 <div style="display:flex;flex-wrap:wrap;gap:10px 28px;align-content:flex-start;max-width:46ch">
 <a href="/privacy#terms" style="font:300 14px/1.6 Assistant,sans-serif;color:rgba(255,255,255,.9)">תנאי שימוש</a>
