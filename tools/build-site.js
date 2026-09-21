@@ -1198,6 +1198,9 @@ const LONG_SECTIONS = [
           <h3 style="margin:14px 0 0;font:700 clamp(19px,2.6vw,23px)/1.3 Heebo,sans-serif;color:#fff">${t}</h3>
           <p style="margin:12px auto 0;max-width:30ch;font:300 clamp(16px,2.1vw,18px)/1.8 Assistant,sans-serif;color:rgba(255,255,255,.9)">${b}</p>
         </div>`).join('')}
+    </div>
+    <div style="margin-top:clamp(36px,5vw,52px);display:flex;justify-content:center">
+      ${buyButton('להזמנה', '#fff', '#4F6BA5')}
     </div>`),
 
   // ── what is in the box ─────────────────────────────────────────────────
