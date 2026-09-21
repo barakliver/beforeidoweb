@@ -164,7 +164,7 @@ a:focus-visible,button:focus-visible{outline:2px solid #EF453D;outline-offset:3p
     </span>
     <a href="/checkout" class="bid-tk-cta">לרכישה</a>
   </span>
-  <span data-tk-done style="display:none"><b>מבצע ההשקה הסתיים</b><span class="bid-tk-sep">·</span><a href="tel:0526604320" class="bid-tk-cta">דברו איתנו</a></span>
+  <span data-tk-done style="display:none"><b>Before I Do</b><span class="bid-tk-sep">·</span><span>189 ₪ + משלוח</span><a href="/checkout" class="bid-tk-cta">לרכישה</a></span>
 </div>
 <style>
   #bid-ticker {
@@ -231,12 +231,9 @@ a:focus-visible,button:focus-visible{outline:2px solid #EF453D;outline-offset:3p
     Array.prototype.forEach.call(document.querySelectorAll('[data-bid-was]'), function (el) {
       if (el.style.display !== 'none') el.style.display = 'none';
     });
-    // Buying must not continue at the launch price for a product that now
-    // costs more — the payment link is fixed at the old amount. Calls instead,
-    // until a link for the new price exists.
-    Array.prototype.forEach.call(document.querySelectorAll('a[href="/checkout"]'), function (a) {
-      a.setAttribute('href', 'tel:0526604320');
-    });
+    // The buy buttons keep pointing at /checkout on purpose. That page swaps
+    // to the 189₪ link by the same clock, and it is what collects the address
+    // and sends Barak the order — jumping straight to Grow would lose both.
     document.documentElement.setAttribute('data-bid-offer', 'ended');
   }
 

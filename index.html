@@ -306,7 +306,7 @@ button:focus-visible,a:focus-visible,[role="button"]:focus-visible,[tabindex]:fo
           המחיר עכשיו 189 ₪, והמשלוח נגבה בנפרד.
         </p>
         <div style="margin-top:26px;display:flex;justify-content:center">
-          <a href="tel:0526604320" style="display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 34px;border-radius:8px;background:#fff;color:#4F6BA5;border:1.5px solid #fff;font:600 17px/1 Assistant,sans-serif;text-decoration:none;white-space:nowrap">דברו איתנו — 052-6604320</a>
+          <a href="/checkout" style="display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 34px;border-radius:8px;background:#fff;color:#4F6BA5;border:1.5px solid #fff;font:600 17px/1 Assistant,sans-serif;text-decoration:none;white-space:nowrap">אני רוצה לשחק!</a>
         </div>
       </div>
     </div>
@@ -857,7 +857,7 @@ class Component extends DCLogic {
     </span>
     <a href="/checkout" class="bid-tk-cta">לרכישה</a>
   </span>
-  <span data-tk-done style="display:none"><b>מבצע ההשקה הסתיים</b><span class="bid-tk-sep">·</span><a href="tel:0526604320" class="bid-tk-cta">דברו איתנו</a></span>
+  <span data-tk-done style="display:none"><b>Before I Do</b><span class="bid-tk-sep">·</span><span>189 ₪ + משלוח</span><a href="/checkout" class="bid-tk-cta">לרכישה</a></span>
 </div>
 <style>
   #bid-ticker {
@@ -924,12 +924,9 @@ class Component extends DCLogic {
     Array.prototype.forEach.call(document.querySelectorAll('[data-bid-was]'), function (el) {
       if (el.style.display !== 'none') el.style.display = 'none';
     });
-    // Buying must not continue at the launch price for a product that now
-    // costs more — the payment link is fixed at the old amount. Calls instead,
-    // until a link for the new price exists.
-    Array.prototype.forEach.call(document.querySelectorAll('a[href="/checkout"]'), function (a) {
-      a.setAttribute('href', 'tel:0526604320');
-    });
+    // The buy buttons keep pointing at /checkout on purpose. That page swaps
+    // to the 189₪ link by the same clock, and it is what collects the address
+    // and sends Barak the order — jumping straight to Grow would lose both.
     document.documentElement.setAttribute('data-bid-offer', 'ended');
   }
 

@@ -68,19 +68,20 @@ const LINKS = {
   'Before I Do - מדיניות.dc.html': '/privacy',
 };
 
-// Grow payment links, one per delivery method: the link's amount is fixed on
-// Grow's side and no URL parameter overrides it (sum/price/amount are all
-// ignored), so a different total needs a different link.
-//   self = 129 ₪ (pickup)   ship = 168 ₪ (129 + 39 delivery)
-// Until a 168 ₪ link exists, shipping falls back to the 129 ₪ one and every
-// shipped order is charged 39 ₪ short.
-// One link is now correct for both delivery choices: while the launch offer
-// runs, delivery is included and the total is 129₪ either way — which is what
-// this link charges. A second link becomes necessary the moment the offer ends
-// and 189₪ + delivery applies.
+// Grow payment links. The amount is fixed on Grow's side and no URL parameter
+// overrides it (sum/price/amount are all ignored), so a different total needs
+// a different link.
+//
+// `launch` covers both delivery choices while the offer runs: delivery is
+// included, so the total is 129₪ whether the box is shipped or collected —
+// which is exactly what that link charges.
+//
+// `after` takes over the moment the clock reaches zero, with no deploy and no
+// hand on the switch: 189₪ for the box, and Grow's own delivery selector adds
+// 39₪ for home delivery or nothing for pickup. Verified against the link.
 const PAY = {
-  self: 'https://pay.grow.link/OTU0ODQ~bf83dbe62447b9a2c28b0611db86e909-NDAxNjIzMw',
-  ship: 'https://pay.grow.link/OTU0ODQ~bf83dbe62447b9a2c28b0611db86e909-NDAxNjIzMw',
+  launch: 'https://pay.grow.link/OTU0ODQ~bf83dbe62447b9a2c28b0611db86e909-NDAxNjIzMw',
+  after: 'https://pay.grow.link/OTU0ODQ~f2522df5261f6b64f81c1f3c57caf677-NDAxODgzNQ',
 };
 
 const PAGES = [
@@ -500,8 +501,9 @@ const buyButton = (label, bg, color, border) =>
 // keeps it ticking.
 //
 // When it reaches zero: fireworks, the price swaps to the post-launch one
-// everywhere it is tagged, and buying stops until Barak supplies a link for
-// the new amount. Charging 129₪ for a 189₪ product would be the worse bug.
+// everywhere it is tagged, and the checkout switches to the 189₪ payment link.
+// Nobody has to be awake for it — it is a comparison against an absolute
+// instant, made fresh every second, on every visitor's own device.
 function countdownParts(fromMs) {
   const end = Date.parse(OFFER.endsISO);
   const left = Math.max(0, end - fromMs);
@@ -546,7 +548,7 @@ const COUNTDOWN = (() => {
           המחיר עכשיו ${OFFER.afterPrice} ₪, והמשלוח נגבה בנפרד.
         </p>
         <div style="margin-top:26px;display:flex;justify-content:center">
-          <a href="tel:0526604320" style="display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 34px;border-radius:8px;background:#fff;color:#4F6BA5;border:1.5px solid #fff;font:600 17px/1 Assistant,sans-serif;text-decoration:none;white-space:nowrap">דברו איתנו — 052-6604320</a>
+          <a href="/checkout" style="display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 34px;border-radius:8px;background:#fff;color:#4F6BA5;border:1.5px solid #fff;font:600 17px/1 Assistant,sans-serif;text-decoration:none;white-space:nowrap">אני רוצה לשחק!</a>
         </div>
       </div>
     </div>
@@ -793,12 +795,9 @@ const COUNTDOWN_JS = `<script>
     Array.prototype.forEach.call(document.querySelectorAll('[data-bid-was]'), function (el) {
       if (el.style.display !== 'none') el.style.display = 'none';
     });
-    // Buying must not continue at the launch price for a product that now
-    // costs more — the payment link is fixed at the old amount. Calls instead,
-    // until a link for the new price exists.
-    Array.prototype.forEach.call(document.querySelectorAll('a[href="/checkout"]'), function (a) {
-      a.setAttribute('href', 'tel:0526604320');
-    });
+    // The buy buttons keep pointing at /checkout on purpose. That page swaps
+    // to the 189₪ link by the same clock, and it is what collects the address
+    // and sends Barak the order — jumping straight to Grow would lose both.
     document.documentElement.setAttribute('data-bid-offer', 'ended');
   }
 
@@ -896,7 +895,7 @@ const TICKER = `<div id="bid-ticker" dir="rtl" role="status">
     </span>
     <a href="/checkout" class="bid-tk-cta">לרכישה</a>
   </span>
-  <span data-tk-done style="display:none"><b>מבצע ההשקה הסתיים</b><span class="bid-tk-sep">·</span><a href="tel:0526604320" class="bid-tk-cta">דברו איתנו</a></span>
+  <span data-tk-done style="display:none"><b>Before I Do</b><span class="bid-tk-sep">·</span><span>${OFFER.afterPrice} ₪ + משלוח</span><a href="/checkout" class="bid-tk-cta">לרכישה</a></span>
 </div>
 <style>
   #bid-ticker {
@@ -927,6 +926,56 @@ const TICKER = `<div id="bid-ticker" dir="rtl" role="status">
     body { padding-block-start: 42px; }
   }
 </style>`;
+
+// The checkout has no clock on it, but it holds the money: the payment link,
+// the total, and the shipping line. All three have to turn over at the same
+// instant the countdown does, on their own, on the visitor's device.
+//
+// window.bidEnded() is defined before the page runtime boots, because the
+// render reads it. applyEnded() then keeps the static copy in step, re-applied
+// every second for the same reason the countdown re-applies its own work: the
+// runtime re-renders this subtree from the raw template and would otherwise
+// put the launch wording straight back.
+const CHECKOUT_SWITCH_JS = `<script>
+(function () {
+  var END = Date.parse(${JSON.stringify(OFFER.endsISO)});
+  window.bidEnded = function () { return Date.now() >= END; };
+
+  var PRICE = ${OFFER.afterPrice} + ' ₪';
+  // Longest first: the short sentence is a substring of the long one, and
+  // replacing it first leaves the long one half-rewritten.
+  var COPY = [
+    ['משלוח עד הבית כלול במבצע ההשקה. ההזמנות המוקדמות יוצאות ב-${OFFER.shipDate}. איסוף עצמי ללא עלות.',
+     'משלוח עד הבית ${OFFER.shipping} ₪, אספקה תוך 1–5 ימי עסקים. איסוף עצמי ללא עלות.'],
+    ['כלול במבצע ההשקה. ההזמנות המוקדמות יוצאות ב-${OFFER.shipDate}.',
+     '${OFFER.shipping} ₪. אספקה תוך 1–5 ימי עסקים.']
+  ];
+
+  function applyEnded() {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-bid-price]'), function (el) {
+      if (el.textContent !== PRICE) el.textContent = PRICE;
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-bid-was]'), function (el) {
+      if (el.style.display !== 'none') el.style.display = 'none';
+    });
+    var walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+    var node;
+    while ((node = walk.nextNode())) {
+      for (var i = 0; i < COPY.length; i++) {
+        if (node.nodeValue.indexOf(COPY[i][0]) !== -1) {
+          node.nodeValue = node.nodeValue.split(COPY[i][0]).join(COPY[i][1]);
+        }
+      }
+    }
+    document.documentElement.setAttribute('data-bid-offer', 'ended');
+  }
+
+  function check() { if (window.bidEnded()) applyEnded(); }
+  if (document.body) check();
+  addEventListener('DOMContentLoaded', check);
+  setInterval(check, 1000);
+})();
+<\/script>`;
 
 const report = [];
 let built = 0;
@@ -1012,13 +1061,18 @@ for (const p of PAGES) {
     // Delivery is included for the launch, so the total is 129₪ on both paths.
     // That is also what makes the single 129₪ Grow link correct: the 39₪ gap
     // that used to be charged short does not exist while the offer runs.
+    //
+    // Every one of these reads the clock rather than a build-time constant, so
+    // the page stops selling the launch price by itself, at the right second.
+    const total = who =>
+      `window.bidEnded() ? ${OFFER.afterPrice} + (${who}.method === "ship" ? ${OFFER.shipping} : 0) : ${OFFER.price}`;
     fix('shipping included in the offer', x => x
       .replace('shipLabel: s.method === "ship" ? "39 ₪"',
-               'shipLabel: s.method === "ship" ? "כלול במבצע ההשקה"')
+               `shipLabel: s.method === "ship" ? (window.bidEnded() ? "${OFFER.shipping} ₪" : "כלול במבצע ההשקה")`)
       .replace('total: 129 + (s.method === "ship" ? 39 : 0)',
-               `total: ${OFFER.price}`)
+               `total: ${total('s')}`)
       .replace('total: 129 + (s2.method === "ship" ? 39 : 0)',
-               `total: ${OFFER.price}`)
+               `total: ${total('s2')}`)
       .replace('משלוח עד הבית', 'משלוח עד הבית')
       .replace('39 ₪. אספקה תוך 1–5 ימי עסקים.',
                `כלול במבצע ההשקה. ההזמנות המוקדמות יוצאות ב-${OFFER.shipDate}.`)
@@ -1059,11 +1113,15 @@ for (const p of PAGES) {
       'אפשר לבטל תוך 14 יום, כל עוד הקופסה סגורה.',
       'אפשר לבטל תוך 14 יום ולהחזיר, כל עוד המוצר באריזה המקורית.'));
 
-    const self = JSON.stringify(PAY.self);
-    const ship = JSON.stringify(PAY.ship || PAY.self);
+    // One link per era, not per delivery method: the launch link charges 129₪
+    // however the box travels, and the post-launch one carries Grow's own
+    // delivery selector. The swap needs no deploy — it is the same clock.
     fix('checkout: pay link', x => x.replace(
       'payUrl: this.props.payUrl ?? "#",',
-      `payUrl: s.method === "ship" ? ${ship} : ${self},`));
+      `payUrl: window.bidEnded() ? ${JSON.stringify(PAY.after)} : ${JSON.stringify(PAY.launch)},`));
+    fix('checkout: offer switch', x => x.replace(
+      '<script src="/assets/js/app.js"></script>',
+      CHECKOUT_SWITCH_JS + '\n<script src="/assets/js/app.js"></script>'));
     fix('checkout: drop placeholder', x =>
       x.replace(/<p [^>]*>עמוד הסליקה יתחבר כאן\.<\/p>\s*/, ''));
 
@@ -1080,12 +1138,12 @@ for (const p of PAGES) {
             name: s2.name, phone: s2.phone, method: s2.method, point: s2.point,
             city: s2.city, street: s2.street, houseNo: s2.houseNo, notes: s2.notes,
             marketing: s2.consentMarketing,
-            total: ${OFFER.price}
+            total: ${total('s2')}
           });
           navigator.sendBeacon("/api/order", new Blob([body], { type: "application/json" }));
         } catch (err) { /* a lost notification must never block the payment */ }
       }`));
-    report.push(['note', `    checkout: one ${OFFER.price} ₪ link covers both paths while delivery is included`]);
+    report.push(['note', `    checkout: ${OFFER.price} ₪ until ${OFFER.endLabel}, then ${OFFER.afterPrice} ₪ + ${OFFER.shipping} ₪ — switched by the clock, not by hand`]);
   }
 
   // Everywhere except the purchase flow — a share button beside a payment

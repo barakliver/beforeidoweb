@@ -9,6 +9,46 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/assets/fonts.css">
+<script>
+(function () {
+  var END = Date.parse("2026-10-26T21:59:59Z");
+  window.bidEnded = function () { return Date.now() >= END; };
+
+  var PRICE = 189 + ' ₪';
+  // Longest first: the short sentence is a substring of the long one, and
+  // replacing it first leaves the long one half-rewritten.
+  var COPY = [
+    ['משלוח עד הבית כלול במבצע ההשקה. ההזמנות המוקדמות יוצאות ב-26.10.26. איסוף עצמי ללא עלות.',
+     'משלוח עד הבית 39 ₪, אספקה תוך 1–5 ימי עסקים. איסוף עצמי ללא עלות.'],
+    ['כלול במבצע ההשקה. ההזמנות המוקדמות יוצאות ב-26.10.26.',
+     '39 ₪. אספקה תוך 1–5 ימי עסקים.']
+  ];
+
+  function applyEnded() {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-bid-price]'), function (el) {
+      if (el.textContent !== PRICE) el.textContent = PRICE;
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-bid-was]'), function (el) {
+      if (el.style.display !== 'none') el.style.display = 'none';
+    });
+    var walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+    var node;
+    while ((node = walk.nextNode())) {
+      for (var i = 0; i < COPY.length; i++) {
+        if (node.nodeValue.indexOf(COPY[i][0]) !== -1) {
+          node.nodeValue = node.nodeValue.split(COPY[i][0]).join(COPY[i][1]);
+        }
+      }
+    }
+    document.documentElement.setAttribute('data-bid-offer', 'ended');
+  }
+
+  function check() { if (window.bidEnded()) applyEnded(); }
+  if (document.body) check();
+  addEventListener('DOMContentLoaded', check);
+  setInterval(check, 1000);
+})();
+</script>
 <script src="/assets/js/app.js"></script>
 </head>
 <body>
@@ -298,9 +338,9 @@ class Component extends DCLogic {
       nextOpacity: ok ? 1 : 0.8,
       nextLabel: step === 1 ? "ממשיכים" : "לתשלום",
       hint: step === 1 ? "שלב 1 מתוך 3" : step === 2 ? "שלב 2 מתוך 3" : "שלב 3 מתוך 3",
-      payUrl: s.method === "ship" ? "https://pay.grow.link/OTU0ODQ~bf83dbe62447b9a2c28b0611db86e909-NDAxNjIzMw" : "https://pay.grow.link/OTU0ODQ~bf83dbe62447b9a2c28b0611db86e909-NDAxNjIzMw",
-      shipLabel: s.method === "ship" ? "כלול במבצע ההשקה" : s.method === "self" ? "איסוף עצמי — ללא עלות" : "—",
-      total: 129,
+      payUrl: window.bidEnded() ? "https://pay.grow.link/OTU0ODQ~f2522df5261f6b64f81c1f3c57caf677-NDAxODgzNQ" : "https://pay.grow.link/OTU0ODQ~bf83dbe62447b9a2c28b0611db86e909-NDAxNjIzMw",
+      shipLabel: s.method === "ship" ? (window.bidEnded() ? "39 ₪" : "כלול במבצע ההשקה") : s.method === "self" ? "איסוף עצמי — ללא עלות" : "—",
+      total: window.bidEnded() ? 189 + (s.method === "ship" ? 39 : 0) : 129,
       consentTerms: s.consentTerms,
       consentMarketing: s.consentMarketing,
       toggleTerms: e => this.setState({ consentTerms: e.target.checked }),
@@ -316,7 +356,7 @@ class Component extends DCLogic {
             name: s2.name, phone: s2.phone, method: s2.method, point: s2.point,
             city: s2.city, street: s2.street, houseNo: s2.houseNo, notes: s2.notes,
             marketing: s2.consentMarketing,
-            total: 129
+            total: window.bidEnded() ? 189 + (s2.method === "ship" ? 39 : 0) : 129
           });
           navigator.sendBeacon("/api/order", new Blob([body], { type: "application/json" }));
         } catch (err) { /* a lost notification must never block the payment */ }
