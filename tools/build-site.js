@@ -42,7 +42,7 @@ const OFFER = {
   price: 129,
   // The struck-through price is what it costs once the launch ends, so the
   // saving on show is the real one. There is only one other price.
-  afterPrice: 189,
+  afterPrice: 169,
   shipping: 39,
   endsISO: '2026-10-26T21:59:59Z',
   endLabel: '26.10.26',
@@ -366,8 +366,10 @@ const SHARE_FLOAT = `<a id="wa-share" class="bid-float" href="https://wa.me/?tex
   /* left, physically: the logical properties resolve the other way in RTL */
   #wa-share { left: clamp(14px, 4vw, 26px); background: #25D366; }
   #wa-share:hover { background: #1FB855; }
-  /* Green button, so a red ring reads as an error rather than as focus. */
-  #wa-share:focus-visible { outline: 3px solid #1F2C4A; outline-offset: 3px; }
+  /* Green button, so a red ring reads as an error rather than as focus.
+     !important because the site-wide focus rule is itself !important and
+     would otherwise paint this one coral the moment it is tabbed to. */
+  #wa-share:focus-visible { outline: 3px solid #1F2C4A !important; outline-offset: 3px !important; }
 
   /* A slow breath, so the eye catches it once without the page nagging.
      Shadow and scale only — nothing that moves the button out from under a
@@ -522,7 +524,7 @@ const POLISH_CSS = `<style>
 const SEC = {
   wrap: (bg, inner, extra) =>
     `<section dir="rtl" style="background:${bg};${extra || ''}">
-       <div style="max-width:1180px;margin:0 auto;padding:clamp(64px,10vw,120px) clamp(20px,5vw,32px)">${inner}</div>
+       <div style="max-width:1180px;margin:0 auto;padding:clamp(40px,6vw,72px) clamp(20px,5vw,32px)">${inner}</div>
      </section>`,
   // One coral mark per section, as the spec's accent budget allows.
   rule: (color) => `<div style="width:34px;height:1.5px;background:${color || '#EF453D'};margin:28px auto 0"></div>`,
@@ -639,20 +641,16 @@ const COUNTDOWN = (() => {
   const gap = `<div aria-hidden="true" style="align-self:start;margin-top:clamp(4px,1.2vw,8px);font:300 clamp(28px,8vw,44px)/1 Heebo,sans-serif;color:rgba(255,255,255,.22)">:</div>`;
   const rule = `<div aria-hidden="true" style="width:min(340px,70%);height:1px;margin:clamp(28px,5vw,40px) auto 0;background:rgba(255,255,255,.16)"></div>`;
   return `<section id="bid-countdown" dir="rtl" style="background:#3E568A">
-    <div style="max-width:1180px;margin:0 auto;padding:clamp(60px,9vw,104px) clamp(20px,5vw,32px);text-align:center">
+    <div style="max-width:1180px;margin:0 auto;padding:clamp(44px,6.5vw,72px) clamp(20px,5vw,32px);text-align:center">
       <div data-cd-live>
-        <p style="margin:0;font:400 clamp(12px,2.8vw,13px)/1 Assistant,sans-serif;color:rgba(255,255,255,.55);letter-spacing:3px">מבצע ההשקה נגמר בעוד</p>
-        <div style="margin-top:clamp(26px,4vw,36px);display:flex;justify-content:center;align-items:flex-start;gap:clamp(6px,2vw,16px)">
+        <div style="display:flex;justify-content:center;align-items:flex-start;gap:clamp(6px,2vw,16px)">
           ${cell(p0.d, 'ימים', 'd')}${gap}${cell(p0.h, 'שעות', 'h')}${gap}${cell(p0.m, 'דקות', 'm')}${gap}${cell(p0.s, 'שניות', 's')}
         </div>
-        ${rule}
-        <p style="margin:clamp(26px,4vw,34px) auto 0;max-width:36ch;font:300 clamp(15px,2vw,17px)/1.8 Assistant,sans-serif;color:rgba(255,255,255,.82)">
-          ${OFFER.price} ₪ כולל משלוח עד הבית, עד ${OFFER.endLabel}.<br>אחרי זה ${OFFER.afterPrice} ₪, והמשלוח נגבה בנפרד.
-        </p>
-        <div style="margin-top:clamp(26px,4vw,32px);display:flex;justify-content:center">
-          <a href="/checkout" style="display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 36px;border-radius:8px;background:${RED};color:#fff;border:1.5px solid ${RED};font:600 17px/1 Assistant,sans-serif;text-decoration:none;white-space:nowrap">אני רוצה לשחק!</a>
+        <p style="margin:clamp(22px,3.4vw,30px) auto 0;font:300 clamp(15px,2vw,17px)/1.7 Assistant,sans-serif;color:rgba(255,255,255,.85)">כולל משלוח חינם עד הבית</p>
+        <div style="margin-top:clamp(20px,3vw,26px);display:flex;justify-content:center">
+          <a href="/checkout" style="display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 36px;border-radius:8px;background:${RED};color:#fff;border:1.5px solid ${RED};font:600 17px/1 Assistant,sans-serif;text-decoration:none;white-space:nowrap">להזמנה</a>
         </div>
-        <p style="margin:18px auto 0;font:300 14px/1.7 Assistant,sans-serif;color:rgba(255,255,255,.5)">ההזמנות המוקדמות יוצאות ב-${OFFER.shipDate}.</p>
+        <p style="margin:16px auto 0;font:300 14px/1.7 Assistant,sans-serif;color:rgba(255,255,255,.5)">ההזמנות המוקדמות יוצאות ב-${OFFER.shipDate}.</p>
       </div>
 
       <div data-cd-done style="display:none">
@@ -663,7 +661,7 @@ const COUNTDOWN = (() => {
           המחיר עכשיו ${OFFER.afterPrice} ₪, והמשלוח נגבה בנפרד.
         </p>
         <div style="margin-top:clamp(26px,4vw,32px);display:flex;justify-content:center">
-          <a href="/checkout" style="display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 36px;border-radius:8px;background:#fff;color:#4F6BA5;border:1.5px solid #fff;font:600 17px/1 Assistant,sans-serif;text-decoration:none;white-space:nowrap">אני רוצה לשחק!</a>
+          <a href="/checkout" style="display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 36px;border-radius:8px;background:#fff;color:#4F6BA5;border:1.5px solid #fff;font:600 17px/1 Assistant,sans-serif;text-decoration:none;white-space:nowrap">להזמנה</a>
         </div>
       </div>
     </div>
@@ -707,22 +705,6 @@ const LONG_SECTIONS = [
           <p style="margin:0;font:700 clamp(34px,5vw,46px)/1 Heebo,sans-serif;color:rgba(255,255,255,.35)">${n}</p>
           <h3 style="margin:14px 0 0;font:700 clamp(19px,2.6vw,23px)/1.3 Heebo,sans-serif;color:#fff">${t}</h3>
           <p style="margin:12px auto 0;max-width:30ch;font:300 clamp(16px,2.1vw,18px)/1.8 Assistant,sans-serif;color:rgba(255,255,255,.9)">${b}</p>
-        </div>`).join('')}
-    </div>`),
-
-  // ── what it actually does ──────────────────────────────────────────────
-  SEC.wrap('#fff', `
-    ${SEC.eyebrow('מה זה עושה בפועל')}
-    ${SEC.h2('זה לא עוד משחק זוגי. זה כלי עבודה לתכנון.', '#4F6BA5')}
-    ${SEC.rule()}
-    <div style="margin-top:clamp(36px,5vw,54px);max-width:780px;margin-inline:auto;display:flex;flex-direction:column;gap:clamp(18px,3vw,26px)">
-      ${OUTCOMES.map(([t, d]) => `
-        <div style="display:flex;gap:16px;align-items:flex-start;text-align:right">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#EF453D" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:5px"><path d="M4 12.5l5.2 5.2L20 7"/></svg>
-          <div>
-            <h3 style="margin:0;font:700 clamp(18px,2.4vw,21px)/1.35 Heebo,sans-serif;color:#4F6BA5">${t}</h3>
-            <p style="margin:7px 0 0;font:300 clamp(16px,2.1vw,18px)/1.75 Assistant,sans-serif;color:#2F3F63">${d}</p>
-          </div>
         </div>`).join('')}
     </div>`),
 

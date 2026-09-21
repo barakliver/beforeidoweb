@@ -253,8 +253,10 @@ class Component extends DCLogic {
   /* left, physically: the logical properties resolve the other way in RTL */
   #wa-share { left: clamp(14px, 4vw, 26px); background: #25D366; }
   #wa-share:hover { background: #1FB855; }
-  /* Green button, so a red ring reads as an error rather than as focus. */
-  #wa-share:focus-visible { outline: 3px solid #1F2C4A; outline-offset: 3px; }
+  /* Green button, so a red ring reads as an error rather than as focus.
+     !important because the site-wide focus rule is itself !important and
+     would otherwise paint this one coral the moment it is tabbed to. */
+  #wa-share:focus-visible { outline: 3px solid #1F2C4A !important; outline-offset: 3px !important; }
 
   /* A slow breath, so the eye catches it once without the page nagging.
      Shadow and scale only — nothing that moves the button out from under a
@@ -334,7 +336,7 @@ class Component extends DCLogic {
     </span>
     <a href="/checkout" class="bid-tk-cta">להזמנה</a>
   </span>
-  <span data-tk-done style="display:none"><span class="bid-tk-lead">Before I Do</span><span class="bid-tk-nums">189 ₪</span><a href="/checkout" class="bid-tk-cta">להזמנה</a></span>
+  <span data-tk-done style="display:none"><span class="bid-tk-lead">Before I Do</span><span class="bid-tk-nums">169 ₪</span><a href="/checkout" class="bid-tk-cta">להזמנה</a></span>
 </div>
 <style>
   /* A hairline of urgency, not a banner. Flat, one weight, no borders. */
@@ -377,7 +379,7 @@ class Component extends DCLogic {
 <script>
 (function () {
   var END = Date.parse("2026-10-26T21:59:59Z");
-  var AFTER = 189;
+  var AFTER = 169;
   // Re-queried every tick on purpose: this script runs while the raw template
   // is still in the DOM, and the page runtime then replaces that whole subtree
   // with its own render. References taken once would point at detached nodes
