@@ -54,7 +54,10 @@ const OFFER = {
 const RED = '#D63229', RED_DARK = '#BC241C';
 const SITE = 'https://www.beforeido.co.il';
 const TAGLINE = 'משחק קלפים לזוגות מאורסים';
-const BLURB = `${TAGLINE}. חמישים כרטיסיות עם השאלות שכל זוג מאורס צריך לשאול לפני החתונה — ערב אחד, שיחה אמיתית, בלי שיפוטיות. מאת Liver Production.`;
+// This is the line Google prints under the link, so it has to be true and it
+// has to earn the click. It said "חמישים כרטיסיות" — fifty — while every other
+// surface said seventy, which is the number in the box.
+const BLURB = `${TAGLINE}. ${OFFER.cards} כרטיסיות עם השאלות שכדאי לשאול לפני החתונה — ערב אחד, שיחה אמיתית, בלי שיפוטיות. משלוח עד הבית.`;
 
 // Design-tool filename → public URL. Pages link to each other by source
 // filename, in raw and percent-encoded form, sometimes with a #fragment.
@@ -202,6 +205,73 @@ for (const f of fs.readdirSync(path.join(SRC, 'uploads'))) {
 console.log(`assets    ${nFont} fonts, ${Object.keys(vendor).length} vendor js, ` +
             `${Object.keys(imgByHash).length} images (from ${Object.keys(imgPath).length} files)`);
 
+// What Google is told the page IS, rather than left to infer from the prose.
+// Without it the homepage is just a page with Hebrew on it; with it, it is a
+// product, at a price, in a currency, from a named seller, on pre-order until
+// a stated date.
+//
+// Only what can be stood behind: no ratings and no reviews, because there are
+// none yet, and inventing them is both against Google's rules and a lie told
+// to a stranger deciding whether to trust the shop.
+const STRUCTURED_DATA = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': SITE + '/#org',
+      name: 'Liver Production',
+      alternateName: 'Before I Do',
+      url: SITE,
+      logo: SITE + '/assets/og-card.png',
+      email: 'barakliver@gmail.com',
+      telephone: '+972-52-660-4320',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'החומש 2',
+        addressLocality: 'הוד השרון',
+        addressCountry: 'IL',
+      },
+    },
+    {
+      '@type': 'WebSite',
+      '@id': SITE + '/#website',
+      url: SITE,
+      name: 'Before I Do',
+      inLanguage: 'he-IL',
+      publisher: { '@id': SITE + '/#org' },
+    },
+    {
+      '@type': 'Product',
+      '@id': SITE + '/#product',
+      name: 'Before I Do',
+      description: BLURB,
+      image: [SITE + '/assets/og-card.png'],
+      brand: { '@type': 'Brand', name: 'Before I Do' },
+      category: 'משחקי קופסה',
+      inLanguage: 'he-IL',
+      offers: {
+        '@type': 'Offer',
+        '@id': SITE + '/#offer',
+        url: SITE + '/checkout',
+        priceCurrency: 'ILS',
+        price: String(OFFER.price),
+        priceValidUntil: OFFER.endsISO.slice(0, 10),
+        availability: 'https://schema.org/PreOrder',
+        itemCondition: 'https://schema.org/NewCondition',
+        seller: { '@id': SITE + '/#org' },
+        hasMerchantReturnPolicy: {
+          '@type': 'MerchantReturnPolicy',
+          applicableCountry: 'IL',
+          returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+          merchantReturnDays: 14,
+          returnMethod: 'https://schema.org/ReturnByMail',
+          returnFees: 'https://schema.org/ReturnShippingFees',
+        },
+      },
+    },
+  ],
+}, null, 0);
+
 // ── per-page build ────────────────────────────────────────────────────────
 function head(p) {
   const abs = u => SITE + u;
@@ -230,7 +300,8 @@ function head(p) {
     `<meta name="twitter:card" content="summary_large_image">`,
     `<meta name="twitter:title" content="Before I Do">`,
     `<meta name="twitter:description" content="${TAGLINE}">`,
-    `<meta name="twitter:image" content="${abs('/assets/og-card.png')}">`);
+    `<meta name="twitter:image" content="${abs('/assets/og-card.png')}">`,
+    `<script type="application/ld+json">${STRUCTURED_DATA}<\/script>`);
   return lines.join('\n') + '\n';
 }
 
@@ -798,6 +869,23 @@ const COUNTDOWN_JS = `<script>
     // The buy buttons keep pointing at /checkout on purpose. That page swaps
     // to the 189₪ link by the same clock, and it is what collects the address
     // and sends Barak the order — jumping straight to Grow would lose both.
+    // The structured data tells Google the price and that the box is on
+    // pre-order. Both stop being true at the same instant as everything else.
+    var ld = document.querySelector('script[type="application/ld+json"]');
+    // schema.org/PreOrder, not "PreOrder": the value is a URL, so the quote
+    // that looks like it belongs in front of the word is nowhere near it.
+    if (ld && ld.textContent.indexOf('schema.org/PreOrder') !== -1) {
+      try {
+        var data = JSON.parse(ld.textContent);
+        (data['@graph'] || []).forEach(function (node) {
+          if (node['@type'] !== 'Product' || !node.offers) return;
+          node.offers.price = String(AFTER);
+          node.offers.availability = 'https://schema.org/InStock';
+          delete node.offers.priceValidUntil;
+        });
+        ld.textContent = JSON.stringify(data);
+      } catch (e) { /* malformed is worse than stale */ }
+    }
     document.documentElement.setAttribute('data-bid-offer', 'ended');
   }
 
