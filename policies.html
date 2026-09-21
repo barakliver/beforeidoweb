@@ -38,6 +38,47 @@ a:hover{color:#EF453D}
     html, body { overflow-x: hidden; }
   }
 </style>
+<style>
+  a[href="/checkout"], a[href^="https://pay.grow.link"],
+  .bid-tk-cta, #bid-where .bid-w-go a, button {
+    transition: transform 200ms cubic-bezier(.22,.8,.3,1),
+                box-shadow 200ms ease,
+                background-color 200ms ease;
+  }
+  @media (hover: hover) {
+    a[href="/checkout"]:hover, a[href^="https://pay.grow.link"]:hover,
+    .bid-tk-cta:hover, button:not(:disabled):not([disabled]):hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(31, 44, 74, .18);
+    }
+  }
+  a[href="/checkout"]:active, a[href^="https://pay.grow.link"]:active,
+  .bid-tk-cta:active, button:not(:disabled):not([disabled]):active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(31, 44, 74, .14);
+  }
+  /* The checkout's legal links sit in a plain div rather than a <footer>, so
+     the site-wide 44px rule never reached them. */
+  a[href^="/privacy#"], a[href^="/terms#"] {
+    min-height: 44px; display: inline-flex; align-items: center;
+  }
+
+  /* Standalone links that act as controls get a thumb-sized box. Inline
+     links inside a paragraph are left alone — they are text, not buttons. */
+  a[href="/"], a[href="/checkout"], .bid-tk-cta {
+    min-height: 44px; display: inline-flex; align-items: center;
+  }
+  .bid-tk-cta { min-height: 0; }
+
+  /* A disabled step button must not pretend it can be pressed. */
+  button:disabled, button[disabled] { transform: none !important; box-shadow: none !important; }
+  @media (prefers-reduced-motion: reduce) {
+    a[href="/checkout"], a[href^="https://pay.grow.link"],
+    .bid-tk-cta, #bid-where .bid-w-go a, button { transition: none; }
+    a[href="/checkout"]:hover, a[href^="https://pay.grow.link"]:hover,
+    .bid-tk-cta:hover, button:not(:disabled):hover { transform: none; }
+  }
+</style>
 </helmet>
 
 <div dir="rtl" style="background:#fff;font-family:Assistant,system-ui,sans-serif">

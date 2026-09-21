@@ -33,6 +33,47 @@ a:focus-visible,button:focus-visible{outline:2px solid #EF453D;outline-offset:3p
   }
   nav a, footer a, header a { min-height: 44px; display: inline-flex; align-items: center; }
 </style>
+<style>
+  a[href="/checkout"], a[href^="https://pay.grow.link"],
+  .bid-tk-cta, #bid-where .bid-w-go a, button {
+    transition: transform 200ms cubic-bezier(.22,.8,.3,1),
+                box-shadow 200ms ease,
+                background-color 200ms ease;
+  }
+  @media (hover: hover) {
+    a[href="/checkout"]:hover, a[href^="https://pay.grow.link"]:hover,
+    .bid-tk-cta:hover, button:not(:disabled):not([disabled]):hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(31, 44, 74, .18);
+    }
+  }
+  a[href="/checkout"]:active, a[href^="https://pay.grow.link"]:active,
+  .bid-tk-cta:active, button:not(:disabled):not([disabled]):active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(31, 44, 74, .14);
+  }
+  /* The checkout's legal links sit in a plain div rather than a <footer>, so
+     the site-wide 44px rule never reached them. */
+  a[href^="/privacy#"], a[href^="/terms#"] {
+    min-height: 44px; display: inline-flex; align-items: center;
+  }
+
+  /* Standalone links that act as controls get a thumb-sized box. Inline
+     links inside a paragraph are left alone — they are text, not buttons. */
+  a[href="/"], a[href="/checkout"], .bid-tk-cta {
+    min-height: 44px; display: inline-flex; align-items: center;
+  }
+  .bid-tk-cta { min-height: 0; }
+
+  /* A disabled step button must not pretend it can be pressed. */
+  button:disabled, button[disabled] { transform: none !important; box-shadow: none !important; }
+  @media (prefers-reduced-motion: reduce) {
+    a[href="/checkout"], a[href^="https://pay.grow.link"],
+    .bid-tk-cta, #bid-where .bid-w-go a, button { transition: none; }
+    a[href="/checkout"]:hover, a[href^="https://pay.grow.link"]:hover,
+    .bid-tk-cta:hover, button:not(:disabled):hover { transform: none; }
+  }
+</style>
 </helmet>
 
 <div dir="rtl" style="background:#fff;min-height:100vh;display:flex;flex-direction:column;font-family:Assistant,system-ui,sans-serif">
@@ -367,12 +408,16 @@ class Component extends DCLogic {
   }
   .bid-tk-nums i { font-style: normal; color: rgba(255,255,255,.45); padding: 0 1px; }
   .bid-tk-cta {
-    display: inline-flex; align-items: center; height: 26px; padding: 0 13px;
+    position: relative;
+    display: inline-flex; align-items: center; height: 28px; padding: 0 14px;
     border-radius: 999px; background: rgba(255,255,255,.14);
     color: #fff; font: 500 12.5px/1 Assistant, sans-serif; text-decoration: none;
     transition: background 180ms ease;
   }
   .bid-tk-cta:hover { background: rgba(255,255,255,.24); }
+  /* The bar is 44px tall and the pill is 28px. The tap area fills the bar
+     without the pill growing — a thumb should not have to aim. */
+  .bid-tk-cta::after { content: ""; position: absolute; inset: -9px -8px; }
   #bid-ticker a:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
   body { padding-block-start: 44px; }
   @media (max-width: 430px) {
@@ -381,7 +426,7 @@ class Component extends DCLogic {
        words a bare 35:08:45:27 says nothing. */
     .bid-tk-long { display: none; }
     .bid-tk-nums { font-size: 14.5px; }
-    .bid-tk-cta { height: 25px; padding: 0 12px; font-size: 12px; }
+    .bid-tk-cta { height: 26px; padding: 0 12px; font-size: 12px; }
     body { padding-block-start: 40px; }
   }
 </style>
