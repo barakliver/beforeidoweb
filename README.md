@@ -93,6 +93,7 @@ assets/og-card.png               תמונת השיתוף (וואטסאפ/פיי�
 assets/favicon.svg               אייקון הלב
 api/order.js                     התראת הזמנה במייל ובוואטסאפ
 tools/build-site.js              בונה את האתר מייצוא הפרויקט
+tools/optimize-images.js         ממיר את התמונות ל-WebP ומעדכן את העמודים
 tools/og-card.html               המקור של תמונת השיתוף
 vercel.json                      כתובות נקיות (/terms ולא /terms.html)
 robots.txt, sitemap.xml          נוצרים על ידי הסקריפט
