@@ -318,6 +318,10 @@ const SHARE_FLOAT = `<a id="wa-share" class="bid-float" href="https://wa.me/?tex
       if (floats.some(function (f) { return f === el || f.contains(el); })) continue;
       var cs = getComputedStyle(el);
       if (cs.position !== 'fixed' || cs.display === 'none' || cs.visibility === 'hidden') continue;
+      // Decorative overlays are not obstructions. The fireworks canvas covers
+      // the whole viewport, so without this the buttons would be lifted a full
+      // screen height and fly off the top the moment the offer ends.
+      if (cs.pointerEvents === 'none') continue;
       var r = el.getBoundingClientRect();
       // Anchored to the bottom edge, and actually covering something.
       if (r.height < 8 || r.width < 40) continue;
@@ -766,18 +770,28 @@ const COUNTDOWN_JS = `<script>
 
   function pad(n) { return n < 10 ? '0' + n : String(n); }
 
-  function expire() {
-    if (ended) return;
-    ended = true;
-    var live = q('[data-cd-live]'), done = q('[data-cd-done]');
-    if (live) live.style.display = 'none';
-    if (done) done.style.display = '';
+  // Re-applied on every tick, not once. Everything below the ticker lives
+  // inside <x-dc>, and the runtime re-renders that subtree from the raw
+  // template — a one-shot expire() would be undone a moment later and the
+  // page would go back to selling at the launch price. Each write is
+  // idempotent and skipped when it would change nothing.
+  function applyEnded() {
+    var PRICE = AFTER + ' \u20AA';
+    Array.prototype.forEach.call(document.querySelectorAll('[data-cd-live],[data-tk-live]'), function (el) {
+      if (el.style.display !== 'none') el.style.display = 'none';
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-cd-done]'), function (el) {
+      if (el.style.display === 'none') el.style.display = '';
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-tk-done]'), function (el) {
+      if (el.style.display !== 'flex') el.style.display = 'flex';
+    });
     // Every tagged price across the page stops being true at the same instant.
     Array.prototype.forEach.call(document.querySelectorAll('[data-bid-price]'), function (el) {
-      el.textContent = AFTER + ' \u20AA';
+      if (el.textContent !== PRICE) el.textContent = PRICE;
     });
     Array.prototype.forEach.call(document.querySelectorAll('[data-bid-was]'), function (el) {
-      el.hidden = true;
+      if (el.style.display !== 'none') el.style.display = 'none';
     });
     // Buying must not continue at the launch price for a product that now
     // costs more — the payment link is fixed at the old amount. Calls instead,
@@ -786,11 +800,19 @@ const COUNTDOWN_JS = `<script>
       a.setAttribute('href', 'tel:0526604320');
     });
     document.documentElement.setAttribute('data-bid-offer', 'ended');
+  }
+
+  function expire() {
+    applyEnded();
+    if (ended) return;
+    ended = true;   // the fireworks are the one thing that happens only once
     fireworks();
   }
 
   function tick() {
     var left = END - Date.now();
+    // The interval is deliberately never cleared: expire() has to keep
+    // re-asserting itself against the runtime's re-renders.
     if (left <= 0) { expire(); return; }
     var v = {
       d: Math.floor(left / 86400000),
@@ -798,9 +820,11 @@ const COUNTDOWN_JS = `<script>
       m: Math.floor(left / 60000) % 60,
       s: Math.floor(left / 1000) % 60
     };
+    // Every clock on the page: the ticker at the top and the section below.
     ['d','h','m','s'].forEach(function (k) {
-      var el = q('[data-cd="' + k + '"]');
-      if (el) el.textContent = pad(v[k]);
+      Array.prototype.forEach.call(document.querySelectorAll('[data-cd="' + k + '"]'), function (el) {
+        el.textContent = pad(v[k]);
+      });
     });
   }
   tick();
@@ -853,6 +877,56 @@ const COUNTDOWN_JS = `<script>
   }
 })();
 <\/script>`;
+
+// A thin ticker pinned to the top of every page.
+//
+// The full countdown section sits 3,284px down a 14,000px page — about four
+// phone screens. A visitor has to go looking for it, which is the opposite of
+// what a deadline is for. This one is visible before anything else.
+//
+// It lives outside <x-dc>, so the runtime never re-renders it, and the body is
+// padded by the same height it occupies so nothing hides underneath.
+const TICKER = `<div id="bid-ticker" dir="rtl" role="status">
+  <span data-tk-live>
+    <b>מבצע השקה</b>
+    <span class="bid-tk-sep">·</span>
+    <span>נגמר בעוד</span>
+    <span class="bid-tk-nums">
+      <span data-cd="d">--</span><i>י׳</i><span data-cd="h">--</span><i>ש׳</i><span data-cd="m">--</span><i>ד׳</i><span data-cd="s">--</span><i>שנ׳</i>
+    </span>
+    <a href="/checkout" class="bid-tk-cta">לרכישה</a>
+  </span>
+  <span data-tk-done style="display:none"><b>מבצע ההשקה הסתיים</b><span class="bid-tk-sep">·</span><a href="tel:0526604320" class="bid-tk-cta">דברו איתנו</a></span>
+</div>
+<style>
+  #bid-ticker {
+    position: fixed; inset-block-start: 0; inset-inline: 0; z-index: 55;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    height: 46px; padding: 0 12px;
+    background: ${RED}; color: #fff;
+    font: 600 14px/1 Assistant, sans-serif; white-space: nowrap; overflow: hidden;
+  }
+  #bid-ticker b { font-weight: 700; }
+  #bid-ticker .bid-tk-sep { opacity: .55; }
+  #bid-ticker [data-tk-live], #bid-ticker [data-tk-done] { display: flex; align-items: center; gap: 10px; }
+  .bid-tk-nums { display: inline-flex; align-items: baseline; gap: 2px; font-variant-numeric: tabular-nums; }
+  .bid-tk-nums span { font-weight: 800; font-size: 15px; }
+  .bid-tk-nums i { font-style: normal; opacity: .7; font-size: 11px; margin-inline-end: 5px; }
+  .bid-tk-cta {
+    display: inline-flex; align-items: center; height: 30px; padding: 0 12px;
+    border-radius: 999px; background: #fff; color: ${RED};
+    font: 700 13px/1 Assistant, sans-serif; text-decoration: none;
+  }
+  #bid-ticker a:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+  body { padding-block-start: 46px; }
+  @media (max-width: 430px) {
+    #bid-ticker { height: 42px; gap: 7px; font-size: 12.5px; }
+    #bid-ticker .bid-tk-sep, #bid-ticker [data-tk-live] > span:not(.bid-tk-nums) { display: none; }
+    .bid-tk-nums span { font-size: 14px; }
+    .bid-tk-cta { height: 27px; padding: 0 10px; font-size: 12px; }
+    body { padding-block-start: 42px; }
+  }
+</style>`;
 
 const report = [];
 let built = 0;
@@ -1044,6 +1118,7 @@ for (const p of PAGES) {
 
   if (p.out !== 'checkout.html' && !p.board) {
     fix('floating share + buy buttons', x => x.replace('</body>', SHARE_FLOAT + '\n</body>'));
+    fix('sticky countdown ticker', x => x.replace('</body>', TICKER + '\n</body>'));
     fix('countdown script', x => x.replace('</body>', COUNTDOWN_JS + '\n</body>'));
   }
 
