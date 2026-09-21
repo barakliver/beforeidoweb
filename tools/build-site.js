@@ -599,6 +599,8 @@ const SEC = {
 
 // The six categories, the audiences, the outcomes and the objections all come
 // from Barak's own sales artifact — his words, not mine.
+// Kept after its section came off the page, like SAMPLES and AUDIENCES:
+// Barak's copy, one paste away from returning.
 const CATEGORIES = [
   ['הבסיס', 'אולם או גן אירועים, חתונה קטנה או המונית, חורף או קיץ, תקציב מדויק או חתונה בלי פשרות.'],
   ['בחופה', 'נדרים אישיים, מי מברך, רק ההורים או כל המשפחה, ואיך זוכרים את מי שחסר.'],
@@ -776,6 +778,109 @@ const WHERE_SECTION = (() => {
   </div>
 </section>`;
 })();
+
+const BOX_SECTION_CSS = `<style>
+  #bid-box {
+    background: #F1F4F9;
+    padding: clamp(44px,6vw,76px) clamp(20px,5vw,32px);
+  }
+  .bid-box-wrap { max-width: 1180px; margin: 0 auto; text-align: center; }
+  #bid-box h2 {
+    margin: 0; font: 700 clamp(28px,4.4vw,44px)/1.25 Heebo, sans-serif;
+    color: #4F6BA5;
+  }
+  .bid-box-rule {
+    display: block; width: 34px; height: 1.5px; background: #EF453D;
+    margin: clamp(22px,3vw,28px) auto 0;
+  }
+
+  .bid-box-grid {
+    /* Capped, or the two halves fly to opposite ends of a 1180px row and
+       leave a hole between them. */
+    max-width: 820px; margin: clamp(30px,4.4vw,46px) auto 0;
+    display: grid; grid-template-columns: 1fr auto;
+    gap: clamp(24px,3.4vw,44px); align-items: center;
+    text-align: start;
+  }
+  .bid-box-copy { min-width: 0; }
+  .bid-box-count {
+    margin: 0 0 clamp(18px,2.6vw,24px);
+    display: flex; align-items: baseline; gap: 10px;
+    font: 300 clamp(20px,2.4vw,25px)/1 Heebo, sans-serif; color: #4F6BA5;
+  }
+  /* the count set at display size inside its own sentence */
+  .bid-box-count b {
+    font: 800 clamp(44px,6vw,72px)/1 Heebo, sans-serif; letter-spacing: -2px;
+  }
+  .bid-box-line {
+    margin: 0 0 clamp(11px,1.5vw,15px);
+    font: 300 clamp(17px,2.2vw,22px)/1.6 Assistant, sans-serif; color: #2F3F63;
+  }
+  /* each line steps in from the reading edge, so the eye falls toward the
+     card the third one introduces */
+  .bid-box-line[data-step="2"] { margin-inline-start: clamp(16px,2.4vw,30px); }
+  .bid-box-line[data-step="3"] { margin-inline-start: clamp(32px,4.8vw,60px); color: #4F6BA5; }
+
+  /* ── the line someone says out loud, set as the product's own card ── */
+  .bid-box-card {
+    /* The page does not set a global border-box, so without this the padding
+       is added to the width and the card comes out 40px wider than asked. */
+    box-sizing: border-box;
+    justify-self: center; outline: none;
+    width: clamp(196px,19vw,228px); min-height: clamp(262px,26vw,302px);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: clamp(20px,2.6vw,28px);
+    padding: clamp(26px,3.4vw,34px) clamp(20px,2.6vw,26px);
+    background: #fff; border-radius: 14px;
+    box-shadow: 0 18px 38px rgba(31, 44, 74, .16);
+    rotate: -2.5deg;
+    transition: rotate 240ms cubic-bezier(.22,.8,.3,1),
+                translate 240ms cubic-bezier(.22,.8,.3,1),
+                box-shadow 240ms ease;
+    position: relative;
+  }
+  /* the hairline frame the printed cards carry */
+  .bid-box-card::before {
+    content: ""; position: absolute; inset: 10px;
+    border: 1px solid rgba(79,107,165,.28); border-radius: 8px; pointer-events: none;
+  }
+  .bid-box-heart { width: 22px; height: auto; flex: none; }
+  .bid-box-quote {
+    margin: 0; font: 600 clamp(18px,2vw,21px)/1.55 Heebo, sans-serif;
+    color: #4F6BA5; text-align: center;
+  }
+  .bid-box-sig {
+    display: flex; align-items: center; gap: 10px; width: 100%;
+    color: rgba(79,107,165,.55);
+  }
+  .bid-box-sig i { flex: 1; height: 1px; background: rgba(79,107,165,.3); }
+  .bid-box-sig span { font: 500 15px/1 Caveat, cursive; white-space: nowrap; }
+
+  @media (hover: hover) {
+    .bid-box-card:hover { rotate: 0deg; translate: 0 -5px; box-shadow: 0 24px 46px rgba(31,44,74,.2); }
+  }
+  .bid-box-card:focus-visible { rotate: 0deg; translate: 0 -5px; }
+
+  .bid-box-close { margin-block-start: clamp(30px,4vw,46px); }
+  .bid-box-close p {
+    margin: 0 0 6px;
+    font: 300 clamp(16px,1.9vw,19px)/1.75 Assistant, sans-serif; color: rgba(47,63,99,.8);
+  }
+  .bid-box-close p:last-child { margin: 0; color: #4F6BA5; font-weight: 400; }
+
+  @media (max-width: 820px) {
+    .bid-box-grid { grid-template-columns: 1fr; gap: clamp(28px,6vw,38px); }
+    .bid-box-copy { text-align: center; }
+    .bid-box-line[data-step="2"], .bid-box-line[data-step="3"] { padding-inline-start: 0; }
+    /* a card's proportions, not a square: 236 × 318 is close to the real one */
+    .bid-box-card { width: 250px; min-height: 336px; gap: 18px; padding: 24px 20px; }
+    .bid-box-quote { font-size: 18px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bid-box-card { transition: none; }
+    .bid-box-card:hover, .bid-box-card:focus-visible { rotate: -2.5deg; translate: none; }
+  }
+</style>`;
 
 const WHERE_CSS = `<style>
   #bid-where {
@@ -1044,19 +1149,40 @@ const LONG_SECTIONS = [
     ${SEC.p('מכאן זה מתגלגל: כל החלטה הופכת למשא ומתן, ההורים נכנסים לתמונה, והזוג מגלה שהוא מתכנן חתונה שלמה בלי שאף פעם ישב לדבר על מה הוא באמת רוצה ממנה.', '#2F3F63')}
     ${SEC.quote('התכנון לא נכשל בגלל ספקים. הוא נכשל בגלל שיחה שלא קרתה בזמן.')}`),
 
-  // ── the six categories ─────────────────────────────────────────────────
-  SEC.wrap('#fff', `
-    ${SEC.eyebrow('מה יש בחפיסה')}
-    ${SEC.h2('שישה נושאים. אף אחד מהם לא נעים לגלות מול ספק.', '#4F6BA5')}
-    ${SEC.rule()}
-    <div style="margin-top:clamp(40px,6vw,60px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:clamp(18px,3vw,26px)">
-      ${CATEGORIES.map(([t, d], i) => `
-        <div style="background:#F1F4F9;border-radius:14px;padding:clamp(24px,4vw,32px)">
-          <p style="margin:0;font:700 13px/1 Assistant,sans-serif;letter-spacing:2px;color:rgba(79,107,165,.55)">0${i + 1}</p>
-          <h3 style="margin:12px 0 0;font:700 clamp(20px,2.8vw,25px)/1.3 Heebo,sans-serif;color:#4F6BA5">${t}</h3>
-          <p style="margin:12px 0 0;font:300 clamp(16px,2.1vw,18px)/1.75 Assistant,sans-serif;color:#2F3F63">${d}</p>
-        </div>`).join('')}
-    </div>`),
+  // ── what is waiting in the box ─────────────────────────────────────────
+  //
+  // Short, rhythmic copy that builds to a line someone says out loud — so the
+  // line is set as a card. The product's own front: white stock, a hairline
+  // frame, the small red heart at the top and the script signature between
+  // two rules at the foot. The card language used once, as the thing the
+  // paragraph is actually about, rather than a pile of them for decoration.
+  //
+  // The three "חלקם" lines step inward as they go, so the eye falls toward
+  // the card the third one introduces.
+  `<section id="bid-box" dir="rtl">
+    <div class="bid-box-wrap">
+      <h2>מה מחכה בקופסה?</h2>
+      <i class="bid-box-rule" aria-hidden="true"></i>
+      <div class="bid-box-grid">
+        <div class="bid-box-copy">
+          <p class="bid-box-count"><b>${OFFER.cards}</b> קלפים.</p>
+          <p class="bid-box-line" data-step="1">חלקם ירגישו לכם מוכרים.</p>
+          <p class="bid-box-line" data-step="2">חלקם יפתיעו אתכם.</p>
+          <p class="bid-box-line" data-step="3">וחלקם יגרמו לכם לעצור רגע ולהגיד:</p>
+        </div>
+        <div class="bid-box-card" tabindex="0">
+          <svg class="bid-box-heart" viewBox="0 0 24 21" fill="#EF453D" aria-hidden="true"><path d="M12 20.4C12 20.4 1.2 13.3 1.2 7.1 1.2 3.7 3.9 1 7.1 1 9.2 1 11.1 2.1 12 3.8 12.9 2.1 14.8 1 16.9 1 20.1 1 22.8 3.7 22.8 7.1 22.8 13.3 12 20.4 12 20.4Z"/></svg>
+          <p class="bid-box-quote">״רגע, על זה בכלל לא דיברנו.״</p>
+          <div class="bid-box-sig" aria-hidden="true"><i></i><span>Before I Do</span><i></i></div>
+        </div>
+      </div>
+      <div class="bid-box-close">
+        <p>לא צריך לדעת מראש מה הולך לעלות.</p>
+        <p>בשביל זה פותחים קלף.</p>
+        <p>ונותנים לשיחה לזרום.</p>
+      </div>
+    </div>
+  </section>`,
 
   // ── how it works ───────────────────────────────────────────────────────
   SEC.wrap('#4F6BA5', `
@@ -1797,6 +1923,7 @@ for (const p of PAGES) {
 
   fix('spec: focus + touch targets', x => x.replace('</helmet>', SPEC_CSS + '\n</helmet>'));
   fix('buttons: one answer to a pointer', x => x.replace('</helmet>', BUTTON_CSS + '\n</helmet>'));
+  if (p.out === 'index.html') fix('box section: styles', x => x.replace('</helmet>', BOX_SECTION_CSS + '\n</helmet>'));
   if (p.board) fix('board: narrow-screen readability', x => x.replace('</helmet>', BOARD_CSS + '\n</helmet>'));
 
   // Images.
