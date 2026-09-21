@@ -465,30 +465,46 @@ const CARD_HEIGHT_CSS = `<style>
 // 3.76:1, and the button's label is 15px/600 — under the size that would let
 // 3:1 pass, so it fails AA. #D63229 is 4.83:1 and reads as the same red.
 //
-// The wiggle animates `rotate` and `scale`, not `transform`: the runtime emits
-// `.scpN:hover { transform: translateY(-12px) !important }`, and !important
-// outranks an animation, so keyframes on transform would run and change
-// nothing. rotate and scale compose with transform instead of replacing it.
+// The card hover animates `rotate`, `scale` and `filter`, not `transform`:
+// the runtime emits `.scpN:hover { transform: translateY(-12px) !important }`,
+// and !important outranks an animation, so keyframes on transform would run
+// and change nothing. These compose with it rather than replacing it.
+//
+// It used to be a wiggle — a shake back and forth, which reads as an error
+// state, not as an invitation. A card you are about to pick up rises, leans a
+// little and catches more light. One motion, one direction, no oscillation.
 const POLISH_CSS = `<style>
   @media (max-width: 720px) {
     #bid-header, #bid-header > div { justify-content: center; }
     #bid-header > div { width: 100%; }
   }
-  @keyframes bidCardWiggle {
-    0%   { rotate: 0deg;    scale: 1; }
-    15%  { rotate: -3.2deg; scale: 1.035; }
-    32%  { rotate: 2.6deg;  scale: 1.045; }
-    50%  { rotate: -1.8deg; scale: 1.04; }
-    70%  { rotate: 1deg;    scale: 1.03; }
-    85%  { rotate: -.4deg;  scale: 1.025; }
-    100% { rotate: 0deg;    scale: 1.02; }
-  }
   @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    [style*="aspect-ratio:250/370"],
+    [style*="aspect-ratio: 250 / 370"] {
+      position: relative;
+      transition: rotate 460ms cubic-bezier(.22,.85,.26,1),
+                  scale 460ms cubic-bezier(.22,.85,.26,1),
+                  filter 460ms ease;
+    }
     [style*="aspect-ratio:250/370"]:hover,
     [style*="aspect-ratio: 250 / 370"]:hover {
-      animation: bidCardWiggle 640ms cubic-bezier(.2,.7,.2,1);
-      animation-fill-mode: forwards;
+      rotate: -3deg;
+      scale: 1.045;
+      filter: brightness(1.07) saturate(1.04);
     }
+    /* The hint belongs under the card the visitor is actually reaching for,
+       the way the design shows it — not as a sentence standing above all three. */
+    [style*="aspect-ratio:250/370"]::after,
+    [style*="aspect-ratio: 250 / 370"]::after {
+      content: "לחצו להפוך";
+      position: absolute; inset-inline: 0; top: calc(100% + 16px);
+      text-align: center; pointer-events: none;
+      font: 400 13px/1 Assistant, sans-serif; color: rgba(47,63,99,.5);
+      opacity: 0; translate: 0 -5px;
+      transition: opacity 280ms ease, translate 280ms cubic-bezier(.2,.7,.2,1);
+    }
+    [style*="aspect-ratio:250/370"]:hover::after,
+    [style*="aspect-ratio: 250 / 370"]:hover::after { opacity: 1; translate: 0 0; }
   }
 </style>`;
 
@@ -1007,9 +1023,9 @@ const TICKER = `<div id="bid-ticker" dir="rtl" role="status">
     <span class="bid-tk-nums">
       <span data-cd="d">--</span><i>:</i><span data-cd="h">--</span><i>:</i><span data-cd="m">--</span><i>:</i><span data-cd="s">--</span>
     </span>
-    <a href="/checkout" class="bid-tk-cta">לרכישה</a>
+    <a href="/checkout" class="bid-tk-cta">להזמנה</a>
   </span>
-  <span data-tk-done style="display:none"><span class="bid-tk-lead">Before I Do</span><span class="bid-tk-nums">${OFFER.afterPrice} ₪</span><a href="/checkout" class="bid-tk-cta">לרכישה</a></span>
+  <span data-tk-done style="display:none"><span class="bid-tk-lead">Before I Do</span><span class="bid-tk-nums">${OFFER.afterPrice} ₪</span><a href="/checkout" class="bid-tk-cta">להזמנה</a></span>
 </div>
 <style>
   /* A hairline of urgency, not a banner. Flat, one weight, no borders. */
@@ -1707,11 +1723,28 @@ for (const p of PAGES) {
   // cap lands around 270px and the headline is squeezed into a column. Give
   // the block a real width and let the headline run at display size.
   if (p.out === 'index.html') {
+    // The line above the flip cards told the visitor how the widget works.
+    // The design says it differently: one short invitation here, and the
+    // "לחצו להפוך" hint under whichever card they are reaching for.
+    fix('cards: invite, do not instruct', x => x.replace(
+      'לחיצה הופכת קלף. לחיצה נוספת מחזירה אותו.',
+      'לחצו על הקלפים כדי להפוך אותם'));
+
+    // …and it belongs under the heading, not under the cards. Below them it
+    // lands right where the per-card hint appears, and the two stack up.
+    fix('cards: invitation above, hint below', x => x
+      .replace('<p style="margin:clamp(22px,3vw,34px) 0 0;font:300 15px/1.6 Assistant,sans-serif;color:#3E568A;text-align:center">לחצו על הקלפים כדי להפוך אותם</p>\n', '')
+      .replace('<p style="margin:0 0 clamp(28px,4vw,44px);font:600 clamp(28px,4.4vw,42px)/1.2 Heebo,sans-serif;color:#4F6BA5">נסו אותי</p>',
+               '<p style="margin:0 0 12px;font:600 clamp(28px,4.4vw,42px)/1.2 Heebo,sans-serif;color:#4F6BA5">נסו אותי</p>\n<p style="margin:0 0 clamp(28px,4vw,44px);font:300 15px/1.6 Assistant,sans-serif;color:#3E568A;text-align:center">לחצו על הקלפים כדי להפוך אותם</p>'));
+
     fix('headline: give it room', x => x
       .replace('<div data-reveal="text" style="max-width:34ch">',
                '<div data-reveal="text" style="max-width:min(900px,100%)">')
+      // Wide, not shouting: it was clamped at 42px and wrapping to six lines,
+      // then over-corrected to 58px and crowding the section. This sits
+      // between them, with the width fix that was the real problem.
       .replace('font:600 clamp(28px,4.4vw,42px)/1.3 Heebo,sans-serif;color:#4F6BA5;text-indent:0',
-               'font:600 clamp(30px,5.4vw,58px)/1.25 Heebo,sans-serif;color:#4F6BA5;text-indent:0'));
+               'font:600 clamp(24px,3.7vw,42px)/1.3 Heebo,sans-serif;color:#4F6BA5;text-indent:0'));
   }
 
   // Barak asked for the licence number out of the footer, and then for the
