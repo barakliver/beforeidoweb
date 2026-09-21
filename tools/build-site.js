@@ -827,7 +827,11 @@ const BOX_SECTION_CSS = `<style>
        is added to the width and the card comes out 40px wider than asked. */
     box-sizing: border-box;
     justify-self: center; outline: none;
-    width: clamp(196px,19vw,228px); min-height: clamp(262px,26vw,302px);
+    /* The floor matters more than the ceiling: between roughly 1020 and
+       1070px the width has already bottomed out while the quote font is
+       still near its own maximum, and the second line used to break in
+       two. 244px leaves the line 8px of room at that worst point. */
+    width: clamp(244px,21vw,258px); min-height: clamp(330px,29vw,352px);
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     gap: clamp(20px,2.6vw,28px);
     padding: clamp(26px,3.4vw,34px) clamp(20px,2.6vw,26px);
@@ -846,7 +850,7 @@ const BOX_SECTION_CSS = `<style>
   }
   .bid-box-heart { width: 22px; height: auto; flex: none; }
   .bid-box-quote {
-    margin: 0; font: 600 clamp(18px,2vw,21px)/1.55 Heebo, sans-serif;
+    margin: 0; font: 600 clamp(17px,1.85vw,19px)/1.55 Heebo, sans-serif;
     color: #4F6BA5; text-align: center;
   }
   .bid-box-sig {
@@ -871,6 +875,8 @@ const BOX_SECTION_CSS = `<style>
   @media (max-width: 820px) {
     .bid-box-grid { grid-template-columns: 1fr; gap: clamp(28px,6vw,38px); }
     .bid-box-copy { text-align: center; }
+    /* a flex row ignores text-align, so the count needs its own centring */
+    .bid-box-count { justify-content: center; }
     .bid-box-line[data-step="2"], .bid-box-line[data-step="3"] { padding-inline-start: 0; }
     /* a card's proportions, not a square: 236 × 318 is close to the real one */
     .bid-box-card { width: 250px; min-height: 336px; gap: 18px; padding: 24px 20px; }
@@ -1174,7 +1180,7 @@ const LONG_SECTIONS = [
         </div>
         <div class="bid-box-card" tabindex="0">
           <svg class="bid-box-heart" viewBox="0 0 24 21" fill="#EF453D" aria-hidden="true"><path d="M12 20.4C12 20.4 1.2 13.3 1.2 7.1 1.2 3.7 3.9 1 7.1 1 9.2 1 11.1 2.1 12 3.8 12.9 2.1 14.8 1 16.9 1 20.1 1 22.8 3.7 22.8 7.1 22.8 13.3 12 20.4 12 20.4Z"/></svg>
-          <p class="bid-box-quote">״רגע, על זה בכלל לא דיברנו.״</p>
+          <p class="bid-box-quote">״רגע,<br>על זה בכלל לא דיברנו.״</p>
           <div class="bid-box-sig" aria-hidden="true"><i></i><span>Before I Do</span><i></i></div>
         </div>
       </div>
