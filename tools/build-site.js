@@ -977,6 +977,75 @@ const CHECKOUT_SWITCH_JS = `<script>
 })();
 <\/script>`;
 
+// Everyone who reached the checkout, not only everyone who paid.
+//
+// Barak asked to keep whatever can be kept about the people who fill the form
+// and leave at the last moment. This watches the component's own state, and on
+// the way out sends what the visitor already typed, plus where they got to and
+// where they came from.
+//
+// Two deliberate limits. It stays quiet unless a name or a phone was actually
+// entered — an empty form is not a lead, and an open endpoint should not be fed
+// noise. And it never fires after the pay button, because that path already
+// sends the real order.
+const CHECKOUT_LEADS_JS = `<script>
+(function () {
+  var sent = false, maxStep = 1, t0 = Date.now();
+  var q = new URLSearchParams(location.search);
+
+  // window.__bidCheckout is refreshed on every render of the checkout, so at
+  // unload it already holds exactly what the visitor last typed.
+  function snap() {
+    var c = window.__bidCheckout;
+    if (!c) return null;
+    if (c.step > maxStep) maxStep = c.step;
+    return c.s;
+  }
+  setInterval(snap, 500);
+
+  function device() {
+    var w = innerWidth;
+    return (w <= 480 ? 'טלפון' : w <= 1024 ? 'טאבלט' : 'מחשב') + ' ' + w + 'px';
+  }
+  function utm() {
+    return ['source', 'medium', 'campaign', 'content', 'term']
+      .map(function (k) { var v = q.get('utm_' + k); return v ? k + '=' + v : ''; })
+      .filter(Boolean).join(' ');
+  }
+
+  function send() {
+    if (sent || window.__bidPaid) return;
+    var s = snap();
+    if (!s) return;
+    var named = String(s.name || '').trim().length > 1;
+    var dialled = String(s.phone || '').replace(/\\D/g, '').length >= 7;
+    if (!named && !dialled) return;
+    var seconds = Math.round((Date.now() - t0) / 1000);
+    if (seconds < 5) return;
+    sent = true;
+    try {
+      var body = JSON.stringify({
+        stage: 'abandoned',
+        name: s.name, phone: s.phone, method: s.method, point: s.point,
+        city: s.city, street: s.street, houseNo: s.houseNo, notes: s.notes,
+        marketing: s.consentMarketing, consentTerms: s.consentTerms,
+        total: window.bidEnded() ? ${OFFER.afterPrice} + (s.method === "ship" ? ${OFFER.shipping} : 0) : ${OFFER.price},
+        step: maxStep, seconds: seconds, device: device(), utm: utm(),
+        source: document.referrer || ''
+      });
+      navigator.sendBeacon("/api/order", new Blob([body], { type: "application/json" }));
+    } catch (err) { /* a lost lead must never be visible to the customer */ }
+  }
+
+  // Both, on purpose: pagehide is the reliable one on a desktop navigation,
+  // and iOS can background and kill a tab without ever firing it.
+  addEventListener('pagehide', send);
+  addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'hidden') send();
+  });
+})();
+<\/script>`;
+
 const report = [];
 let built = 0;
 
@@ -1122,6 +1191,12 @@ for (const p of PAGES) {
     fix('checkout: offer switch', x => x.replace(
       '<script src="/assets/js/app.js"></script>',
       CHECKOUT_SWITCH_JS + '\n<script src="/assets/js/app.js"></script>'));
+
+    // renderVals runs on every render, so this is always the current answer.
+    fix('checkout: expose state to the lead beacon', x => x.replace(
+      'const s = this.state, step = s.step;',
+      'const s = this.state, step = s.step; try { window.__bidCheckout = { s: s, step: step }; } catch (e) {}'));
+    fix('checkout: lead beacon', x => x.replace('</body>', CHECKOUT_LEADS_JS + '\n</body>'));
     fix('checkout: drop placeholder', x =>
       x.replace(/<p [^>]*>עמוד הסליקה יתחבר כאן\.<\/p>\s*/, ''));
 
@@ -1132,9 +1207,11 @@ for (const p of PAGES) {
       'onPay: e => { if (!this.state.consentTerms) e.preventDefault(); }',
       `onPay: e => {
         if (!this.state.consentTerms) { e.preventDefault(); return; }
+        window.__bidPaid = true;
         try {
           const s2 = this.state;
           const body = JSON.stringify({
+            stage: "pay",
             name: s2.name, phone: s2.phone, method: s2.method, point: s2.point,
             city: s2.city, street: s2.street, houseNo: s2.houseNo, notes: s2.notes,
             marketing: s2.consentMarketing,

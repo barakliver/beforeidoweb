@@ -290,7 +290,7 @@ class Component extends DCLogic {
   go(n) { this.setState({ step: n }); if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" }); }
 
   renderVals() {
-    const s = this.state, step = s.step;
+    const s = this.state, step = s.step; try { window.__bidCheckout = { s: s, step: step }; } catch (e) {}
     const done = (step - 1) + (this.valid(step) ? 1 : 0);
     const pct = Math.min(1, done / 3);
     const ink = "#4F6BA5", pale = "rgba(79,107,165,.45)", coral = "#EF453D";
@@ -350,9 +350,11 @@ class Component extends DCLogic {
       payOpacity: s.consentTerms ? 1 : 0.85,
       onPay: e => {
         if (!this.state.consentTerms) { e.preventDefault(); return; }
+        window.__bidPaid = true;
         try {
           const s2 = this.state;
           const body = JSON.stringify({
+            stage: "pay",
             name: s2.name, phone: s2.phone, method: s2.method, point: s2.point,
             city: s2.city, street: s2.street, houseNo: s2.houseNo, notes: s2.notes,
             marketing: s2.consentMarketing,
@@ -364,6 +366,63 @@ class Component extends DCLogic {
     };
   }
 }
+</script>
+<script>
+(function () {
+  var sent = false, maxStep = 1, t0 = Date.now();
+  var q = new URLSearchParams(location.search);
+
+  // window.__bidCheckout is refreshed on every render of the checkout, so at
+  // unload it already holds exactly what the visitor last typed.
+  function snap() {
+    var c = window.__bidCheckout;
+    if (!c) return null;
+    if (c.step > maxStep) maxStep = c.step;
+    return c.s;
+  }
+  setInterval(snap, 500);
+
+  function device() {
+    var w = innerWidth;
+    return (w <= 480 ? 'טלפון' : w <= 1024 ? 'טאבלט' : 'מחשב') + ' ' + w + 'px';
+  }
+  function utm() {
+    return ['source', 'medium', 'campaign', 'content', 'term']
+      .map(function (k) { var v = q.get('utm_' + k); return v ? k + '=' + v : ''; })
+      .filter(Boolean).join(' ');
+  }
+
+  function send() {
+    if (sent || window.__bidPaid) return;
+    var s = snap();
+    if (!s) return;
+    var named = String(s.name || '').trim().length > 1;
+    var dialled = String(s.phone || '').replace(/\D/g, '').length >= 7;
+    if (!named && !dialled) return;
+    var seconds = Math.round((Date.now() - t0) / 1000);
+    if (seconds < 5) return;
+    sent = true;
+    try {
+      var body = JSON.stringify({
+        stage: 'abandoned',
+        name: s.name, phone: s.phone, method: s.method, point: s.point,
+        city: s.city, street: s.street, houseNo: s.houseNo, notes: s.notes,
+        marketing: s.consentMarketing, consentTerms: s.consentTerms,
+        total: window.bidEnded() ? 189 + (s.method === "ship" ? 39 : 0) : 129,
+        step: maxStep, seconds: seconds, device: device(), utm: utm(),
+        source: document.referrer || ''
+      });
+      navigator.sendBeacon("/api/order", new Blob([body], { type: "application/json" }));
+    } catch (err) { /* a lost lead must never be visible to the customer */ }
+  }
+
+  // Both, on purpose: pagehide is the reliable one on a desktop navigation,
+  // and iOS can background and kill a tab without ever firing it.
+  addEventListener('pagehide', send);
+  addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'hidden') send();
+  });
+})();
 </script>
 </body>
 </html>
