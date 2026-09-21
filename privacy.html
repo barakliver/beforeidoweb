@@ -252,7 +252,10 @@ class Component extends DCLogic {
   }
   /* left, physically: the logical properties resolve the other way in RTL */
   #wa-share { left: clamp(14px, 4vw, 26px); background: #25D366; }
-  #wa-share:hover { background: #1FB855; }
+  /* The hover keeps the same green and the same white. Barak wants one
+     colouring for the button in every state, so the answer to a pointer is
+     the lift and the icon, not a different shade. */
+  #wa-share:hover, #wa-share:focus-visible, #wa-share:active { background: #25D366; }
   /* The page carries a bare a:hover colour rule, coral, which outranks the
      .bid-float colour and turned the label coral — on a phone too, because
      iOS applies :hover on tap and leaves it applied. The id wins in every

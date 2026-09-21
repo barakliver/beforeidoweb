@@ -365,7 +365,10 @@ const SHARE_FLOAT = `<a id="wa-share" class="bid-float" href="https://wa.me/?tex
   }
   /* left, physically: the logical properties resolve the other way in RTL */
   #wa-share { left: clamp(14px, 4vw, 26px); background: #25D366; }
-  #wa-share:hover { background: #1FB855; }
+  /* The hover keeps the same green and the same white. Barak wants one
+     colouring for the button in every state, so the answer to a pointer is
+     the lift and the icon, not a different shade. */
+  #wa-share:hover, #wa-share:focus-visible, #wa-share:active { background: #25D366; }
   /* The page carries a bare a:hover colour rule, coral, which outranks the
      .bid-float colour and turned the label coral — on a phone too, because
      iOS applies :hover on tap and leaves it applied. The id wins in every
@@ -861,6 +864,115 @@ const WHERE_CSS = `<style>
   /* The ticker is fixed at the top, so an anchor jump must clear it. */
   #bid-try { scroll-margin-top: 64px; }
 </style>`;
+
+// ── מאחורי הקלעים: Barak ─────────────────────────────────────────────────
+//
+// Barak's own words, as he wrote them; his two starred phrases carry the only
+// emphasis. Warm neutral rather than the house blue, because he asked for less
+// blue this high up the page — and paper stock is the right register for a
+// man talking about a physical box he made.
+//
+// The portrait is not here yet. The slot is built, and PORTRAIT_JS removes
+// the figure while the file is missing, so the section reads as one clean
+// column today and becomes two the moment assets/img/barak.webp lands.
+const BARAK_SECTION = `<section id="bid-barak" dir="rtl" aria-labelledby="bid-barak-h">
+  <div class="bid-b-grid">
+    <figure class="bid-b-photo">
+      <img src="/assets/img/barak.webp" alt="ברק ליור, מפיק חתונות" loading="lazy" decoding="async">
+    </figure>
+    <div class="bid-b-text">
+      <p class="bid-b-eyebrow">מאחורי הקלעים</p>
+      <h2 id="bid-barak-h">משחק החתונות היחיד<br>שנוצר על ידי מפיק חתונות.</h2>
+      <i class="bid-b-mark" aria-hidden="true"></i>
+      <p>יש את הרגע הזה אחרי ההצעה. האדרנלין קצת יורד, ופתאום קולטים שצריך להרים עכשיו חתיכת אירוע. פתאום במקום רומנטיקה, אתם מוצאים את עצמכם <strong>טובעים באקסלים, במשימות ובלחץ</strong>.</p>
+      <p>אהלן, אני ברק. מפיק חתונות ומאסטר NLP. ביומיום שלי אני מתעסק בלעשות סדר בבלאגן — גם של פרויקטים וגם של אנשים — ולגרום לדברים לעבוד חלק.</p>
+      <p>‏'Before I Do' נולד כדי שלא תיזרקו למים העמוקים לגמרי לבד. הבאתי לתוך הקופסה הזו את הידע מעשרות חתונות וזוגות יחד עם כלים מה-NLP, נטו כדי לתת לכם תמיכה מרחוק.</p>
+      <p>הרעיון פשוט: אתם מנהלים את התכנון בעצמכם, אבל יש לכם עוגן. משהו ששומר עליכם מפוקסים ודואג שתתקשרו נכון גם כשנהיה לחוץ.</p>
+      <p>ואל תדאגו, אם חששתם שזה עוד משחק זוגיות קיטשי ודביק – זה הכי לא. דרך לתאם ציפיות, לשחרר עומס ולהפוך את <em>הדרך לחופה לחוויה שאשכרה נהנים ממנה</em>.</p>
+      <p class="bid-b-sign">ברק ליור<span aria-hidden="true">·</span>מפיק חתונות ומאסטר NLP</p>
+    </div>
+  </div>
+</section>`;
+
+const BARAK_CSS = `<style>
+  #bid-barak {
+    background: #F7F6F3;
+    padding: clamp(52px,7vw,92px) clamp(20px,5vw,32px);
+  }
+  .bid-b-grid {
+    max-width: 1180px; margin: 0 auto;
+    display: grid; grid-template-columns: minmax(0,7fr) minmax(0,5fr);
+    column-gap: clamp(32px,5vw,76px); align-items: start;
+  }
+  /* the text sits on the reading edge, the portrait opposite it */
+  .bid-b-text { grid-column: 1; }
+  .bid-b-photo { grid-column: 2; margin: 0; }
+  .bid-b-photo img {
+    display: block; width: 100%; height: auto; aspect-ratio: 4 / 5;
+    object-fit: cover; border-radius: 10px;
+  }
+
+  .bid-b-eyebrow {
+    margin: 0 0 14px; font: 400 12.5px/1 Assistant, sans-serif;
+    letter-spacing: 3px; color: rgba(47,63,99,.5);
+  }
+  #bid-barak h2 {
+    margin: 0; font: 700 clamp(25px,3.4vw,40px)/1.2 Heebo, sans-serif;
+    color: #2F3F63; letter-spacing: -.5px;
+  }
+  .bid-b-mark {
+    display: block; width: 44px; height: 2px; background: #EF453D;
+    margin-block: clamp(20px,2.6vw,26px) clamp(24px,3vw,32px);
+  }
+  .bid-b-text p:not(.bid-b-eyebrow):not(.bid-b-sign) {
+    margin: 0 0 clamp(15px,1.8vw,19px); max-width: 58ch;
+    font: 300 clamp(16px,1.8vw,18px)/1.85 Assistant, sans-serif; color: rgba(47,63,99,.88);
+  }
+  .bid-b-text strong { font-weight: 600; color: #2F3F63; }
+  .bid-b-text em { font-style: normal; font-weight: 600; color: #EF453D; }
+  .bid-b-sign {
+    margin: clamp(22px,3vw,30px) 0 0;
+    display: flex; align-items: center; gap: 10px;
+    font: 600 clamp(15px,1.7vw,16.5px)/1.5 Assistant, sans-serif; color: #2F3F63;
+  }
+  .bid-b-sign span { color: rgba(47,63,99,.35); }
+
+  /* Until the portrait arrives: one measured column rather than a text block
+     sitting beside a hole where a picture is supposed to be. */
+  #bid-barak[data-no-photo] .bid-b-grid { display: block; max-width: 760px; }
+  #bid-barak[data-no-photo] .bid-b-text p:not(.bid-b-eyebrow):not(.bid-b-sign) { max-width: none; }
+
+  /* one column, and the portrait first — a face before a wall of text */
+  @media (max-width: 860px) {
+    .bid-b-grid { display: flex; flex-direction: column; }
+    .bid-b-photo { width: min(320px,72%); margin-block-end: clamp(26px,5vw,34px); }
+    .bid-b-photo img { aspect-ratio: 1 / 1; }
+    .bid-b-text p:not(.bid-b-eyebrow):not(.bid-b-sign) { max-width: none; }
+  }
+</style>`;
+
+// The portrait has not been supplied yet. Rather than ship a broken image or a
+// "photo goes here" box on a shop that is taking orders, the figure removes
+// itself while the file is missing — and the layout is already there for it.
+const PORTRAIT_JS = `<script>
+(function () {
+  function check() {
+    var sec = document.getElementById('bid-barak');
+    if (!sec) return;
+    var fig = sec.querySelector('.bid-b-photo');
+    function drop() { if (fig) fig.remove(); sec.setAttribute('data-no-photo', ''); }
+    if (!fig) return;
+    var img = fig.querySelector('img');
+    if (!img) return drop();
+    if (img.complete) { if (!img.naturalWidth) drop(); else sec.removeAttribute('data-no-photo'); return; }
+    img.addEventListener('error', drop);
+    img.addEventListener('load', function () { sec.removeAttribute('data-no-photo'); });
+  }
+  check();
+  // The runtime re-renders this subtree, which puts the figure back.
+  setInterval(check, 700);
+})();
+<\/script>`;
 
 const LONG_SECTIONS = [
   COUNTDOWN,
@@ -1868,6 +1980,36 @@ for (const p of PAGES) {
     // The line above the flip cards told the visitor how the widget works.
     // The design says it differently: one short invitation here, and the
     // "לחצו להפוך" hint under whichever card they are reaching for.
+    // Barak asked for a new running order near the top: the opening, then his
+    // own paragraph, then the cards, then "יש החלטות". That last block sits
+    // before the cards today, so it moves down past them; "איפה אתם" keeps
+    // its place just ahead of the cards, which is what its one link needs.
+    fix('order: Barak, then the cards, then the deck', x => {
+      const span = (open) => {
+        const i = x.indexOf(open);
+        if (i < 0) return null;
+        let depth = 0, end = -1;
+        const re = /<(\/?)div\b[^>]*>/g; re.lastIndex = i;
+        for (let m; (m = re.exec(x));) { depth += m[1] ? -1 : 1; if (depth === 0) { end = m.index + m[0].length; break; } }
+        return end < 0 ? null : [i, end];
+      };
+      const deck = span('<div id="deck"');
+      const tryCards = span('<div id="bid-try"');
+      const w = x.indexOf('<section id="bid-where"');
+      const wEnd = x.indexOf('</section>', w);
+      if (!deck || !tryCards || w < 0 || wEnd < 0) return x;
+      // deck → where → cards, in that order and not nested
+      if (!(deck[0] < deck[1] && deck[1] <= w && wEnd < tryCards[0] && tryCards[0] < tryCards[1])) return x;
+      const where = x.slice(w, wEnd + '</section>'.length);
+      const cards = x.slice(tryCards[0], tryCards[1]);
+      const board = x.slice(deck[0], deck[1]);
+      return x.slice(0, deck[0])
+        + BARAK_SECTION + '\n\n' + where + '\n\n' + cards + '\n\n' + board
+        + x.slice(tryCards[1]);
+    });
+    fix('barak: styles', x => x.replace('</helmet>', BARAK_CSS + '\n</helmet>'));
+    fix('barak: portrait slot', x => x.replace('</body>', PORTRAIT_JS + '\n</body>'));
+
     // The section goes inside the template, immediately before the card
     // preview, so its one continuation leads forward into the cards rather
     // than scrolling a visitor back up the page.
