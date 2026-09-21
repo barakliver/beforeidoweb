@@ -150,5 +150,105 @@ a:focus-visible,button:focus-visible{outline:2px solid #EF453D;outline-offset:3p
   new MutationObserver(schedule).observe(document.documentElement, { childList: true, subtree: true });
 })();
 </script>
+<script>
+(function () {
+  var END = Date.parse("2026-10-26T21:59:59Z");
+  var AFTER = 189;
+  // Re-queried every tick on purpose: this script runs while the raw template
+  // is still in the DOM, and the page runtime then replaces that whole subtree
+  // with its own render. References taken once would point at detached nodes
+  // and the clock would sit frozen on its server-rendered numbers.
+  function q(sel) { return document.querySelector(sel); }
+  var ended = false;
+
+  function pad(n) { return n < 10 ? '0' + n : String(n); }
+
+  function expire() {
+    if (ended) return;
+    ended = true;
+    var live = q('[data-cd-live]'), done = q('[data-cd-done]');
+    if (live) live.style.display = 'none';
+    if (done) done.style.display = '';
+    // Every tagged price across the page stops being true at the same instant.
+    Array.prototype.forEach.call(document.querySelectorAll('[data-bid-price]'), function (el) {
+      el.textContent = AFTER + ' ₪';
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-bid-was]'), function (el) {
+      el.hidden = true;
+    });
+    // Buying must not continue at the launch price for a product that now
+    // costs more — the payment link is fixed at the old amount. Calls instead,
+    // until a link for the new price exists.
+    Array.prototype.forEach.call(document.querySelectorAll('a[href="/checkout"]'), function (a) {
+      a.setAttribute('href', 'tel:0526604320');
+    });
+    document.documentElement.setAttribute('data-bid-offer', 'ended');
+    fireworks();
+  }
+
+  function tick() {
+    var left = END - Date.now();
+    if (left <= 0) { expire(); return; }
+    var v = {
+      d: Math.floor(left / 86400000),
+      h: Math.floor(left / 3600000) % 24,
+      m: Math.floor(left / 60000) % 60,
+      s: Math.floor(left / 1000) % 60
+    };
+    ['d','h','m','s'].forEach(function (k) {
+      var el = q('[data-cd="' + k + '"]');
+      if (el) el.textContent = pad(v[k]);
+    });
+  }
+  tick();
+  setInterval(tick, 1000);
+
+  function fireworks() {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var c = document.createElement('canvas');
+    c.setAttribute('aria-hidden', 'true');
+    c.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:70';
+    document.body.appendChild(c);
+    var ctx = c.getContext('2d');
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    function size() { c.width = innerWidth * dpr; c.height = innerHeight * dpr; ctx.setTransform(dpr,0,0,dpr,0,0); }
+    size(); addEventListener('resize', size);
+
+    var colors = ['#EF453D', '#FFFFFF', '#FFD34D', '#8FB3F5'];
+    var parts = [], t0 = performance.now(), LAST = 5200, nextBurst = 0;
+
+    function burst(x, y) {
+      var col = colors[(Math.random() * colors.length) | 0];
+      var n = 46 + ((Math.random() * 22) | 0);
+      for (var i = 0; i < n; i++) {
+        var a = (Math.PI * 2 * i) / n + Math.random() * 0.2;
+        var sp = 1.7 + Math.random() * 3.6;
+        parts.push({ x: x, y: y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 1, col: col });
+      }
+    }
+    function frame(now) {
+      var age = now - t0;
+      ctx.clearRect(0, 0, innerWidth, innerHeight);
+      if (age < LAST - 1200 && now > nextBurst) {
+        burst(innerWidth * (0.15 + Math.random() * 0.7), innerHeight * (0.15 + Math.random() * 0.45));
+        nextBurst = now + 280 + Math.random() * 380;
+      }
+      for (var i = parts.length - 1; i >= 0; i--) {
+        var p = parts[i];
+        p.x += p.vx; p.y += p.vy; p.vy += 0.045; p.vx *= 0.99; p.vy *= 0.99;
+        p.life -= 0.012;
+        if (p.life <= 0) { parts.splice(i, 1); continue; }
+        ctx.globalAlpha = Math.max(0, p.life);
+        ctx.fillStyle = p.col;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 2.4, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      if (age < LAST || parts.length) requestAnimationFrame(frame);
+      else c.remove();
+    }
+    requestAnimationFrame(frame);
+  }
+})();
+</script>
 </body>
 </html>

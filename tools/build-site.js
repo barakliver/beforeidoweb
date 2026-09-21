@@ -40,7 +40,8 @@ if (!SRC) {
 const OFFER = {
   cards: 70,
   price: 129,
-  wasPrice: 169,
+  // The struck-through price is what it costs once the launch ends, so the
+  // saving on show is the real one. There is only one other price.
   afterPrice: 189,
   shipping: 39,
   endsISO: '2026-10-26T21:59:59Z',
@@ -488,7 +489,69 @@ const FAQ = [
 const buyButton = (label, bg, color, border) =>
   `<a href="/checkout" style="display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 34px;border-radius:8px;background:${bg};color:${color};border:1.5px solid ${border || bg};font:600 17px/1 Assistant,sans-serif;text-decoration:none;white-space:nowrap">${label}</a>`;
 
+// ── the launch countdown ──────────────────────────────────────────────────
+// Counts to OFFER.endsISO, an absolute instant, so it reads the same from any
+// timezone. Rendered server-side with the real numbers already in place, so
+// the section is never blank and never flashes placeholders — the script only
+// keeps it ticking.
+//
+// When it reaches zero: fireworks, the price swaps to the post-launch one
+// everywhere it is tagged, and buying stops until Barak supplies a link for
+// the new amount. Charging 129₪ for a 189₪ product would be the worse bug.
+function countdownParts(fromMs) {
+  const end = Date.parse(OFFER.endsISO);
+  const left = Math.max(0, end - fromMs);
+  const d = Math.floor(left / 86400000);
+  return {
+    expired: left === 0,
+    d,
+    h: Math.floor(left / 3600000) % 24,
+    m: Math.floor(left / 60000) % 60,
+    s: Math.floor(left / 1000) % 60,
+  };
+}
+
+const COUNTDOWN = (() => {
+  const p0 = countdownParts(Date.now());
+  const cell = (v, label, key) => `
+    <div style="min-width:clamp(62px,17vw,92px)">
+      <p data-cd="${key}" style="margin:0;font:800 clamp(32px,8vw,52px)/1 Heebo,sans-serif;color:#fff;font-variant-numeric:tabular-nums">${String(v).padStart(2, '0')}</p>
+      <p style="margin:6px 0 0;font:400 clamp(12px,3vw,14px)/1 Assistant,sans-serif;color:rgba(255,255,255,.72);letter-spacing:1px">${label}</p>
+    </div>`;
+  return `<section id="bid-countdown" dir="rtl" style="background:#3E568A">
+    <div style="max-width:1180px;margin:0 auto;padding:clamp(52px,8vw,88px) clamp(20px,5vw,32px);text-align:center">
+      <div data-cd-live>
+        ${SEC.eyebrow('מבצע השקה', true)}
+        <h2 style="margin:0 auto;max-width:20ch;font:700 clamp(26px,4.4vw,40px)/1.25 Heebo,sans-serif;color:#fff">המחיר הזה נגמר בעוד</h2>
+        <div style="margin-top:clamp(26px,4vw,38px);display:flex;justify-content:center;gap:clamp(10px,3vw,26px);flex-wrap:wrap">
+          ${cell(p0.d, 'ימים', 'd')}${cell(p0.h, 'שעות', 'h')}${cell(p0.m, 'דקות', 'm')}${cell(p0.s, 'שניות', 's')}
+        </div>
+        <p style="margin:clamp(24px,4vw,32px) auto 0;max-width:40ch;font:300 clamp(16px,2.2vw,19px)/1.75 Assistant,sans-serif;color:rgba(255,255,255,.9)">
+          עד ${OFFER.endLabel}: ${OFFER.price} ₪ כולל משלוח עד הבית. אחרי זה ${OFFER.afterPrice} ₪, והמשלוח נגבה בנפרד.
+        </p>
+        <div style="margin-top:26px;display:flex;justify-content:center">
+          <a href="/checkout" style="display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 34px;border-radius:8px;background:${RED};color:#fff;border:1.5px solid ${RED};font:600 17px/1 Assistant,sans-serif;text-decoration:none;white-space:nowrap">אני רוצה לשחק!</a>
+        </div>
+        <p style="margin:16px auto 0;font:300 15px/1.7 Assistant,sans-serif;color:rgba(255,255,255,.75)">ההזמנות המוקדמות יוצאות ב-${OFFER.shipDate}.</p>
+      </div>
+
+      <div data-cd-done style="display:none">
+        ${SEC.eyebrow('מבצע ההשקה הסתיים', true)}
+        <h2 style="margin:0 auto;max-width:22ch;font:700 clamp(26px,4.4vw,40px)/1.25 Heebo,sans-serif;color:#fff">תודה לכל מי שהצטרף להשקה.</h2>
+        <p style="margin:20px auto 0;max-width:40ch;font:300 clamp(16px,2.2vw,19px)/1.75 Assistant,sans-serif;color:rgba(255,255,255,.9)">
+          המחיר עכשיו ${OFFER.afterPrice} ₪, והמשלוח נגבה בנפרד.
+        </p>
+        <div style="margin-top:26px;display:flex;justify-content:center">
+          <a href="tel:0526604320" style="display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 34px;border-radius:8px;background:#fff;color:#4F6BA5;border:1.5px solid #fff;font:600 17px/1 Assistant,sans-serif;text-decoration:none;white-space:nowrap">דברו איתנו — 052-6604320</a>
+        </div>
+      </div>
+    </div>
+  </section>`;
+})();
+
 const LONG_SECTIONS = [
+  COUNTDOWN,
+
   // ── the problem, before anything is offered ────────────────────────────
   SEC.wrap('#DDE7F5', `
     ${SEC.eyebrow('הבעיה')}
@@ -629,8 +692,8 @@ const PREFOOTER_CTA = `<section dir="rtl" style="background:#4F6BA5">
     <h2 style="margin:0;font:700 clamp(28px,4.6vw,44px)/1.25 Heebo,sans-serif;color:#fff;max-width:20ch;margin-inline:auto">ערב אחד. ${OFFER.cards} שאלות. החתונה שלכם.</h2>
     <p style="margin:20px auto 0;max-width:42ch;font:300 clamp(17px,2.2vw,20px)/1.8 Assistant,sans-serif;color:rgba(255,255,255,.92)">קופסה קשיחה עם ${OFFER.cards} כרטיסיות, בשישה נושאים. משלוח עד הבית כלול במבצע ההשקה. יוצא ב-${OFFER.shipDate}.</p>
     <div style="margin-top:26px;display:flex;align-items:baseline;justify-content:center;gap:12px">
-      <span style="font:800 clamp(34px,5vw,46px)/1 Heebo,sans-serif;color:#fff">129 ₪</span>
-      <span style="font:400 clamp(18px,2.4vw,22px)/1 Heebo,sans-serif;color:rgba(255,255,255,.65);text-decoration:line-through">169 ₪</span>
+      <span data-bid-price style="font:800 clamp(34px,5vw,46px)/1 Heebo,sans-serif;color:#fff">${OFFER.price} ₪</span>
+      <span data-bid-was style="font:400 clamp(18px,2.4vw,22px)/1 Heebo,sans-serif;color:rgba(255,255,255,.65);text-decoration:line-through">${OFFER.afterPrice} ₪</span>
     </div>
     <div style="margin-top:28px;display:flex;justify-content:center">
       ${buyButton('אני רוצה את המשחק', '#fff', '#4F6BA5')}
@@ -686,6 +749,111 @@ const FOOTER_CSS = `<style>
   }
 </style>`;
 
+// Keeps the countdown ticking, and handles the moment it runs out.
+//
+// Lives outside <x-dc> so the runtime never re-renders it. It writes only into
+// the cells, so a re-render of the page around it costs at most one tick.
+const COUNTDOWN_JS = `<script>
+(function () {
+  var END = Date.parse(${JSON.stringify(OFFER.endsISO)});
+  var AFTER = ${OFFER.afterPrice};
+  // Re-queried every tick on purpose: this script runs while the raw template
+  // is still in the DOM, and the page runtime then replaces that whole subtree
+  // with its own render. References taken once would point at detached nodes
+  // and the clock would sit frozen on its server-rendered numbers.
+  function q(sel) { return document.querySelector(sel); }
+  var ended = false;
+
+  function pad(n) { return n < 10 ? '0' + n : String(n); }
+
+  function expire() {
+    if (ended) return;
+    ended = true;
+    var live = q('[data-cd-live]'), done = q('[data-cd-done]');
+    if (live) live.style.display = 'none';
+    if (done) done.style.display = '';
+    // Every tagged price across the page stops being true at the same instant.
+    Array.prototype.forEach.call(document.querySelectorAll('[data-bid-price]'), function (el) {
+      el.textContent = AFTER + ' \u20AA';
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-bid-was]'), function (el) {
+      el.hidden = true;
+    });
+    // Buying must not continue at the launch price for a product that now
+    // costs more — the payment link is fixed at the old amount. Calls instead,
+    // until a link for the new price exists.
+    Array.prototype.forEach.call(document.querySelectorAll('a[href="/checkout"]'), function (a) {
+      a.setAttribute('href', 'tel:0526604320');
+    });
+    document.documentElement.setAttribute('data-bid-offer', 'ended');
+    fireworks();
+  }
+
+  function tick() {
+    var left = END - Date.now();
+    if (left <= 0) { expire(); return; }
+    var v = {
+      d: Math.floor(left / 86400000),
+      h: Math.floor(left / 3600000) % 24,
+      m: Math.floor(left / 60000) % 60,
+      s: Math.floor(left / 1000) % 60
+    };
+    ['d','h','m','s'].forEach(function (k) {
+      var el = q('[data-cd="' + k + '"]');
+      if (el) el.textContent = pad(v[k]);
+    });
+  }
+  tick();
+  setInterval(tick, 1000);
+
+  function fireworks() {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var c = document.createElement('canvas');
+    c.setAttribute('aria-hidden', 'true');
+    c.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:70';
+    document.body.appendChild(c);
+    var ctx = c.getContext('2d');
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    function size() { c.width = innerWidth * dpr; c.height = innerHeight * dpr; ctx.setTransform(dpr,0,0,dpr,0,0); }
+    size(); addEventListener('resize', size);
+
+    var colors = ['#EF453D', '#FFFFFF', '#FFD34D', '#8FB3F5'];
+    var parts = [], t0 = performance.now(), LAST = 5200, nextBurst = 0;
+
+    function burst(x, y) {
+      var col = colors[(Math.random() * colors.length) | 0];
+      var n = 46 + ((Math.random() * 22) | 0);
+      for (var i = 0; i < n; i++) {
+        var a = (Math.PI * 2 * i) / n + Math.random() * 0.2;
+        var sp = 1.7 + Math.random() * 3.6;
+        parts.push({ x: x, y: y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 1, col: col });
+      }
+    }
+    function frame(now) {
+      var age = now - t0;
+      ctx.clearRect(0, 0, innerWidth, innerHeight);
+      if (age < LAST - 1200 && now > nextBurst) {
+        burst(innerWidth * (0.15 + Math.random() * 0.7), innerHeight * (0.15 + Math.random() * 0.45));
+        nextBurst = now + 280 + Math.random() * 380;
+      }
+      for (var i = parts.length - 1; i >= 0; i--) {
+        var p = parts[i];
+        p.x += p.vx; p.y += p.vy; p.vy += 0.045; p.vx *= 0.99; p.vy *= 0.99;
+        p.life -= 0.012;
+        if (p.life <= 0) { parts.splice(i, 1); continue; }
+        ctx.globalAlpha = Math.max(0, p.life);
+        ctx.fillStyle = p.col;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 2.4, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      if (age < LAST || parts.length) requestAnimationFrame(frame);
+      else c.remove();
+    }
+    requestAnimationFrame(frame);
+  }
+})();
+<\/script>`;
+
 const report = [];
 let built = 0;
 
@@ -706,6 +874,15 @@ for (const p of PAGES) {
     .split('60 קלפים').join('70 קלפים')
     .split('60 שאלות').join('70 שאלות')
     .split('50 כרטיסיות').join('70 כרטיסיות'));
+
+  // The struck price is the post-launch one: 189₪, not the 169₪ the design
+  // was drawn with. Tagged so the countdown can swap both when time is up.
+  fix('struck price → 189', x => x
+    .replace(/>129 ₪</g, ` data-bid-price>${OFFER.price} ₪<`)
+    .replace(/>169 ₪</g, ` data-bid-was>${OFFER.afterPrice} ₪<`)
+    // the policies document states it in a sentence rather than an element
+    .replace('129 ₪ (מבצע, במקום 169 ₪), כולל מע״מ',
+             `${OFFER.price} ₪ (מבצע השקה, במקום ${OFFER.afterPrice} ₪), כולל מע״מ`));
 
   // "מבצע" alone says nothing about why. This is a launch.
   fix('offer label → launch', x => x.replace(/>מבצע</g, '>מבצע השקה<'));
@@ -867,6 +1044,7 @@ for (const p of PAGES) {
 
   if (p.out !== 'checkout.html' && !p.board) {
     fix('floating share + buy buttons', x => x.replace('</body>', SHARE_FLOAT + '\n</body>'));
+    fix('countdown script', x => x.replace('</body>', COUNTDOWN_JS + '\n</body>'));
   }
 
   // "יש החלטות שמקבלים מול ספקים" was wrapping to six lines even on a desktop.
