@@ -586,6 +586,8 @@ const BOX = [
   ['60', 'דקות', 'זמן משחק ממוצע'],   // no tilde: it flips to the wrong side in RTL
 ];
 
+// SAMPLES and AUDIENCES are Barak's own copy, kept after their sections came
+// off the page: bringing either back is a paste, not a rewrite.
 const SAMPLES = [
   'מוזיקה חיה בחופה או פלייליסט',
   'דיג׳יי או להקה חיה',
@@ -720,40 +722,6 @@ const LONG_SECTIONS = [
           <p style="margin:8px 0 0;font:300 15px/1.6 Assistant,sans-serif;color:#2F3F63">${s2}</p>
         </div>`).join('')}
     </div>`),
-
-  // ── sample questions ───────────────────────────────────────────────────
-  SEC.wrap('#4F6BA5', `
-    ${SEC.eyebrow('טעימה', true)}
-    ${SEC.h2(`ארבע מתוך ${OFFER.cards}.`, '#fff')}
-    ${SEC.p('אלה שאלות אמיתיות מהחפיסה. תחשבו רגע מה הייתם עונים — ומה היה עונה מי שיושב מולכם.', 'rgba(255,255,255,.92)')}
-    ${SEC.rule()}
-    <div style="margin-top:clamp(40px,6vw,60px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:clamp(16px,2.6vw,24px)">
-      ${SAMPLES.map((q, i) => `
-        <div style="background:#fff;border-radius:14px;padding:clamp(28px,4vw,38px) 20px;min-height:180px;display:flex;align-items:center;justify-content:center;box-shadow:0 14px 30px rgba(31,44,74,.22);rotate:${[-2, 1.4, -1.2, 2][i]}deg">
-          <p style="margin:0;font:400 clamp(18px,2.4vw,21px)/1.45 Heebo,sans-serif;color:#4F6BA5;text-align:center">${q}</p>
-        </div>`).join('')}
-    </div>`),
-
-  // ── who it is for ──────────────────────────────────────────────────────
-  SEC.wrap('#fff', `
-    ${SEC.eyebrow('למי זה מתאים')}
-    ${SEC.h2('אם אתם באחד המצבים האלה, המשחק הזה נכתב בשבילכם.', '#4F6BA5')}
-    ${SEC.rule()}
-    <div style="margin-top:clamp(40px,6vw,60px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(270px,100%),1fr));gap:clamp(18px,3vw,26px)">
-      ${AUDIENCES.map(([t, d]) => `
-        <div style="border:1.5px solid rgba(79,107,165,.25);border-radius:14px;padding:clamp(24px,4vw,32px)">
-          <h3 style="margin:0;font:700 clamp(18px,2.4vw,21px)/1.35 Heebo,sans-serif;color:#4F6BA5">${t}</h3>
-          <p style="margin:12px 0 0;font:300 clamp(16px,2.1vw,18px)/1.75 Assistant,sans-serif;color:#2F3F63">${d}</p>
-        </div>`).join('')}
-    </div>`),
-
-  // ── when ───────────────────────────────────────────────────────────────
-  SEC.wrap('#F1F4F9', `
-    ${SEC.eyebrow('מתי')}
-    ${SEC.h2('הזמן הנכון הוא עכשיו, לא אחר כך.', '#4F6BA5')}
-    ${SEC.p('בחודש הראשון אחרי האירוסין עוד לא סגרתם אולם, לא בחרתם תפריט ולא הבטחתם לאף אחד כלום. זה השלב היחיד שבו התשובות שלכם עוד יכולות לשנות משהו.', '#2F3F63')}
-    ${SEC.p('חודש אחרי זה, רוב ההחלטות כבר יתקבלו מול ספקים — ולא ביניכם.', '#2F3F63')}
-    ${SEC.rule()}`),
 
   // ── objections ─────────────────────────────────────────────────────────
   SEC.wrap('#fff', `
