@@ -366,6 +366,12 @@ const SHARE_FLOAT = `<a id="wa-share" class="bid-float" href="https://wa.me/?tex
   /* left, physically: the logical properties resolve the other way in RTL */
   #wa-share { left: clamp(14px, 4vw, 26px); background: #25D366; }
   #wa-share:hover { background: #1FB855; }
+  /* The page carries a bare a:hover colour rule, coral, which outranks the
+     .bid-float colour and turned the label coral — on a phone too, because
+     iOS applies :hover on tap and leaves it applied. The id wins in every
+     state. */
+  #wa-share, #wa-share:link, #wa-share:visited,
+  #wa-share:hover, #wa-share:focus, #wa-share:active { color: #fff; }
   /* Green button, so a red ring reads as an error rather than as focus.
      !important because the site-wide focus rule is itself !important and
      would otherwise paint this one coral the moment it is tabbed to. */
@@ -669,6 +675,192 @@ const COUNTDOWN = (() => {
     </div>
   </section>`;
 })();
+
+// ── "איפה אתם בתוך כל הסיפור הזה?" ────────────────────────────────────────
+//
+// An editorial composition rather than a feature grid. The four states are
+// the material; the layout is the design.
+//
+// What carries it:
+//   · One focal point — the headline, at display size, held on the right
+//     where an RTL reader starts, with a coral hairline as its only mark.
+//   · Scale tension — 84px numerals against 16px copy, and nothing between.
+//   · Controlled asymmetry — 01 sits beside the headline, 02 drops 120px
+//     below it, 03 tucks under the headline and 04 runs wide across the
+//     lower band. The 12-column grid underneath stays disciplined.
+//   · Four different treatments of one system: 01 bare on the page, 02 under
+//     a hairline, 03 beside one, 04 on a tinted surface. No rounded boxes
+//     repeated four times.
+//   · One motif, once: the brand heart, drawn as a line, oversized and
+//     cropped by the section edge. Not a pile of cards.
+//
+// Coral appears exactly twice: the rule under the headline, and the 04
+// numeral that pulls the eye down into the cards.
+const WHERE_STATES = [
+  ['01', 'הרגע התארסנו', 'עוד לא פתחתם אקסל.<br>תיהנו מהרגע.'],
+  ['02', 'עמוק בתכנונים', 'תקציב, אורחים, ספקים.<br>כן, אנחנו מכירים.'],
+  ['03', 'מחפשים מתנה', 'מתנה בנאלית?<br>לא במשמרת שלכם.'],
+  ['04', 'משפחה', 'אתם מכירים אותם מספיק טוב<br>כדי להביא משהו עם קצת יותר מחשבה.'],
+];
+
+const WHERE_SECTION = (() => {
+  const state = ([n, title, copy]) => `
+    <div class="bid-w-state" data-n="${n}" tabindex="0">
+      <p class="bid-w-num">${n}</p>
+      <div>
+        <h3 class="bid-w-title">${title}</h3>
+        <p class="bid-w-copy">${copy}</p>
+      </div>
+    </div>`;
+  const [s1, s2, s3, s4] = WHERE_STATES.map(state);
+  return `<section id="bid-where" dir="rtl" aria-labelledby="bid-where-h">
+  <svg class="bid-w-heart" viewBox="0 0 24 21" fill="none" stroke="#4F6BA5" stroke-width=".5" aria-hidden="true"><path d="M12 20.4C12 20.4 1.2 13.3 1.2 7.1 1.2 3.7 3.9 1 7.1 1 9.2 1 11.1 2.1 12 3.8 12.9 2.1 14.8 1 16.9 1 20.1 1 22.8 3.7 22.8 7.1 22.8 13.3 12 20.4 12 20.4Z"/></svg>
+  <div class="bid-w-grid">
+    <div class="bid-w-lead">
+      <h2 id="bid-where-h">איפה אתם בתוך<br>כל הסיפור הזה?</h2>
+      <i class="bid-w-mark" aria-hidden="true"></i>
+      ${s4}
+    </div>
+    <div class="bid-w-list">${s1}${s2}${s3}</div>
+    <div class="bid-w-go"><a href="#bid-try">יאללה, תראו לנו קלף<span aria-hidden="true">←</span></a></div>
+  </div>
+</section>`;
+})();
+
+const WHERE_CSS = `<style>
+  #bid-where {
+    position: relative; overflow: hidden; background: #fff;
+    padding: clamp(54px,7.5vw,96px) clamp(20px,5vw,32px);
+  }
+  .bid-w-grid {
+    position: relative; z-index: 1;
+    max-width: 1180px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(12, 1fr);
+    column-gap: clamp(24px,4vw,72px); align-items: start;
+  }
+
+  /* The one motif: the brand heart as a line, large, and cut by the section
+     edge so it reads as a watermark rather than as an illustration. */
+  .bid-w-heart {
+    position: absolute; inset-inline-end: -11%; inset-block-end: -30%;
+    width: clamp(300px,30vw,420px); height: auto; opacity: .075; pointer-events: none;
+  }
+
+  /* ── right: the focal point, the weighted state, the one way on ──── */
+  .bid-w-lead { grid-column: 1 / 7; grid-row: 1; }
+  .bid-w-lead h2 {
+    margin: 0;
+    font: 700 clamp(33px,5vw,64px)/1.05 Heebo, sans-serif;
+    letter-spacing: -1px; color: #4F6BA5;
+  }
+  .bid-w-mark {
+    display: block; width: 52px; height: 2px; background: #EF453D;
+    margin-block: clamp(22px,3vw,30px) clamp(30px,4.5vw,52px);
+  }
+
+  /* ── one system, two registers ───────────────────────────────────── */
+  .bid-w-state {
+    min-width: 0; outline: none;
+    display: grid; grid-template-columns: auto 1fr; column-gap: clamp(16px,2.2vw,26px);
+    align-items: start;
+    transition: transform 220ms cubic-bezier(.22,.8,.3,1), background-color 220ms ease;
+  }
+  .bid-w-num {
+    margin: 0; font: 800 clamp(30px,3.4vw,46px)/.85 Heebo, sans-serif;
+    color: rgba(79,107,165,.2); letter-spacing: -1px;
+    font-variant-numeric: tabular-nums;
+    transition: color 220ms ease;
+  }
+  .bid-w-title { margin: 0; font: 700 clamp(18px,2vw,22px)/1.3 Heebo, sans-serif; color: #2F3F63; }
+  .bid-w-copy {
+    margin: 8px 0 0; font: 300 clamp(15px,1.6vw,16.5px)/1.7 Assistant, sans-serif;
+    color: rgba(47,63,99,.72);
+  }
+
+  /* 04 — the anchor: a surface beneath the headline, and the coral numeral */
+  .bid-w-state[data-n="04"] {
+    background: #F1F4F9; border-radius: 10px;
+    padding: clamp(24px,3vw,32px) clamp(22px,2.6vw,30px);
+    align-items: center;
+    /* copy where the eye lands, numeral thrown to the far edge, so the
+       surface is spanned rather than filled on one side */
+    grid-template-columns: 1fr auto;
+  }
+  .bid-w-state[data-n="04"] > div { order: -1; }
+  .bid-w-state[data-n="04"] .bid-w-num { color: rgba(239,69,61,.85); font-size: clamp(46px,5.4vw,76px); }
+  .bid-w-state[data-n="04"] .bid-w-title { font-size: clamp(19px,2.2vw,24px); }
+
+  /* ── left: the three lighter states, a list with its own rhythm ──── */
+  .bid-w-list {
+    grid-column: 8 / 13; grid-row: 1 / 3;
+    margin-block-start: clamp(26px,5vw,86px);
+  }
+  .bid-w-list .bid-w-state { padding-block: clamp(20px,2.6vw,28px); }
+  .bid-w-list .bid-w-state + .bid-w-state { border-block-start: 1px solid rgba(79,107,165,.18); }
+  /* the first carries a touch more weight, so the three are not one shape × 3 */
+  .bid-w-list .bid-w-state:first-child { padding-block-start: 0; }
+  .bid-w-list .bid-w-state:first-child .bid-w-num { font-size: clamp(36px,4.2vw,58px); color: rgba(79,107,165,.26); }
+  .bid-w-list .bid-w-state:first-child .bid-w-title { font-size: clamp(20px,2.2vw,24px); }
+
+  /* ── one continuation, not four ──────────────────────────────────── */
+  .bid-w-go { grid-column: 1 / 7; grid-row: 2; margin-block-start: clamp(26px,3.4vw,38px); }
+  .bid-w-go a {
+    display: inline-flex; align-items: center; gap: 10px; min-height: 44px;
+    font: 600 clamp(16px,1.9vw,18px)/1 Assistant, sans-serif;
+    color: #EF453D; text-decoration: none;
+    border-block-end: 1.5px solid rgba(239,69,61,.3); padding-block-end: 6px;
+    transition: border-color 200ms ease;
+  }
+  .bid-w-go a span { transition: transform 200ms cubic-bezier(.22,.8,.3,1); }
+  .bid-w-go a:hover { border-block-end-color: #EF453D; }
+  .bid-w-go a:hover span { transform: translateX(-5px); }
+
+  /* ── restraint: a lift and the numeral coming forward ────────────── */
+  @media (hover: hover) {
+    .bid-w-state:hover { transform: translateY(-4px); }
+    .bid-w-state:hover .bid-w-num { color: rgba(79,107,165,.44); }
+    .bid-w-state[data-n="04"]:hover { background: #E7EDF8; }
+    .bid-w-state[data-n="04"]:hover .bid-w-num { color: #EF453D; }
+    /* 01 carries its own numeral colour for weight, so its hover has to
+       out-specify that rule or it would lift without answering. */
+    .bid-w-list .bid-w-state:first-child:hover .bid-w-num { color: rgba(79,107,165,.5); }
+  }
+  .bid-w-state:focus-visible { transform: translateY(-4px); }
+  .bid-w-state:focus-visible .bid-w-num { color: rgba(79,107,165,.44); }
+  .bid-w-state[data-n="04"]:focus-visible .bid-w-num { color: #EF453D; }
+
+  /* ── phones: one column, the numerals keeping the rhythm ─────────── */
+  @media (max-width: 900px) {
+    .bid-w-heart { inset-inline-end: -24%; inset-block-end: -8%; width: 240px; opacity: .07; }
+    .bid-w-state[data-n="04"] {
+      grid-template-columns: auto 1fr; align-items: start;
+      padding: clamp(22px,5vw,26px) clamp(18px,4.5vw,22px);
+    }
+    .bid-w-state[data-n="04"] > div { order: 0; }
+    .bid-w-grid { display: block; }
+    .bid-w-lead h2 { letter-spacing: -.5px; }
+    .bid-w-mark { margin-block: 20px 28px; }
+    .bid-w-list { margin-block-start: 0; }
+    .bid-w-state[data-n="04"] { order: -1; }
+    .bid-w-list .bid-w-state:first-child {
+      padding-block-start: clamp(20px,5vw,26px);
+      border-block-start: 1px solid rgba(79,107,165,.18);
+    }
+    .bid-w-list .bid-w-state:first-child .bid-w-num { font-size: 32px; color: rgba(79,107,165,.2); }
+    .bid-w-list .bid-w-state:first-child .bid-w-title { font-size: 19px; }
+    .bid-w-state[data-n="04"] .bid-w-num { font-size: 40px; }
+    .bid-w-state[data-n="04"] .bid-w-title { font-size: 20px; }
+    .bid-w-go { margin-block-start: 30px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bid-w-state, .bid-w-num, .bid-w-go a, .bid-w-go a span { transition: none; }
+    .bid-w-state:hover, .bid-w-state:focus-visible { transform: none; }
+  }
+
+  /* The ticker is fixed at the top, so an anchor jump must clear it. */
+  #bid-try { scroll-margin-top: 64px; }
+</style>`;
 
 const LONG_SECTIONS = [
   COUNTDOWN,
@@ -1676,6 +1868,14 @@ for (const p of PAGES) {
     // The line above the flip cards told the visitor how the widget works.
     // The design says it differently: one short invitation here, and the
     // "לחצו להפוך" hint under whichever card they are reaching for.
+    // The section goes inside the template, immediately before the card
+    // preview, so its one continuation leads forward into the cards rather
+    // than scrolling a visitor back up the page.
+    fix('where-are-you: the section', x => x.replace(
+      '<div style="background:#fff">\n<div style="max-width:1180px;margin:0 auto;padding:clamp(40px,6vw,72px) clamp(20px,5vw,32px)">\n<div data-reveal="visual" style="text-align:center">',
+      WHERE_SECTION + '\n<div id="bid-try" style="background:#fff">\n<div style="max-width:1180px;margin:0 auto;padding:clamp(40px,6vw,72px) clamp(20px,5vw,32px)">\n<div data-reveal="visual" style="text-align:center">'));
+    fix('where-are-you: styles', x => x.replace('</helmet>', WHERE_CSS + '\n</helmet>'));
+
     fix('cards: invite, do not instruct', x => x.replace(
       'לחיצה הופכת קלף. לחיצה נוספת מחזירה אותו.',
       'לחצו על הקלפים כדי להפוך אותם'));

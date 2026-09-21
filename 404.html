@@ -102,6 +102,12 @@ a:focus-visible,button:focus-visible{outline:2px solid #EF453D;outline-offset:3p
   /* left, physically: the logical properties resolve the other way in RTL */
   #wa-share { left: clamp(14px, 4vw, 26px); background: #25D366; }
   #wa-share:hover { background: #1FB855; }
+  /* The page carries a bare a:hover colour rule, coral, which outranks the
+     .bid-float colour and turned the label coral — on a phone too, because
+     iOS applies :hover on tap and leaves it applied. The id wins in every
+     state. */
+  #wa-share, #wa-share:link, #wa-share:visited,
+  #wa-share:hover, #wa-share:focus, #wa-share:active { color: #fff; }
   /* Green button, so a red ring reads as an error rather than as focus.
      !important because the site-wide focus rule is itself !important and
      would otherwise paint this one coral the moment it is tabbed to. */
