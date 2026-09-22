@@ -481,6 +481,15 @@ const SHARE_FLOAT = `<a id="wa-share" class="bid-float" href="https://wa.me/?tex
       if (r.bottom < vh - 4 || r.top > vh - 8) continue;
       clear = Math.max(clear, vh - r.top);
     }
+    // The footer is not fixed, so the loop above never sees it — but the
+    // float parks on top of it at the end of the page, and the legal links
+    // are the last thing that may be unreachable. Treat its top edge as an
+    // obstruction while it is the bottom of the viewport.
+    var ftr = document.getElementById('bid-footer');
+    if (ftr) {
+      var fr = ftr.getBoundingClientRect();
+      if (fr.bottom > vh - 4 && fr.top < vh - 8) clear = Math.max(clear, vh - fr.top);
+    }
     var v = clear ? clear + 10 + 'px' : '0px';
     floats.forEach(function (f) { f.style.setProperty('--wa-lift', v); });
   }
@@ -1301,15 +1310,77 @@ const FAQ_CSS = `<style>
   @media (prefers-reduced-motion: reduce) { .bid-faq > summary > i { transition: none; } }
 </style>`;
 
+const FOOTER_HEART = '<svg width="18" height="16" viewBox="0 0 24 21" fill="#EF453D" aria-hidden="true" style="display:block"><path d="M12 20.4C12 20.4 1.2 13.3 1.2 7.1 1.2 3.7 3.9 1 7.1 1 9.2 1 11.1 2.1 12 3.8 12.9 2.1 14.8 1 16.9 1 20.1 1 22.8 3.7 22.8 7.1 22.8 13.3 12 20.4 12 20.4Z"></path></svg>';
+
+// The four legal links pointed at two pages between them, and both pages
+// already carry their own "בעמוד הזה" index — so משלוחים/ביטול and מדיניות
+// עוגיות belong there as sections, not here as separate rows. What is left
+// is one bar: the two headings are gone, and seven stacked 44px rows became
+// two wrapped lines on a phone. 342px down to about 150.
+//
+// Nothing was dropped that the law asks for. The accessibility statement
+// keeps its own link under that exact name, and the cookie control stays
+// reachable for as long as the banner exists.
+const footerMarkup = (cookies) => `<footer id="bid-footer" dir="rtl" style="background:#3E568A;padding:clamp(26px,3.6vw,34px) clamp(20px,5vw,32px) clamp(20px,3vw,26px);font-family:Assistant,system-ui,sans-serif">
+<div class="bid-f-bar">
+<a class="bid-f-logo" href="/">
+${FOOTER_HEART}
+<span>Before I Do</span>
+</a>
+<nav class="bid-f-links" aria-label="מידע ותקנון">
+<a href="/terms#terms">תקנון האתר</a>
+<a href="/#bid-faq-section">שאלות ותשובות</a>
+<a href="/terms#returns">משלוחים והחזרות</a>
+<a href="tel:0526604320">צור קשר</a>
+</nav>
+</div>
+<div class="bid-f-fine">
+<a href="/privacy#privacy">מדיניות פרטיות</a>
+<a href="/privacy#accessibility">הצהרת נגישות</a>
+${cookies}
+</div>
+</footer>`;
+
+// The homepage carries the consent dialog itself; every other page sends the
+// reader to the section that explains it.
+const FOOTER_COOKIE_BUTTON = '<button type="button" onClick="{{ openCookies }}">העדפות עוגיות</button>';
+const FOOTER_COOKIE_LINK   = '<a href="/privacy#cookies">העדפות עוגיות</a>';
+
 const FOOTER_CSS = `<style>
-  @media (max-width: 720px) {
-    #bid-footer > div { gap: 26px !important; text-align: center; }
-    #bid-footer a[href="/"] { justify-content: center; }
-    #bid-footer ul {
-      flex-direction: row !important; flex-wrap: wrap;
-      justify-content: center; gap: 0 22px !important;
-    }
-    #bid-footer h2 { margin-bottom: 4px !important; }
+  /* Four links he asked for, plus the three the law asks for kept quiet
+     below a hairline rather than dropped. Both legal pages carry their own
+     "בעמוד הזה" index, so their sub-sections live there, not here. */
+  .bid-f-bar {
+    max-width: 1180px; margin: 0 auto;
+    display: flex; flex-wrap: wrap; align-items: center;
+    justify-content: space-between; gap: 2px clamp(18px,3vw,32px);
+  }
+  .bid-f-logo { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; text-decoration: none; }
+  .bid-f-logo span { font: 500 clamp(16px,2.4vw,21px)/1 Caveat, cursive; color: #fff; }
+  .bid-f-links { display: flex; flex-wrap: wrap; align-items: center; gap: 0 clamp(16px,2.4vw,28px); }
+  .bid-f-links > a {
+    display: inline-flex; align-items: center; min-height: 44px;
+    font: 400 15px/1.5 Assistant, sans-serif; color: #fff;
+    text-decoration: underline; text-underline-offset: 3px;
+  }
+  .bid-f-fine {
+    max-width: 1180px; margin: clamp(10px,1.4vw,14px) auto 0;
+    padding-block-start: clamp(10px,1.4vw,14px);
+    border-block-start: 1px solid rgba(255,255,255,.14);
+    display: flex; flex-wrap: wrap; align-items: center;
+    gap: 0 clamp(14px,2vw,22px);
+  }
+  .bid-f-fine > a, .bid-f-fine > button {
+    display: inline-flex; align-items: center; min-height: 36px;
+    margin: 0; padding: 0; border: 0; background: none; cursor: pointer;
+    font: 400 13px/1.5 Assistant, sans-serif; color: rgba(255,255,255,.62);
+    text-decoration: underline; text-underline-offset: 3px;
+  }
+  @media (hover: hover) { .bid-f-fine > a:hover, .bid-f-fine > button:hover { color: #fff; } }
+  @media (max-width: 760px) {
+    .bid-f-bar { justify-content: center; gap: 4px 0; }
+    .bid-f-links { justify-content: center; gap: 0 20px; }
+    .bid-f-fine { justify-content: center; gap: 0 18px; }
   }
 </style>`;
 
@@ -2135,6 +2206,14 @@ for (const p of PAGES) {
   // Everywhere except the purchase flow — a share button beside a payment
   // form is a way out of it. The internal boards do not get one either; they
   // are working documents, not something a visitor shares.
+  // Every page that carries the legal footer gets the one-bar version.
+  if (/aria-label="עמודים משפטיים"/.test(s)) {
+    const cookies = p.out === 'index.html' ? FOOTER_COOKIE_BUTTON : FOOTER_COOKIE_LINK;
+    fix('footer: one bar', x => x
+      .replace(/<footer dir="rtl"[\s\S]*?<\/footer>/, footerMarkup(cookies))
+      .replace('</helmet>', FOOTER_CSS + '\n</helmet>'));
+  }
+
   if (p.out === 'index.html') {
     fix('cards: height in Safari', x => x.replace('</helmet>', CARD_HEIGHT_CSS + '\n</helmet>'));
     fix('header centring + card wiggle', x => x.replace('</helmet>', POLISH_CSS + '\n</helmet>'));
@@ -2146,11 +2225,11 @@ for (const p of PAGES) {
 
     // The long-form page, and one more place to buy, before the footer.
     fix('long page: sections', x => x.replace('<footer', LONG_SECTIONS + '\n' + PREFOOTER_CTA + '\n<footer'));
+    // The footer links to the FAQ from every page, so it needs a handle.
+    fix('faq: section id', x => x.replace(
+      '<section dir="rtl" style="background:#F1F4F9;">',
+      '<section id="bid-faq-section" dir="rtl" style="background:#F1F4F9;">'));
     fix('faq: accordion styles', x => x.replace('</helmet>', FAQ_CSS + '\n</helmet>'));
-    fix('footer: compact on phones', x => x
-      .replace('<footer dir="rtl"', '<footer id="bid-footer" dir="rtl"')
-      .replace('</helmet>', FOOTER_CSS + '\n</helmet>'));
-
     // Only the header's CTA turns red. The other two sit ON the blue, where
     // white-on-blue is the contrast that works and red would not.
     fix('header CTA: red', x => x.replace(
