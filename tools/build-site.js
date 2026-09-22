@@ -1119,7 +1119,8 @@ const BARAK_CSS = `<style>
   @media (max-width: 860px) {
     .bid-b-grid { display: flex; flex-direction: column; }
     .bid-b-photo { width: min(320px,72%); margin-block-end: clamp(26px,5vw,34px); }
-    .bid-b-photo img { aspect-ratio: 1 / 1; }
+    /* The portrait keeps its 4:5 on a phone too. A square crop of this
+       frame cut the top of his head off. */
     .bid-b-text p:not(.bid-b-eyebrow):not(.bid-b-sign) { max-width: none; }
   }
 </style>`;
