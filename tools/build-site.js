@@ -2237,7 +2237,13 @@ for (const p of PAGES) {
       .replace('body: "אנחנו מאמינים בך.\\nרק שלא נגיע למצעים."',
                'body: "ואנחנו מאמינים בכם,\\nבואו לא נקנה להם מצעים."')
       .replace('note: "The approved line, kept gender-neutral (לך / בך). Bedsheet joke on the situation."',
-               'note: "His own wording, addressed to the crowd in the plural. Bedsheet joke on the situation."'));
+               'note: "His own wording, addressed to the crowd in the plural. Bedsheet joke on the situation."')
+      // The rest of the route followed suit: nothing here addresses one person.
+      .replace('שזה נחמד גם בשבילך.', 'שזה נחמד גם בשבילכם.')
+      .replace('body: "המתנה שלך לא חייבת להיות עוד אחת מהן."',
+               'body: "המתנה שלכם לא חייבת להיות עוד אחת מהן."')
+      .replace('note: "Gender-neutral. Aimed at the buyer\'s crowd, never at the couple."',
+               'note: "Plural, aimed at the buyer\'s crowd, never at the couple."'));
 
     // The footer links to the FAQ from every page, so it needs a handle.
     fix('faq: section id', x => x.replace(
