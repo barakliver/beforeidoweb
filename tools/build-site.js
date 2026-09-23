@@ -2225,6 +2225,20 @@ for (const p of PAGES) {
 
     // The long-form page, and one more place to buy, before the footer.
     fix('long page: sections', x => x.replace('<footer', LONG_SECTIONS + '\n' + PREFOOTER_CTA + '\n<footer'));
+    // The gift route speaks to the friends and family buying the present,
+    // so it addresses them in the plural and says so up front. The couple
+    // route keeps its own line.
+    fix('gift route: opening copy', x => x
+      .replace(
+        /(<sc-if value="\{\{ isGift \}\}"[\s\S]*?)שיחה אחת, לפני כל השאר\./,
+        '$1חברים ומשפחה הגעתם למקום הנכון')
+      .replace('head: "נתנו לך משימה אחת.\\nלמצוא מתנה."',
+               'head: "יש לכם משימה אחת\\nלמצוא מתנה."')
+      .replace('body: "אנחנו מאמינים בך.\\nרק שלא נגיע למצעים."',
+               'body: "ואנחנו מאמינים בכם,\\nבואו לא נקנה להם מצעים."')
+      .replace('note: "The approved line, kept gender-neutral (לך / בך). Bedsheet joke on the situation."',
+               'note: "His own wording, addressed to the crowd in the plural. Bedsheet joke on the situation."'));
+
     // The footer links to the FAQ from every page, so it needs a handle.
     fix('faq: section id', x => x.replace(
       '<section dir="rtl" style="background:#F1F4F9;">',
