@@ -2259,6 +2259,12 @@ for (const p of PAGES) {
       .replace('note: "Gender-neutral. Aimed at the buyer\'s crowd, never at the couple."',
                'note: "Plural, aimed at the buyer\'s crowd, never at the couple."'));
 
+    // "מה יש בקופסה" pointed at #deck, which is the "יש החלטות" block. The
+    // answer to that question is the section that lists what is in it.
+    fix('hero: box link', x => x.replace(
+      /<a href="#deck"([^>]*)>מה יש בקופסה<\/a>/,
+      '<a href="#bid-box"$1>מה יש בקופסה</a>'));
+
     // The footer links to the FAQ from every page, so it needs a handle.
     fix('faq: section id', x => x.replace(
       '<section dir="rtl" style="background:#F1F4F9;">',
