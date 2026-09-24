@@ -673,6 +673,21 @@ const FAQ = [
   ["המשחק מתאים לכולם? (דתיים, חילונים, גייז, פרק ב')", "חד משמעית, כי לא משנה איך תיראה החופה שלכם, האתגר הוא לעבור את ההפקה הזו ביחד, ולזכור שמאחורי כל האקסלים והסידורים, אתם פשוט שני אנשים שאוהבים ורוצים לחגוג את זה."],
 ];
 
+// Google reads this and can show the questions themselves under the result.
+// Built from the FAQ array above, never typed out twice — a schema that says
+// something the page does not is worse than no schema at all.
+const FAQ_SCHEMA = () => JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': SITE + '/#faq',
+  inLanguage: 'he-IL',
+  mainEntity: FAQ.map(([q, a]) => ({
+    '@type': 'Question',
+    name: q,
+    acceptedAnswer: { '@type': 'Answer', text: a },
+  })),
+});
+
 const buyButton = (label, bg, color, border) =>
   `<a href="/checkout" style="display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 34px;border-radius:8px;background:${bg};color:${color};border:1.5px solid ${border || bg};font:600 17px/1 Assistant,sans-serif;text-decoration:none;white-space:nowrap">${label}</a>`;
 
@@ -2269,6 +2284,9 @@ for (const p of PAGES) {
     fix('faq: section id', x => x.replace(
       '<section dir="rtl" style="background:#F1F4F9;">',
       '<section id="bid-faq-section" dir="rtl" style="background:#F1F4F9;">'));
+    fix('faq: schema', x => x.replace(
+      '</helmet>',
+      '<script type="application/ld+json">' + FAQ_SCHEMA() + '<\/script>\n</helmet>'));
     fix('faq: accordion styles', x => x.replace('</helmet>', FAQ_CSS + '\n</helmet>'));
     // Only the header's CTA turns red. The other two sit ON the blue, where
     // white-on-blue is the contrast that works and red would not.
