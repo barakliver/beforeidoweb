@@ -1349,6 +1349,7 @@ ${FOOTER_HEART}
 </div>
 <nav class="bid-f-links" aria-label="מידע ותקנון">
 <a href="/terms#terms">תקנון האתר</a>
+<a href="/blog">הבלוג</a>
 <a href="/#bid-faq-section">שאלות ותשובות</a>
 <a href="/terms#returns">משלוחים והחזרות</a>
 <a href="tel:0526604320">צור קשר</a>
@@ -2425,7 +2426,14 @@ for (const p of PAGES) {
 // ── robots + sitemap ──────────────────────────────────────────────────────
 // The internal boards carry noindex, but state it here too so crawlers skip
 // the fetch entirely rather than reading the page to learn they should not.
-const publicPages = PAGES.filter(p => !p.noindex && p.canonical);
+// The blog is built by tools/build-blog.js, but the sitemap is written here,
+// so its urls are collected rather than left out of the one file Google reads.
+const { POSTS: BLOG_POSTS } = require('./blog-posts.js');
+const publicPages = [
+  ...PAGES.filter(p => !p.noindex && p.canonical),
+  { canonical: '/blog' },
+  ...BLOG_POSTS.map(p => ({ canonical: '/blog/' + p.slug })),
+];
 fs.writeFileSync(path.join(ROOT, 'robots.txt'),
   ['User-agent: *',
    ...PAGES.filter(p => p.noindex && p.out !== '404.html')
@@ -2438,7 +2446,7 @@ fs.writeFileSync(path.join(ROOT, 'sitemap.xml'),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
   publicPages.map(p =>
     `  <url><loc>${SITE}${p.canonical}</loc><lastmod>${today}</lastmod>` +
-    `<priority>${p.canonical === '/' ? '1.0' : '0.5'}</priority></url>`).join('\n') +
+    `<priority>${p.canonical === '/' ? '1.0' : p.canonical.startsWith('/blog') ? '0.8' : '0.5'}</priority></url>`).join('\n') +
   `\n</urlset>\n`);
 console.log(`seo       robots.txt, sitemap.xml (${publicPages.length} public urls)`);
 
