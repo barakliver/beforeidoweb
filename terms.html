@@ -10,6 +10,40 @@
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/assets/fonts.css">
 <script src="/assets/js/app.js"></script>
+<!-- Google tag (gtag.js) — denied until the cookie banner is answered -->
+<script>
+(function () {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { dataLayer.push(arguments); };
+
+  function state() {
+    try {
+      var raw = localStorage.getItem('bid-cookie-consent');
+      return raw && JSON.parse(raw).value === 'all' ? 'granted' : 'denied';
+    } catch (e) { return 'denied'; }
+  }
+
+  var v = state();
+  gtag('consent', 'default', {
+    ad_storage: v, ad_user_data: v, ad_personalization: v,
+    analytics_storage: v, wait_for_update: 500
+  });
+  gtag('js', new Date());
+  gtag('config', 'AW-18472514997');
+
+  var last = v;
+  setInterval(function () {
+    var now = state();
+    if (now === last) return;
+    last = now;
+    gtag('consent', 'update', {
+      ad_storage: now, ad_user_data: now,
+      ad_personalization: now, analytics_storage: now
+    });
+  }, 700);
+})();
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18472514997"></script>
 </head>
 <body>
 <x-dc>
@@ -262,10 +296,10 @@ a:focus-visible,button:focus-visible{outline:2px solid #EF453D;outline-offset:3p
 </footer>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;pageTitle&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;תקנון ותנאי שימוש&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;kicker&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;מידע ותקנון&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;updatedIso&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;2026-09-21&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;pageTitle&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;תקנון ותנאי שימוש&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;kicker&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;מידע ותקנון&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;updatedIso&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;2026-09-24&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
 class Component extends DCLogic {
   renderVals() {
-    const iso = this.props.updatedIso ?? "2026-09-21";
+    const iso = this.props.updatedIso ?? "2026-09-24";
     const d = new Date(iso + "T00:00:00");
     const label = isNaN(d) ? iso : d.toLocaleDateString("he-IL", { day: "numeric", month: "long", year: "numeric" });
     return {

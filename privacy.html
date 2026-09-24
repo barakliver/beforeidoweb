@@ -10,6 +10,40 @@
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/assets/fonts.css">
 <script src="/assets/js/app.js"></script>
+<!-- Google tag (gtag.js) — denied until the cookie banner is answered -->
+<script>
+(function () {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { dataLayer.push(arguments); };
+
+  function state() {
+    try {
+      var raw = localStorage.getItem('bid-cookie-consent');
+      return raw && JSON.parse(raw).value === 'all' ? 'granted' : 'denied';
+    } catch (e) { return 'denied'; }
+  }
+
+  var v = state();
+  gtag('consent', 'default', {
+    ad_storage: v, ad_user_data: v, ad_personalization: v,
+    analytics_storage: v, wait_for_update: 500
+  });
+  gtag('js', new Date());
+  gtag('config', 'AW-18472514997');
+
+  var last = v;
+  setInterval(function () {
+    var now = state();
+    if (now === last) return;
+    last = now;
+    gtag('consent', 'update', {
+      ad_storage: now, ad_user_data: now,
+      ad_personalization: now, analytics_storage: now
+    });
+  }, 700);
+})();
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18472514997"></script>
 </head>
 <body>
 <x-dc>
@@ -224,12 +258,16 @@ a:focus-visible,button:focus-visible{outline:2px solid #EF453D;outline-offset:3p
 <h2 id="cookies">מדיניות עוגיות</h2>
 
 <h3>11. מה נשמר בפועל</h3>
-<p>נכון לתאריך שבראש העמוד, האתר <strong>אינו מפעיל עוגיות מדידה, פילוח או פרסום של צד שלישי</strong>. אין באתר Google Analytics, אין פיקסל של פייסבוק, ואין מערכת מעקב אחרת.</p>
-<p>הדבר היחיד שנשמר בדפדפן שלכם הוא פריט אחסון מקומי בשם <strong>bid-cookie-consent</strong>, שמכיל את הבחירה שלכם בהודעת העוגיות ואת מועד הבחירה. הוא נשמר במכשיר שלכם בלבד, לא נשלח אלינו, ונועד רק כדי שההודעה לא תופיע שוב בכל ביקור.</p>
+<p>האתר מפעיל כלי מדידה אחד של צד שלישי: <strong>Google Ads (gtag.js)</strong>, של Google Ireland Limited. הוא משמש כדי לדעת אילו מודעות הובילו להזמנה בפועל, ולשם כך בלבד.</p>
+<p><strong>הכלי הזה אינו אוסף דבר עד שתאשרו אותו.</strong> האתר משתמש במנגנון Google Consent Mode: כל אפשרויות האחסון של גוגל (ad_storage, ad_user_data, ad_personalization, analytics_storage) נטענות במצב <strong>חסום</strong> כברירת מחדל. אם תבחרו "דחיית הכל" או פשוט לא תענו, גוגל לא יקבל מכם מזהים ולא יציב עוגיות. רק בחירה מפורשת ב"אישור הכל" משנה את זה.</p>
+<p>אין באתר Google Analytics, אין פיקסל של פייסבוק, ואין מערכת מעקב אחרת.</p>
+<p>מעבר לכך נשמר בדפדפן שלכם פריט אחסון מקומי בשם <strong>bid-cookie-consent</strong>, שמכיל את הבחירה שלכם בהודעת העוגיות ואת מועד הבחירה. הוא נשמר במכשיר שלכם בלבד, לא נשלח אלינו, ונועד רק כדי שההודעה לא תופיע שוב בכל ביקור.</p>
 <p>בנוסף, ספק האחסון Vercel עשוי להציב עוגיות טכניות הכרחיות לאיזון עומסים ולאבטחה. אלה אינן משמשות למעקב.</p>
 
-<h3>12. אם זה ישתנה</h3>
-<p>אם נוסיף בעתיד כלי מדידה או פרסום, הם ייטענו <strong>רק לאחר אישור מצידכם</strong> בהודעת העוגיות, והעמוד הזה יעודכן לפני כן.</p>
+<h3>12. מה גוגל מקבל אם אישרתם</h3>
+<p>אם אישרתם, גוגל עשוי להציב עוגיות ולקבל מזהה פרסומי, כתובת IP, סוג מכשיר ודפדפן, ואת דף הנחיתה שהגעתם אליו. אם השלמתם הזמנה, גוגל מקבל גם את העובדה שבוצעה הזמנה. <strong>איננו מעבירים לגוגל שם, טלפון, כתובת או פרטי תשלום.</strong></p>
+<p>Google Ireland Limited פועלת גם מחוץ לאיחוד האירופי, ולכן ייתכן שהמידע הזה יעובד מחוץ לישראל. מדיניות הפרטיות של גוגל זמינה בכתובת <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a>.</p>
+<p>אפשר לחזור בכם בכל רגע דרך סעיף 13 למטה. ברגע שתבחרו "דחיית הכל", האיסוף נפסק.</p>
 
 <h3>13. ניהול ההעדפה</h3>
 <p>אפשר לאפס את הבחירה שלכם בכל רגע — הכפתור למטה ימחק את ההעדפה השמורה, והודעת העוגיות תופיע שוב בביקור הבא.</p>
@@ -300,10 +338,10 @@ a:focus-visible,button:focus-visible{outline:2px solid #EF453D;outline-offset:3p
 </footer>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;pageTitle&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;מדיניות פרטיות ונגישות&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;kicker&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;מידע ותקנון&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;updatedIso&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;2026-09-21&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;pageTitle&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;מדיניות פרטיות ונגישות&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;kicker&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;מידע ותקנון&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;updatedIso&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;2026-09-24&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
 class Component extends DCLogic {
   renderVals() {
-    const iso = this.props.updatedIso ?? "2026-09-21";
+    const iso = this.props.updatedIso ?? "2026-09-24";
     const d = new Date(iso + "T00:00:00");
     const label = isNaN(d) ? iso : d.toLocaleDateString("he-IL", { day: "numeric", month: "long", year: "numeric" });
     return {

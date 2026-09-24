@@ -688,6 +688,41 @@ const FAQ_SCHEMA = () => JSON.stringify({
   })),
 });
 
+const GTAG = `<!-- Google tag (gtag.js) — denied until the cookie banner is answered -->
+<script>
+(function () {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { dataLayer.push(arguments); };
+
+  function state() {
+    try {
+      var raw = localStorage.getItem('bid-cookie-consent');
+      return raw && JSON.parse(raw).value === 'all' ? 'granted' : 'denied';
+    } catch (e) { return 'denied'; }
+  }
+
+  var v = state();
+  gtag('consent', 'default', {
+    ad_storage: v, ad_user_data: v, ad_personalization: v,
+    analytics_storage: v, wait_for_update: 500
+  });
+  gtag('js', new Date());
+  gtag('config', 'AW-18472514997');
+
+  var last = v;
+  setInterval(function () {
+    var now = state();
+    if (now === last) return;
+    last = now;
+    gtag('consent', 'update', {
+      ad_storage: now, ad_user_data: now,
+      ad_personalization: now, analytics_storage: now
+    });
+  }, 700);
+})();
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18472514997"></script>`;
+
 const buyButton = (label, bg, color, border) =>
   `<a href="/checkout" style="display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 34px;border-radius:8px;background:${bg};color:${color};border:1.5px solid ${border || bg};font:600 17px/1 Assistant,sans-serif;text-decoration:none;white-space:nowrap">${label}</a>`;
 
@@ -1897,12 +1932,16 @@ const PRIVACY_BODY = `<p style="font-weight:600;color:#4F6BA5">אנחנו אוס
 <h2 id="cookies">מדיניות עוגיות</h2>
 
 <h3>11. מה נשמר בפועל</h3>
-<p>נכון לתאריך שבראש העמוד, האתר <strong>אינו מפעיל עוגיות מדידה, פילוח או פרסום של צד שלישי</strong>. אין באתר Google Analytics, אין פיקסל של פייסבוק, ואין מערכת מעקב אחרת.</p>
-<p>הדבר היחיד שנשמר בדפדפן שלכם הוא פריט אחסון מקומי בשם <strong>bid-cookie-consent</strong>, שמכיל את הבחירה שלכם בהודעת העוגיות ואת מועד הבחירה. הוא נשמר במכשיר שלכם בלבד, לא נשלח אלינו, ונועד רק כדי שההודעה לא תופיע שוב בכל ביקור.</p>
+<p>האתר מפעיל כלי מדידה אחד של צד שלישי: <strong>Google Ads (gtag.js)</strong>, של Google Ireland Limited. הוא משמש כדי לדעת אילו מודעות הובילו להזמנה בפועל, ולשם כך בלבד.</p>
+<p><strong>הכלי הזה אינו אוסף דבר עד שתאשרו אותו.</strong> האתר משתמש במנגנון Google Consent Mode: כל אפשרויות האחסון של גוגל (ad_storage, ad_user_data, ad_personalization, analytics_storage) נטענות במצב <strong>חסום</strong> כברירת מחדל. אם תבחרו "דחיית הכל" או פשוט לא תענו, גוגל לא יקבל מכם מזהים ולא יציב עוגיות. רק בחירה מפורשת ב"אישור הכל" משנה את זה.</p>
+<p>אין באתר Google Analytics, אין פיקסל של פייסבוק, ואין מערכת מעקב אחרת.</p>
+<p>מעבר לכך נשמר בדפדפן שלכם פריט אחסון מקומי בשם <strong>bid-cookie-consent</strong>, שמכיל את הבחירה שלכם בהודעת העוגיות ואת מועד הבחירה. הוא נשמר במכשיר שלכם בלבד, לא נשלח אלינו, ונועד רק כדי שההודעה לא תופיע שוב בכל ביקור.</p>
 <p>בנוסף, ספק האחסון Vercel עשוי להציב עוגיות טכניות הכרחיות לאיזון עומסים ולאבטחה. אלה אינן משמשות למעקב.</p>
 
-<h3>12. אם זה ישתנה</h3>
-<p>אם נוסיף בעתיד כלי מדידה או פרסום, הם ייטענו <strong>רק לאחר אישור מצידכם</strong> בהודעת העוגיות, והעמוד הזה יעודכן לפני כן.</p>
+<h3>12. מה גוגל מקבל אם אישרתם</h3>
+<p>אם אישרתם, גוגל עשוי להציב עוגיות ולקבל מזהה פרסומי, כתובת IP, סוג מכשיר ודפדפן, ואת דף הנחיתה שהגעתם אליו. אם השלמתם הזמנה, גוגל מקבל גם את העובדה שבוצעה הזמנה. <strong>איננו מעבירים לגוגל שם, טלפון, כתובת או פרטי תשלום.</strong></p>
+<p>Google Ireland Limited פועלת גם מחוץ לאיחוד האירופי, ולכן ייתכן שהמידע הזה יעובד מחוץ לישראל. מדיניות הפרטיות של גוגל זמינה בכתובת <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a>.</p>
+<p>אפשר לחזור בכם בכל רגע דרך סעיף 13 למטה. ברגע שתבחרו "דחיית הכל", האיסוף נפסק.</p>
 
 <h3>13. ניהול ההעדפה</h3>
 <p>אפשר לאפס את הבחירה שלכם בכל רגע — הכפתור למטה ימחק את ההעדפה השמורה, והודעת העוגיות תופיע שוב בביקור הבא.</p>
@@ -1975,7 +2014,7 @@ const CONSENT_RESET = `<script>
 // The date the legal pages state they were last updated. It is the date the
 // text changed, not the date of the build — a document that redates itself on
 // every deploy is telling the reader something untrue.
-const LEGAL_UPDATED = '2026-09-21';
+const LEGAL_UPDATED = '2026-09-24';
 
 const LEGAL_OPEN = '<div class="legal" style="order:1;max-width:70ch;min-width:0">';
 const LEGAL_CLOSE = '</div>\n\n</div>\n</main>';
@@ -1991,6 +2030,8 @@ for (const p of PAGES) {
   const fix = (name, fn) => { const b = s; s = fn(s); fixes.push([s === b ? 'SKIPPED' : 'ok', name]); };
 
   fix('lang/dir', x => x.replace('<html>', '<html lang="he" dir="rtl">'));
+  // Ads measurement. Not on the internal boards, which nobody but us opens.
+  if (!p.board) fix('google tag', x => x.replace('</head>', GTAG + '\n</head>'));
   // The deck is 70 cards. The design was written for 60, in digits and in
   // words, and the number appears in both forms across the pages.
   fix('card count → 70', x => x

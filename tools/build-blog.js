@@ -275,6 +275,40 @@ const shell = ({ title, desc, canonical, schema, main }) => `<!DOCTYPE html>
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">${schema}</script>
 <style>${CSS}</style>
+<!-- Google tag (gtag.js) — denied until the cookie banner is answered -->
+<script>
+(function () {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function () { dataLayer.push(arguments); };
+
+  function state() {
+    try {
+      var raw = localStorage.getItem('bid-cookie-consent');
+      return raw && JSON.parse(raw).value === 'all' ? 'granted' : 'denied';
+    } catch (e) { return 'denied'; }
+  }
+
+  var v = state();
+  gtag('consent', 'default', {
+    ad_storage: v, ad_user_data: v, ad_personalization: v,
+    analytics_storage: v, wait_for_update: 500
+  });
+  gtag('js', new Date());
+  gtag('config', 'AW-18472514997');
+
+  var last = v;
+  setInterval(function () {
+    var now = state();
+    if (now === last) return;
+    last = now;
+    gtag('consent', 'update', {
+      ad_storage: now, ad_user_data: now,
+      ad_personalization: now, analytics_storage: now
+    });
+  }, 700);
+})();
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18472514997"></script>
 </head>
 <body>
 ${header}
