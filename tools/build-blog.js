@@ -268,7 +268,7 @@ ${footer}
 `;
 
 // ── the blog index ────────────────────────────────────────────────────────
-function buildIndex() {
+function buildIndex(POSTS) {
   const schema = JSON.stringify({
     '@context': 'https://schema.org',
     '@type': 'Blog',
@@ -376,6 +376,9 @@ function buildPost(p) {
   return `blog/${p.slug}.html`;
 }
 
-const written = [buildIndex(), ...POSTS.map(buildPost)];
+const live = POSTS.filter(p => !p.draft);
+const held = POSTS.length - live.length;
+const written = [buildIndex(live), ...live.map(buildPost)];
 console.log('blog      ' + written.length + ' page(s)');
 written.forEach(f => console.log('  ok      ' + f));
+if (held) console.log('  held    ' + held + ' draft(s), not built and not in the sitemap');

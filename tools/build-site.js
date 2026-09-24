@@ -2432,7 +2432,7 @@ const { POSTS: BLOG_POSTS } = require('./blog-posts.js');
 const publicPages = [
   ...PAGES.filter(p => !p.noindex && p.canonical),
   { canonical: '/blog' },
-  ...BLOG_POSTS.map(p => ({ canonical: '/blog/' + p.slug })),
+  ...BLOG_POSTS.filter(p => !p.draft).map(p => ({ canonical: '/blog/' + p.slug })),
 ];
 fs.writeFileSync(path.join(ROOT, 'robots.txt'),
   ['User-agent: *',
