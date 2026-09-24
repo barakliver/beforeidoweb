@@ -688,6 +688,8 @@ const FAQ_SCHEMA = () => JSON.stringify({
   })),
 });
 
+const ADS_CONVERSION = 'AW-18472514997/jF0-CNHH-IMdELXrsOhE';
+
 const GTAG = `<!-- Google tag (gtag.js) — denied until the cookie banner is answered -->
 <script>
 (function () {
@@ -2259,6 +2261,13 @@ for (const p of PAGES) {
       `onPay: e => {
         if (!this.state.consentTerms) { e.preventDefault(); return; }
         window.__bidPaid = true;
+        try {
+          gtag('event', 'conversion', {
+            send_to: ${JSON.stringify(ADS_CONVERSION)},
+            value: ${total('this.state')}, currency: 'ILS',
+            transport_type: 'beacon'
+          });
+        } catch (err) { /* measurement must never block the payment */ }
         try {
           const s2 = this.state;
           const body = JSON.stringify({

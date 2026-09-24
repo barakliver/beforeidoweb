@@ -432,6 +432,13 @@ class Component extends DCLogic {
         if (!this.state.consentTerms) { e.preventDefault(); return; }
         window.__bidPaid = true;
         try {
+          gtag('event', 'conversion', {
+            send_to: "AW-18472514997/jF0-CNHH-IMdELXrsOhE",
+            value: window.bidEnded() ? 169 + (this.state.method === "ship" ? 39 : 0) : 129, currency: 'ILS',
+            transport_type: 'beacon'
+          });
+        } catch (err) { /* measurement must never block the payment */ }
+        try {
           const s2 = this.state;
           const body = JSON.stringify({
             stage: "pay",
