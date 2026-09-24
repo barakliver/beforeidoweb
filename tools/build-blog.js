@@ -161,6 +161,23 @@ const CSS = `
     width: 6px; height: 6px; border-radius: 50%; background: ${RED};
   }
 
+  /* A two-column figure list. Real table semantics through roles, so it
+     reads correctly to a screen reader without a <table> to wrangle in RTL. */
+  .bl-table {
+    margin: 0 0 clamp(18px,2.4vw,26px);
+    border-block-start: 1px solid rgba(79,107,165,.22);
+  }
+  .bl-table > [role="row"] {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 16px; padding: 14px 2px;
+    border-block-end: 1px solid rgba(79,107,165,.22);
+  }
+  .bl-table [role="rowheader"] { font: 400 16px/1.4 Assistant, sans-serif; color: rgba(47,63,99,.85); }
+  .bl-table [role="cell"] {
+    font: 700 clamp(17px,2.1vw,19px)/1.2 Heebo, sans-serif; color: ${BLUE};
+    white-space: nowrap; direction: ltr; unicode-bidi: isolate;
+  }
+
   /* ── the product, once, at the end ────────────────────── */
   .bl-plug {
     margin: clamp(44px,6vw,68px) 0 0; background: ${BLUE}; border-radius: 16px;
