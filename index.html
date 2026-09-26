@@ -84,6 +84,16 @@ button:focus-visible,a:focus-visible,[role="button"]:focus-visible,[tabindex]:fo
   [style*="aspect-ratio: 250 / 370"] { align-self: start; }
 </style>
 <style>
+  /* On a phone the three cards in a row are thumbnails. One under the other,
+     each big enough to read the question. */
+  @media (max-width: 600px) {
+    #bid-try [style*="grid-template-columns:repeat(3,minmax(0,1fr))"],
+    #bid-try [style*="grid-template-columns: repeat(3, minmax(0px, 1fr))"] {
+      grid-template-columns: minmax(0, 1fr) !important;
+      max-width: 270px !important;
+      gap: 26px !important;
+    }
+  }
   @media (max-width: 720px) {
     #bid-header, #bid-header > div { justify-content: center; }
     #bid-header > div { width: 100%; }
@@ -1549,7 +1559,7 @@ class Component extends DCLogic {
 </style>
 <script>
 (function () {
-  var KEY = 'bid-offer-popup', DELAY = 60000, AGAIN = 7 * 86400000;
+  var KEY = 'bid-offer-popup', DELAY = 45000, AGAIN = 7 * 86400000;
   var END = Date.parse("2026-10-26T21:59:59Z");
   if (Date.now() >= END) return;
   try { if (Date.now() - (+localStorage.getItem(KEY) || 0) < AGAIN) return; } catch (e) {}

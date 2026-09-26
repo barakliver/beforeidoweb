@@ -542,6 +542,16 @@ const CARD_HEIGHT_CSS = `<style>
 // state, not as an invitation. A card you are about to pick up rises, leans a
 // little and catches more light. One motion, one direction, no oscillation.
 const POLISH_CSS = `<style>
+  /* On a phone the three cards in a row are thumbnails. One under the other,
+     each big enough to read the question. */
+  @media (max-width: 600px) {
+    #bid-try [style*="grid-template-columns:repeat(3,minmax(0,1fr))"],
+    #bid-try [style*="grid-template-columns: repeat(3, minmax(0px, 1fr))"] {
+      grid-template-columns: minmax(0, 1fr) !important;
+      max-width: 270px !important;
+      gap: 26px !important;
+    }
+  }
   @media (max-width: 720px) {
     #bid-header, #bid-header > div { justify-content: center; }
     #bid-header > div { width: 100%; }
@@ -1510,7 +1520,7 @@ const OFFER_POPUP = `<!-- Launch-offer popup: once, after a minute of reading, n
 </style>
 <script>
 (function () {
-  var KEY = 'bid-offer-popup', DELAY = 60000, AGAIN = 7 * 86400000;
+  var KEY = 'bid-offer-popup', DELAY = 45000, AGAIN = 7 * 86400000;
   var END = Date.parse(${JSON.stringify(OFFER.endsISO)});
   if (Date.now() >= END) return;
   try { if (Date.now() - (+localStorage.getItem(KEY) || 0) < AGAIN) return; } catch (e) {}
