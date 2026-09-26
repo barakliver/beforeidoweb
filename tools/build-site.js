@@ -766,7 +766,7 @@ const COUNTDOWN = (() => {
   return `<section id="bid-countdown" dir="rtl" style="background:#3E568A">
     <div style="max-width:1180px;margin:0 auto;padding:clamp(44px,6.5vw,72px) clamp(20px,5vw,32px);text-align:center">
       <div data-cd-live>
-        <div style="display:flex;justify-content:center;align-items:flex-start;gap:clamp(6px,2vw,16px)">
+        <div style="display:flex;justify-content:center;align-items:flex-start;gap:clamp(6px,2vw,16px);direction:ltr">
           ${cell(p0.d, 'ימים', 'd')}${gap}${cell(p0.h, 'שעות', 'h')}${gap}${cell(p0.m, 'דקות', 'm')}${gap}${cell(p0.s, 'שניות', 's')}
         </div>
         <p style="margin:clamp(22px,3.4vw,30px) auto 0;font:300 clamp(15px,2vw,17px)/1.7 Assistant,sans-serif;color:rgba(255,255,255,.85)">כולל משלוח חינם עד הבית</p>
