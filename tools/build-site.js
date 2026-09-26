@@ -1455,6 +1455,36 @@ const FOOTER_CSS = `<style>
 //
 // Lives outside <x-dc> so the runtime never re-renders it. It writes only into
 // the cells, so a re-render of the page around it costs at most one tick.
+const ANCHOR_JS = `<!-- Anchor jumps: the runtime rebuilds the page after load and drops the scroll the browser already made for the URL's #fragment -->
+<style>[id] { scroll-margin-top: 64px; }</style>
+<script>
+(function () {
+  function target() {
+    var id = decodeURIComponent(location.hash.slice(1));
+    return id ? document.getElementById(id) : null;
+  }
+  function jump() {
+    var el = target();
+    if (el) el.scrollIntoView({ block: 'start' });
+    return !!el;
+  }
+  addEventListener('hashchange', jump);
+  if (!location.hash) return;
+  // Once the element exists, and again after the layout has settled (fonts,
+  // images, the fixed ticker) — unless the visitor has scrolled meanwhile.
+  var found = false, y0 = -1, n = 0;
+  var t = setInterval(function () {
+    n++;
+    if (!found) {
+      if (jump()) { found = true; y0 = scrollY; }
+    } else if (n % 4 === 0 && Math.abs(scrollY - y0) < 2) {
+      jump(); y0 = scrollY;
+    }
+    if (n >= 16) clearInterval(t);
+  }, 125);
+})();
+<\/script>`;
+
 const COUNTDOWN_JS = `<script>
 (function () {
   var END = Date.parse(${JSON.stringify(OFFER.endsISO)});
@@ -2352,6 +2382,7 @@ for (const p of PAGES) {
     fix('floating share + buy buttons', x => x.replace('</body>', SHARE_FLOAT + '\n</body>'));
     fix('sticky countdown ticker', x => x.replace('</body>', TICKER + '\n</body>'));
     fix('countdown script', x => x.replace('</body>', COUNTDOWN_JS + '\n</body>'));
+    fix('anchor jumps', x => x.replace('</body>', ANCHOR_JS + '\n</body>'));
   }
 
   // "יש החלטות שמקבלים מול ספקים" was wrapping to six lines even on a desktop.
