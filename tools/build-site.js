@@ -1455,6 +1455,107 @@ const FOOTER_CSS = `<style>
 //
 // Lives outside <x-dc> so the runtime never re-renders it. It writes only into
 // the cells, so a re-render of the page around it costs at most one tick.
+const OFFER_POPUP = `<!-- Launch-offer popup: once, after a minute of reading, never after the offer ends -->
+<div id="bid-offer" dir="rtl" hidden>
+  <div class="bid-of-back" data-of-close></div>
+  <div class="bid-of-card" role="dialog" aria-modal="true" aria-labelledby="bid-of-title" tabindex="-1">
+    <div class="bid-of-top">
+      <button type="button" class="bid-of-x" data-of-close aria-label="סגירה"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M1 1l10 10M11 1L1 11"/></svg></button>
+      <p class="bid-of-lbl">מבצע השקה · פעם אחת בלבד</p>
+      <h2 id="bid-of-title" class="bid-of-h">משלוח חינם לכל הארץ<br>נגמר בעוד:</h2>
+      <div class="bid-of-clock" aria-hidden="true">
+        <span><b data-cd="d">--</b><small>ימים</small></span><i>:</i><span><b data-cd="h">--</b><small>שעות</small></span><i>:</i><span><b data-cd="m">--</b><small>דקות</small></span><i>:</i><span><b data-cd="s">--</b><small>שניות</small></span>
+      </div>
+    </div>
+    <div class="bid-of-perf"><i></i></div>
+    <div class="bid-of-bot">
+      <p class="bid-of-price"><b>${OFFER.price} ₪</b><s>${OFFER.afterPrice} ₪</s></p>
+      <p class="bid-of-p">מחיר ההשקה, כולל משלוח חינם לכל הארץ. אחרי ה-${OFFER.endLabel} חוזרים ל-${OFFER.afterPrice} ₪.</p>
+      <a class="bid-of-cta" href="/checkout">להזמנה לפני שנגמר</a>
+      <p class="bid-of-fine">ההזמנות המוקדמות יוצאות במשלוח הראשון, ${OFFER.shipDate}.</p>
+    </div>
+  </div>
+</div>
+<style>
+  #bid-offer { position: fixed; inset: 0; z-index: 64; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  #bid-offer[hidden] { display: none; }
+  .bid-of-back { position: absolute; inset: 0; background: rgba(31,44,74,.62); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); opacity: 0; transition: opacity 260ms ease; }
+  #bid-offer .bid-of-card:focus-visible { outline: none !important; }
+  .bid-of-card { position: relative; outline: none; width: min(100%, 400px); max-height: calc(100vh - 40px); overflow: auto; filter: drop-shadow(0 30px 40px rgba(31,44,74,.5)); text-align: center; opacity: 0; transform: translateY(14px) scale(.97); transition: opacity 260ms ease, transform 320ms cubic-bezier(.2,.7,.2,1); }
+  #bid-offer.is-open .bid-of-back { opacity: 1; }
+  #bid-offer.is-open .bid-of-card { opacity: 1; transform: none; }
+  .bid-of-top { position: relative; background: ${RED}; color: #fff; border-radius: 18px 18px 0 0; padding: 28px 24px 22px; }
+  .bid-of-x { position: absolute; z-index: 2; top: 12px; left: 12px; width: 32px; height: 32px; border-radius: 50%; border: 0; padding: 0; display: grid; place-items: center; background: rgba(255,255,255,.18); color: #fff; cursor: pointer; }
+  .bid-of-x svg { width: 13px; height: 13px; }
+  .bid-of-x:hover { background: rgba(255,255,255,.3); }
+  .bid-of-lbl { margin: 0; font: 600 12px/1 Assistant, sans-serif; letter-spacing: 2.5px; opacity: .85; }
+  .bid-of-h { margin: 12px 0 0; font: 700 clamp(26px, 7vw, 30px)/1.2 Heebo, sans-serif; color: #fff; }
+  .bid-of-clock { margin-top: 16px; display: inline-flex; direction: ltr; gap: 6px; align-items: baseline; font: 500 22px/1 Heebo, sans-serif; font-variant-numeric: tabular-nums; color: #fff; }
+  .bid-of-clock i { font-style: normal; opacity: .4; }
+  .bid-of-clock b { font-weight: 500; display: inline-block; min-width: 34px; text-align: center; }
+  .bid-of-clock small { display: block; font: 400 10px/1 Assistant, sans-serif; letter-spacing: 1.5px; opacity: .6; margin-top: 5px; text-align: center; }
+  .bid-of-perf { position: relative; height: 22px;
+    background: radial-gradient(circle at 0 50%, transparent 11px, #fff 12px) left / 50% 100% no-repeat,
+                radial-gradient(circle at 100% 50%, transparent 11px, #fff 12px) right / 50% 100% no-repeat; }
+  .bid-of-perf i { position: absolute; left: 24px; right: 24px; top: 10px; border-top: 2px dashed rgba(79,107,165,.3); }
+  .bid-of-bot { background: #fff; border-radius: 0 0 18px 18px; padding: 6px 24px 24px; }
+  .bid-of-price { margin: 0; display: flex; justify-content: center; align-items: baseline; gap: 12px; }
+  .bid-of-price b { font: 700 44px/1 Heebo, sans-serif; color: #4F6BA5; }
+  .bid-of-price s { font: 300 20px/1 Assistant, sans-serif; color: rgba(47,63,99,.5); }
+  .bid-of-p { margin: 12px 0 0; font: 300 16px/1.65 Assistant, sans-serif; color: #2F3F63; }
+  #bid-offer .bid-of-cta { margin-top: 20px; width: 100%; box-sizing: border-box; padding: 0; display: flex; align-items: center; justify-content: center; height: 54px; border-radius: 10px; background: ${RED}; color: #fff; font: 700 17px/1 Assistant, sans-serif; text-decoration: none; }
+  #bid-offer .bid-of-cta:hover { background: ${RED_DARK}; color: #fff; }
+  .bid-of-fine { margin: 12px 0 0; font: 300 13px/1.5 Assistant, sans-serif; color: rgba(47,63,99,.6); }
+  @media (prefers-reduced-motion: reduce) { .bid-of-back, .bid-of-card { transition: none; } }
+</style>
+<script>
+(function () {
+  var KEY = 'bid-offer-popup', DELAY = 60000, AGAIN = 7 * 86400000;
+  var END = Date.parse(${JSON.stringify(OFFER.endsISO)});
+  if (Date.now() >= END) return;
+  try { if (Date.now() - (+localStorage.getItem(KEY) || 0) < AGAIN) return; } catch (e) {}
+
+  var box = document.getElementById('bid-offer');
+  var scrolled = false, due = false, shown = false, opener = null;
+
+  function cookieOpen() {
+    var d = document.querySelector('[role="dialog"][aria-label="הגדרות עוגיות"]');
+    return !!d && d.getBoundingClientRect().height > 0;
+  }
+  function maybe() {
+    if (shown || !scrolled || !due) return;
+    if (Date.now() >= END) return;
+    // Two dialogs at once is a wall; let the cookie banner be answered first.
+    if (cookieOpen()) { setTimeout(maybe, 1500); return; }
+    open();
+  }
+  function open() {
+    shown = true;
+    try { localStorage.setItem(KEY, String(Date.now())); } catch (e) {}
+    opener = document.activeElement;
+    box.hidden = false;
+    document.documentElement.style.overflow = 'hidden';
+    requestAnimationFrame(function () { box.classList.add('is-open'); });
+    setTimeout(function () { box.querySelector('.bid-of-card').focus(); }, 300);
+    var t = setInterval(function () { if (Date.now() >= END) { clearInterval(t); close(); } }, 1000);
+  }
+  function close() {
+    if (box.hidden) return;
+    box.classList.remove('is-open');
+    document.documentElement.style.overflow = '';
+    setTimeout(function () { box.hidden = true; }, 280);
+    if (opener && opener.focus) opener.focus();
+  }
+
+  Array.prototype.forEach.call(box.querySelectorAll('[data-of-close]'), function (el) {
+    el.addEventListener('click', close);
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+  addEventListener('scroll', function () { if (scrollY > 200) { scrolled = true; maybe(); } }, { passive: true });
+  setTimeout(function () { due = true; maybe(); }, DELAY);
+})();
+<\/script>`;
+
 const ANCHOR_JS = `<!-- Anchor jumps: the runtime rebuilds the page after load and drops the scroll the browser already made for the URL's #fragment -->
 <style>[id] { scroll-margin-top: 64px; }</style>
 <script>
@@ -1967,7 +2068,7 @@ const PRIVACY_BODY = `<p style="font-weight:600;color:#4F6BA5">אנחנו אוס
 <p>האתר מפעיל כלי מדידה אחד של צד שלישי: <strong>Google Ads (gtag.js)</strong>, של Google Ireland Limited. הוא משמש כדי לדעת אילו מודעות הובילו להזמנה בפועל, ולשם כך בלבד.</p>
 <p><strong>הכלי הזה אינו אוסף דבר עד שתאשרו אותו.</strong> האתר משתמש במנגנון Google Consent Mode: כל אפשרויות האחסון של גוגל (ad_storage, ad_user_data, ad_personalization, analytics_storage) נטענות במצב <strong>חסום</strong> כברירת מחדל. אם תבחרו "דחיית הכל" או פשוט לא תענו, גוגל לא יקבל מכם מזהים ולא יציב עוגיות. רק בחירה מפורשת ב"אישור הכל" משנה את זה.</p>
 <p>אין באתר Google Analytics, אין פיקסל של פייסבוק, ואין מערכת מעקב אחרת.</p>
-<p>מעבר לכך נשמר בדפדפן שלכם פריט אחסון מקומי בשם <strong>bid-cookie-consent</strong>, שמכיל את הבחירה שלכם בהודעת העוגיות ואת מועד הבחירה. הוא נשמר במכשיר שלכם בלבד, לא נשלח אלינו, ונועד רק כדי שההודעה לא תופיע שוב בכל ביקור.</p>
+<p>מעבר לכך נשמר בדפדפן שלכם פריט אחסון מקומי בשם <strong>bid-cookie-consent</strong>, שמכיל את הבחירה שלכם בהודעת העוגיות ואת מועד הבחירה. הוא נשמר במכשיר שלכם בלבד, לא נשלח אלינו, ונועד רק כדי שההודעה לא תופיע שוב בכל ביקור. באותו אופן נשמר פריט בשם <strong>bid-offer-popup</strong>, שמכיל רק את המועד שבו הוצגה הודעת מבצע ההשקה בעמוד הבית, כדי שלא תופיע שוב.</p>
 <p>בנוסף, ספק האחסון Vercel עשוי להציב עוגיות טכניות הכרחיות לאיזון עומסים ולאבטחה. אלה אינן משמשות למעקב.</p>
 
 <h3>12. מה גוגל מקבל אם אישרתם</h3>
@@ -2383,6 +2484,7 @@ for (const p of PAGES) {
     fix('sticky countdown ticker', x => x.replace('</body>', TICKER + '\n</body>'));
     fix('countdown script', x => x.replace('</body>', COUNTDOWN_JS + '\n</body>'));
     fix('anchor jumps', x => x.replace('</body>', ANCHOR_JS + '\n</body>'));
+    if (p.out === 'index.html') fix('launch offer popup', x => x.replace('</body>', OFFER_POPUP + '\n</body>'));
   }
 
   // "יש החלטות שמקבלים מול ספקים" was wrapping to six lines even on a desktop.
